@@ -3,10 +3,12 @@ import { useState } from 'react';
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { auth } from './../utils/firebase';
 import { notifications } from '@mantine/notifications';
+import { useNavigate } from 'react-router-dom';
 
 function Login({geöffnet, setGeöffnet}) {
   const [email, setEmail] = useState('');
   const [passwort, setPasswort] = useState('');
+  const navigate = useNavigate();
 
     const handleLogin = async () => {
         try {
@@ -21,6 +23,7 @@ function Login({geöffnet, setGeöffnet}) {
             autoClose: 2000,
         });
         setGeöffnet(false);
+        navigate('/Einstellungen');
         } catch (error) {
         // Fehlerbehandlung
         console.error(error);
