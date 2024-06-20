@@ -8,7 +8,6 @@ import { collection, addDoc } from 'firebase/firestore';
 import { Timestamp } from 'firebase/firestore';
 import { useEffect } from 'react';
 
-
 const Registrierung = ({ modalOpen, setModalOpen}) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");

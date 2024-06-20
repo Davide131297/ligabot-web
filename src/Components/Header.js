@@ -9,6 +9,10 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Registrierung from './Registrierung';
+import Login from './login';
+import { signOut } from "firebase/auth";
+import { notifications } from '@mantine/notifications';
+import { auth } from './../utils/firebase';
 
 const darkTheme = createTheme({
     palette: {
@@ -19,7 +23,8 @@ const darkTheme = createTheme({
 const Header = () => {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
-    const [modalOpen, setModalOpen] = React.useState(false);    
+    const [modalOpen, setModalOpen] = React.useState(false);
+    const [geöffnet, setGeöffnet] = React.useState(false);    
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -29,10 +34,31 @@ const Header = () => {
         setAnchorEl(null);
     };
 
+    const handleLogin = () => {
+        console.log("Login");
+        handleClose();
+        setGeöffnet(true);
+    };
+
     const handleRegister = () => {
         console.log("Registrierung");
         handleClose();
         setModalOpen(true);
+    };
+
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+            localStorage.removeItem('user');
+            notifications.show({
+                title: 'Logout erfolgreich! 🎉',
+                message: 'Du hast dich erfolgreich abgemeldet!',
+                color: 'green',
+                autoClose: 2000,
+            });
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     return (
@@ -60,8 +86,14 @@ const Header = () => {
                                 'aria-labelledby': 'basic-button',
                             }}
                         >
-                            <MenuItem onClick={handleClose}>Login</MenuItem>
-                            <MenuItem onClick={handleRegister}>Registrieren</MenuItem>
+                            {localStorage.getItem('user') ? (
+                                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                            ) : (
+                                <>
+                                    <MenuItem onClick={handleLogin}>Login</MenuItem>
+                                    <MenuItem onClick={handleRegister}>Registrieren</MenuItem>
+                                </>
+                            )}
                         </Menu>
                         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                             Discord LigaBot
@@ -73,6 +105,11 @@ const Header = () => {
         <Registrierung 
             modalOpen={modalOpen} 
             setModalOpen={setModalOpen} 
+        />
+
+        <Login 
+            geöffnet={geöffnet}
+            setGeöffnet={setGeöffnet}
         />
         </>
     );
