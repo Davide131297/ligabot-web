@@ -13,6 +13,7 @@ import Login from './login';
 import { signOut } from "firebase/auth";
 import { notifications } from '@mantine/notifications';
 import { auth } from './../utils/firebase';
+import { useNavigate } from 'react-router-dom';
 
 const darkTheme = createTheme({
     palette: {
@@ -24,7 +25,8 @@ const Header = () => {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const [modalOpen, setModalOpen] = React.useState(false);
-    const [geöffnet, setGeöffnet] = React.useState(false);    
+    const [geöffnet, setGeöffnet] = React.useState(false); 
+    const navigate = useNavigate();   
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -46,6 +48,11 @@ const Header = () => {
         setModalOpen(true);
     };
 
+    const handleEinstellungen = () => {
+        handleClose();
+        navigate('/Einstellungen');
+    }
+
     const handleLogout = async () => {
         try {
             await signOut(auth);
@@ -60,6 +67,10 @@ const Header = () => {
             console.error(error);
         }
     };
+
+    const handleLogoClick = () => {
+        navigate('/');
+    }
 
     return (
         <>
@@ -87,7 +98,10 @@ const Header = () => {
                             }}
                         >
                             {localStorage.getItem('user') ? (
-                                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                                <>
+                                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                                    <MenuItem onClick={handleEinstellungen}>Einstellungen</MenuItem>
+                                </>
                             ) : (
                                 <>
                                     <MenuItem onClick={handleLogin}>Login</MenuItem>
@@ -95,7 +109,7 @@ const Header = () => {
                                 </>
                             )}
                         </Menu>
-                        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} onClick={handleLogoClick} style={{cursor: 'pointer'}}>
                             Discord LigaBot
                         </Typography>
                     </Toolbar>
