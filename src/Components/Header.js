@@ -63,6 +63,7 @@ const Header = () => {
                 color: 'green',
                 autoClose: 2000,
             });
+            navigate('/');
         } catch (error) {
             console.error(error);
         }

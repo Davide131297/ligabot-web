@@ -1,8 +1,9 @@
 import { db } from './../utils/firebase';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
+import Table from 'react-bootstrap/Table';
 
-const Einsteöllungen = () => {  
+const Einstellungen = () => {  
 
     const [DiscordServer, setDiscordServer] = useState([]);
     const [Liga, setLiga] = useState([]);
@@ -47,7 +48,7 @@ const Einsteöllungen = () => {
 
     useEffect(() => {
         if (nutzerDaten) {
-            console.log(nutzerDaten);
+            console.log(JSON.stringify(nutzerDaten));
         }
     }, [nutzerDaten]);
 
@@ -61,8 +62,27 @@ const Einsteöllungen = () => {
 
     return (
         <div>
-        <h1>Einstellungen</h1>
+            <Table striped bordered hover>
+                <thead>
+                    <tr>
+                        <th>Liga Name</th>
+                        <th>Registrierungsdatum Liga</th>
+                        <th>Admin User</th>
+                        <th>Liga Key</th>
+                        <th>Server ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{nutzerDaten?.LigaZugehörigkeit?.ligaName}</td>
+                        <td>{new Date(nutzerDaten?.LigaZugehörigkeit?.registrierungsDatum.seconds * 1000).toLocaleDateString()}</td>
+                        <td>{nutzerDaten?.LigaZugehörigkeit?.adminUser}</td>
+                        <td>{nutzerDaten?.LigaZugehörigkeit?.key}</td>
+                        <td>{nutzerDaten?.DiscordServerZugehörigkeit?.serverId}</td>
+                    </tr>
+                </tbody>
+            </Table>
         </div>
     );
 }
-export default Einsteöllungen;
+export default Einstellungen;
