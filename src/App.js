@@ -6,6 +6,7 @@ import { Notifications } from '@mantine/notifications';
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 import '@mantine/charts/styles.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   return (
