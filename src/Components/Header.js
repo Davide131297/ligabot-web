@@ -57,6 +57,8 @@ const Header = () => {
         try {
             await signOut(auth);
             localStorage.removeItem('user');
+            handleClose();
+            navigate('/');
             notifications.show({
                 title: 'Logout erfolgreich! 🎉',
                 message: 'Du hast dich erfolgreich abgemeldet!',
