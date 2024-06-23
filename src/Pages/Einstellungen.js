@@ -1,9 +1,11 @@
 import { db } from './../utils/firebase';
-import { collection, onSnapshot, doc, setDoc } from 'firebase/firestore';
+import { collection, onSnapshot, doc, setDoc, updateDoc, getDoc } from 'firebase/firestore';
 import { useEffect, useState, useCallback } from 'react';
-import { Button, Table, Modal } from '@mantine/core';
+import { Button, Table, Modal, ScrollArea, Box, Input, Checkbox} from '@mantine/core';
 import BootstrapTable from 'react-bootstrap/Table';
 import { useDisclosure } from '@mantine/hooks';
+import { FaTrashAlt } from "react-icons/fa";
+import { FaUserEdit } from "react-icons/fa";
 
 const Einstellungen = () => {  
 
@@ -13,10 +15,96 @@ const Einstellungen = () => {
     const [Daten, setDaten] = useState(null);
     const [ligaName, setLigaName] = useState(null);
     const [ligaErstellt, setLigaErstellt] = useState(false);
-    const [ligaDaten, setLigaDaten] = useState([]);
     const [fahrername, setFahrername] = useState("");
     const [teamname, setTeamname] = useState("");
-    const [opened, { open, close }] = useDisclosure(false);
+    const [ligaDaten, setLigaDaten] = useState([]);
+    const [fahrerliste, setFahrerliste] = useState([]);
+
+    const [opened, { open, close }] = useDisclosure(false); // Modal Hinzufügen neuer Fahrer
+    const [openEintragen, setOpenEintragen] = useState(false); // Modal Eintragen der Ergebnisse
+    const [ergebnis, setErgebnis] = useState({ fahrername: '', strecke: '', platz: ''});
+
+    const Strecken = [
+        "Bahrain",
+        "SaudiArabien",
+        "Australien",
+        "Japan",
+        "China",
+        "Miami",
+        "Imola",
+        "Monaco",
+        "Kanada",
+        "Spanien",
+        "Österreich",
+        "Großbritannien",
+        "Ungarn",
+        "Belgien",
+        "Niederlande",
+        "Monza",
+        "Aserbaidschan",
+        "Singapur",
+        "Austin",
+        "Mexiko",
+        "Brasilien",
+        "LasVegas",
+        "Katar",
+        "AbuDhabi",
+    ];
+
+    const StreckenSelect = [
+        { value: 'Bahrain', label: 'Bahrain' },
+        { value: 'SaudiArabien', label: 'Saudi Arabien' },
+        { value: 'Australien', label: 'Australien' },
+        { value: 'Japan', label: 'Japan' },
+        { value: 'China', label: 'China' },
+        { value: 'Miami', label: 'Miami' },
+        { value: 'Imola', label: 'Imola' },
+        { value: 'Monaco', label: 'Monaco' },
+        { value: 'Kanada', label: 'Kanada' },
+        { value: 'Spanien', label: 'Spanien' },
+        { value: 'Österreich_Sprint', label: 'Österreich Sprint' },
+        { value: 'Österreich_Rennen', label: 'Österreich Rennen' },
+        { value: 'Großbritannien', label: 'Großbritannien' },
+        { value: 'Ungarn', label: 'Ungarn' },
+        { value: 'Belgien', label: 'Belgien' },
+        { value: 'Niederlande', label: 'Niederlande' },
+        { value: 'Monza', label: 'Monza' },
+        { value: 'Aserbaidschan', label: 'Aserbaidschan' },
+        { value: 'Singapur', label: 'Singapur' },
+        { value: 'Austin_Sprint', label: 'Austin Sprint' },
+        { value: 'Austin_Rennen', label: 'Austin Rennen' },
+        { value: 'Mexiko', label: 'Mexiko' },
+        { value: 'Brasilien_Sprint', label: 'Brasilien Sprint' },
+        { value: 'Brasilien_Rennen', label: 'Brasilien Rennen' },
+        { value: 'LasVegas', label: 'Las Vegas' },
+        { value: 'Katar_Sprint', label: 'Katar Sprint' },
+        { value: 'Katar_Rennen', label: 'Katar Rennen' },
+        { value: 'AbuDhabi', label: 'Abu Dhabi' },
+    ];
+
+    const Platzierungen = [
+        { value: 25, label: '1' },
+        { value: 18, label: '2' },
+        { value: 15, label: '3' },
+        { value: 12, label: '4' },
+        { value: 10, label: '5' },
+        { value: 8, label: '6' },
+        { value: 6, label: '7' },
+        { value: 4, label: '8' },
+        { value: 2, label: '9' },
+        { value: 1, label: '10' },
+        { value: 0, label: '11' },
+        { value: 0, label: '12' },
+        { value: 0, label: '13' },
+        { value: 0, label: '14' },
+        { value: 0, label: '15' },
+        { value: 0, label: '16' },
+        { value: 0, label: '17' },
+        { value: 0, label: '18' },
+        { value: 0, label: '19' },
+        { value: 0, label: '20' },
+        { value: "DNF", label: 'DNF' }
+    ]
 
     const allDataAvailable = useCallback(() => {
         const pairringLiga = Liga.filter(liga => liga.adminUser === user);
@@ -80,7 +168,7 @@ const Einstellungen = () => {
         }
     }, [Daten]);
 
-    useEffect(() => {
+   useEffect(() => {
         if (ligaErstellt) {
             console.log("Liga wurde erstellt");
             const fahrerDatenRef = collection(db, `${ligaName}`);
@@ -89,17 +177,22 @@ const Einstellungen = () => {
                 snapshot.forEach((doc) => {
                     fahrerDatenList.push(doc.data());
                 });
-                console.log("Fahrerdaten: ", JSON.stringify(fahrerDatenList, null, 2));
-                // setLigaDaten(fahrerDatenList);
+                const fahrerlistenObjekt = fahrerDatenList[0];
+                // Umwandlung des Objekts in ein Array von Objekten
+                const fahrerlistenArray = Object.entries(fahrerlistenObjekt).map(([fahrerName, daten]) => {
+                    return {
+                        fahrername: fahrerName,
+                        ...daten
+                    };
+                });
+                console.log("Fahrerdaten: ", fahrerlistenArray);
+                const fahrerliste = fahrerlistenArray.map((fahrer) => fahrer.fahrername);
+                console.log("Fahrerliste: ", fahrerliste);
+                setFahrerliste(fahrerliste);
+                setLigaDaten(fahrerlistenArray);
             });
         }
     }, [ligaErstellt]);
-
-    useEffect(() => {
-        if (ligaDaten.length > 0) {
-            console.log("Ligadaten: ", ligaDaten);
-        }
-    }, [ligaDaten]);
 
     function createLigaCollection() {
         if (ligaName) {
@@ -116,14 +209,41 @@ const Einstellungen = () => {
         }
     }
 
-    const handleSubmit = (e) => {
+    const handleCreateDriver = (e) => {
         e.preventDefault();
         console.log("Fahrername: ", fahrername);
         if (ligaName) {
-            const docRef = doc(db, ligaName, 'Fahrer', fahrername);
-            setDoc(docRef, {
-                team: teamname,
-                Wertung: {}
+            const docRef = doc(db, ligaName, 'Fahrer');
+            updateDoc(docRef, {
+                [fahrername]: {
+                    team: teamname,
+                    Wertung: {
+                        Bahrain: null,
+                        SaudiArabien: null,
+                        Australien: null,
+                        Japan: null,
+                        China: null,
+                        Miami: null,
+                        Imola: null,
+                        Monaco: null,
+                        Kanada: null,
+                        Spanien: null,
+                        Österreich: null,
+                        Großbritannien: null,
+                        Ungarn: null,
+                        Belgien: null,
+                        Niederlande: null,
+                        Monza: null,
+                        Aserbaidschan: null,
+                        Singapur: null,
+                        Austin: null,
+                        Mexiko: null,
+                        Brasilien: null,
+                        LasVegas: null,
+                        Katar: null,
+                        AbuDhabi: null
+                    }
+                }
             })
             .then(() => {
                 console.log("Document successfully written!");
@@ -136,20 +256,36 @@ const Einstellungen = () => {
         }
     };
 
+    const handleErgebnisEintragen = async (e) => {
+        e.preventDefault();
+        console.log("Ergebnis: ", ergebnis);
 
-    useEffect(() => {
-        if (nutzerDaten) {
-            console.log(nutzerDaten);
+        const docRef = doc(db, ligaName, 'Fahrer');
+        const docSnap = await getDoc(docRef);
+        const daten = docSnap.data();
+
+        console.log("Daten: ", daten);
+
+        // Kopieren Sie das gesamte 'daten' Objekt
+        const aktualisierteDaten = { ...daten };
+
+        // Stellen Sie sicher, dass das Fahrerobjekt existiert
+        if (!aktualisierteDaten[ergebnis.fahrername]) {
+            aktualisierteDaten[ergebnis.fahrername] = { Wertung: {} };
         }
-    }, [nutzerDaten]);
 
-    function handlepairing() {
-        const NutzerDaten = {
-            LigaZugehörigkeit: Liga.find(Liga => Liga.adminUser === user),
-            DiscordServerZugehörigkeit: DiscordServer.find(DiscordServer => DiscordServer.ligaKey === Liga.find(Liga => Liga.key).key)
-        };
-        setNutzerDaten(NutzerDaten);
-    }
+        // Aktualisieren Sie den spezifischen Fahrer innerhalb des kopierten Objekts
+        if (ergebnis.platz !== "DNF") {
+            aktualisierteDaten[ergebnis.fahrername].Wertung[ergebnis.strecke] = parseInt(ergebnis.platz, 10);
+        } else {
+            aktualisierteDaten[ergebnis.fahrername].Wertung[ergebnis.strecke] = ergebnis.platz;
+        }
+
+        console.log("Aktualisierte Daten: ", aktualisierteDaten);
+
+        await updateDoc(docRef, aktualisierteDaten);
+
+    };
 
     return (
         <>
@@ -172,29 +308,74 @@ const Einstellungen = () => {
                 </Table>
             </div>
             <div>
-                {!ligaErstellt && (
+                {!ligaErstellt &&(
                     <div>
                         Die Liga wurde noch nicht erstellt!
                         <Button variant="filled" color="rgba(0, 0, 0, 1)" onClick={createLigaCollection}>Liga erstellen</Button>
                     </div>
                 )}
-                {ligaErstellt && ligaDaten && (
+                {ligaErstellt && ligaDaten &&(
                     <div>
-                        Die Liga wurde bereits erstellt!
+                        <ScrollArea w="auto" h="auto">
+                            <Box w="70%">
+                                <BootstrapTable striped bordered hover>
+                                    <thead>
+                                        <tr>
+                                            <th>Fahrername</th>
+                                            <th>Team</th>
+                                            {
+                                            Strecken.map((schlüssel) => (
+                                                <th key={schlüssel}>{schlüssel}</th>
+                                            ))
+                                            }
+                                            <th>{/* Buttons */}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {ligaDaten.map((fahrer, index) => (
+                                            <tr key={index}>
+                                                <td>{fahrer.fahrername}</td>
+                                                <td>{fahrer.team}</td>
+                                                {Strecken.map((schlüssel) => (
+                                                    <td key={schlüssel}>{fahrer.Wertung[schlüssel]}</td>
+                                                ))}
+                                                <td>
+                                                    <div style={{display: 'flex', marginLeft: '5px'}}>
+                                                        <div style={{marginRight: '10px', cursor: 'pointer'}}>
+                                                            <FaUserEdit color='black' size={20}/>
+                                                        </div>
+                                                        <div style={{ cursor: 'pointer'}}>
+                                                            <FaTrashAlt color='red' size={20}/>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </BootstrapTable>
+                            </Box>
+                        </ScrollArea>
                     </div>
                 )}
             </div>
             <div>
                 <Button onClick={open}>Fahrer hinzufügen</Button>
+                <Button onClick={() => setOpenEintragen(true)}>Ergebnisse eintragen</Button>
             </div>
+
+            {/* Modal für das Hinzufügen eines Fahrers */}
             <Modal
                 opened={opened}
-                onClose={close}
+                onClose={() => {
+                    close();
+                    setFahrername("");
+                    setTeamname("");
+                }}
                 title="Fahrer hinzufügen"
                 centered
                 size="md"
             >
-                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', maxWidth: '300px', margin: '0 auto' }}>
+                <form onSubmit={handleCreateDriver} style={{ display: 'flex', flexDirection: 'column', maxWidth: '300px', margin: '0 auto' }}>
                     <label>
                         Fahrername:
                         <input 
@@ -227,6 +408,61 @@ const Einstellungen = () => {
                         </select>
                     </label>
                     <input type="submit" value="Fahrer hinzufügen" style={{marginTop: "30px"}}/>
+                </form>
+            </Modal>
+
+            {/* Modal für das Eintragen der Ergebnisse */}
+            <Modal
+                opened={openEintragen}
+                onClose={() => setOpenEintragen(false)}
+                title="Ergebnisse eintragen"
+                centered
+                size="md"
+            >
+                <form onSubmit={handleErgebnisEintragen} style={{ display: 'flex', flexDirection: 'column', maxWidth: '300px', margin: '0 auto' }}>
+                    <label>
+                        Fahrername:
+                        <select 
+                            value={ergebnis.fahrername} 
+                            onChange={(e) => setErgebnis({...ergebnis, fahrername: e.target.value})}
+                            required
+                            style={{ width: '100%', padding: '10px', fontSize: '16px' }}
+                        >
+                            <option value="">--Bitte wählen Sie einen Fahrer--</option>
+                            {fahrerliste.map((fahrer, index) => (
+                                <option key={index} value={fahrer}>{fahrer}</option>
+                            ))}
+                        </select>
+                    </label>
+                    <label>
+                        Strecke:
+                        <select 
+                            value={ergebnis.strecke}
+                            onChange={(e) => setErgebnis({...ergebnis, strecke: e.target.value})}
+                            required
+                            style={{ width: '100%', padding: '10px', fontSize: '16px' }}
+                        >
+                            <option value="">--Bitte wählen Sie eine Strecke--</option>
+                            {StreckenSelect.map((option, index) => (
+                                <option key={index} value={option.value}>{option.label}</option>
+                            ))}
+                        </select>
+                    </label>
+                    <label>
+                        Platzierung:
+                        <select 
+                            value={ergebnis.platz}
+                            onChange={(e) => setErgebnis({...ergebnis, platz: e.target.value})}
+                            required
+                            style={{ width: '100%', padding: '10px', fontSize: '16px' }}
+                        >
+                            <option value="">--Bitte wählen Sie eine Platzierung--</option>
+                            {Platzierungen.map((option, index) => (
+                                <option key={index} value={option.value}>{option.label}</option>
+                            ))}
+                        </select>
+                    </label>
+                    <input type="submit" value="Ergebnis hinzufügen" style={{marginTop: "30px"}}/>
                 </form>
             </Modal>
         </>
