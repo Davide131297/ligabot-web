@@ -187,8 +187,18 @@ const Einstellungen = () => {
                 });
                 console.log("Fahrerdaten: ", fahrerlistenArray);
                 const fahrerliste = fahrerlistenArray.map((fahrer) => fahrer.fahrername);
-                console.log("Fahrerliste: ", fahrerliste);
                 setFahrerliste(fahrerliste);
+                // Schritt 1: Hinzufügen von gesamtWertung zu jedem Objekt
+                fahrerlistenArray.forEach(fahrer => {
+                    const wertungenArray = Object.values(fahrer.Wertung || {});
+                    fahrer.gesamtWertung = wertungenArray.reduce((summe, aktuelleWertung) => summe + aktuelleWertung, 0);
+                });
+
+                // Schritt 2: Sortieren des Arrays absteigend basierend auf gesamtWertung
+                fahrerlistenArray.sort((a, b) => b.gesamtWertung - a.gesamtWertung);
+
+                // Optional: Ausgabe des sortierten Arrays zur Überprüfung
+                console.log("FahrerlistenArray: ", fahrerlistenArray);
                 setLigaDaten(fahrerlistenArray);
             });
         }
@@ -328,6 +338,7 @@ const Einstellungen = () => {
                                                 <th key={schlüssel}>{schlüssel}</th>
                                             ))
                                             }
+                                            <th>Gesamtwertung</th>
                                             <th>{/* Buttons */}</th>
                                         </tr>
                                     </thead>
@@ -339,6 +350,7 @@ const Einstellungen = () => {
                                                 {Strecken.map((schlüssel) => (
                                                     <td key={schlüssel}>{fahrer.Wertung[schlüssel]}</td>
                                                 ))}
+                                                <td>{fahrer.gesamtWertung}</td>
                                                 <td>
                                                     <div style={{display: 'flex', marginLeft: '5px'}}>
                                                         <div style={{marginRight: '10px', cursor: 'pointer'}}>
