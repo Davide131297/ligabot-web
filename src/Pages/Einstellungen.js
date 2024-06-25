@@ -1,7 +1,7 @@
 import { db } from './../utils/firebase';
 import { collection, onSnapshot, doc, setDoc, updateDoc, getDoc } from 'firebase/firestore';
 import { useEffect, useState, useCallback } from 'react';
-import { Button, Table, Modal, ScrollArea, Box, Select } from '@mantine/core';
+import { Button, Table, Modal, ScrollArea, Box, Select, Checkbox } from '@mantine/core';
 import BootstrapTable from 'react-bootstrap/Table';
 import { useDisclosure } from '@mantine/hooks';
 import { FaTrashAlt } from "react-icons/fa";
@@ -340,6 +340,26 @@ const Einstellungen = () => {
                 });
                 fahrer.gesamtWertung = gesamt;
             }
+
+            // Füge Pole, SchnellsteRunde und FahrerDesTages hinzu
+            if (ergebnisse.Pole === fahrername) {
+                if (!fahrer.Pole) {
+                    fahrer.Pole = {};
+                }
+                fahrer.Pole[gefahreneStrecke] = true;
+            }
+            if (ergebnisse.SchnellsteRunde === fahrername) {
+                if (!fahrer.SchnellsteRunde) {
+                    fahrer.SchnellsteRunde = {};
+                }
+                fahrer.SchnellsteRunde[gefahreneStrecke] = true;
+            }
+            if (ergebnisse.FahrerDesTages === fahrername) {
+                if (!fahrer.FahrerDesTages) {
+                    fahrer.FahrerDesTages = {};
+                }
+                fahrer.FahrerDesTages[gefahreneStrecke] = true;
+            }
         });
 
         Object.keys(fahrerlistenObjekt).forEach(fahrername => {
@@ -392,6 +412,7 @@ const Einstellungen = () => {
         try {
             await updateDoc(teamsDocRef, teamErgebnisse, { merge: true });
             setErgebnis({});
+            setOpenEintragen(false);
             console.log("Teams erfolgreich aktualisiert");
             notifications.show({
                 title: 'Ergebnisse eingetragen',
@@ -656,13 +677,15 @@ const Einstellungen = () => {
                 <Select
                     label="Streckenauswahl"
                     placeholder="Wähle hier die Strecke"
-                    data={StreckenSelect}
+                    data={StreckenSelect.map(strecke => ({ value: strecke.value, label: strecke.label }))}
                     searchable
                     onChange={(value) => setGefahreneStrecke(value)}
+                    required
+                    nothingFoundMessage="Nothing found..."
                 />
 
                 <div style={{marginTop: '10px'}}>
-                    <ScrollArea h={250}>
+                    <ScrollArea h="auto">
                         <BootstrapTable striped bordered hover>
                             <thead>
                                 <tr style={{ textAlign: 'center', verticalAlign: 'middle' }}>
@@ -682,6 +705,7 @@ const Einstellungen = () => {
                                                     ...prevErgebnis,
                                                     [fahrer]: value // Aktualisiert die Punkte für den spezifischen Fahrer
                                                 }))}
+                                                nothingFoundMessage="Nothing found..."
                                             />
                                         </td>
                                     </tr>
@@ -689,6 +713,46 @@ const Einstellungen = () => {
                             </tbody>
                         </BootstrapTable>
                     </ScrollArea>
+                </div>
+
+                <div>
+                    <Select
+                        placeholder='Wer hat die Pole Position?'
+                        data={fahrerliste.map(fahrer => ({ value: fahrer, label: fahrer }))}
+                        onChange={(value) => setErgebnis(prevErgebnis => ({
+                            ...prevErgebnis,
+                            Pole: value
+                        }))}
+                        searchable
+                        required
+                        nothingFoundMessage="Nothing found..."
+                        style={{ marginBottom: '5px' }}
+                    />
+
+                    <Select
+                        placeholder='Wer hat die schnellste Runde?'
+                        data={fahrerliste.map(fahrer => ({ value: fahrer, label: fahrer }))}
+                        onChange={(value) => setErgebnis(prevErgebnis => ({
+                            ...prevErgebnis,
+                            SchnellsteRunde: value
+                        }))}
+                        searchable
+                        required
+                        nothingFoundMessage="Nothing found..."
+                        style={{ marginBottom: '5px' }}
+                    />
+
+                    <Select
+                        placeholder='Wer ist der Fahrer des Tages?'
+                        data={fahrerliste.map(fahrer => ({ value: fahrer, label: fahrer }))}
+                        onChange={(value) => setErgebnis(prevErgebnis => ({
+                            ...prevErgebnis,
+                            FahrerDesTages: value
+                        }))}
+                        searchable
+                        nothingFoundMessage="Nothing found..."
+                        style={{ marginBottom: '5px' }}
+                    />
                 </div>
 
                 <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '20px'}}>
