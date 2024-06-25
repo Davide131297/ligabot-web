@@ -1,7 +1,7 @@
 import { db } from './../utils/firebase';
 import { collection, onSnapshot, doc, setDoc, updateDoc, getDoc } from 'firebase/firestore';
 import { useEffect, useState, useCallback } from 'react';
-import { Button, Table, Modal, ScrollArea, Box, Input, Checkbox} from '@mantine/core';
+import { Button, Table, Modal, ScrollArea, Box, Select, NumberInput} from '@mantine/core';
 import BootstrapTable from 'react-bootstrap/Table';
 import { useDisclosure } from '@mantine/hooks';
 import { FaTrashAlt } from "react-icons/fa";
@@ -19,10 +19,12 @@ const Einstellungen = () => {
     const [teamname, setTeamname] = useState("");
     const [ligaDaten, setLigaDaten] = useState([]);
     const [fahrerliste, setFahrerliste] = useState([]);
+    const [fahrerlistenObjekt, setFahrerlistenObjekt] = useState();
 
     const [opened, { open, close }] = useDisclosure(false); // Modal Hinzufügen neuer Fahrer
     const [openEintragen, setOpenEintragen] = useState(false); // Modal Eintragen der Ergebnisse
-    const [ergebnis, setErgebnis] = useState({ fahrername: '', strecke: '', platz: ''});
+    const [ergebnisse, setErgebnis] = useState({});
+    const [gefahreneStrecke, setGefahreneStrecke] = useState(null);
 
     const Strecken = [
         "Bahrain",
@@ -82,29 +84,29 @@ const Einstellungen = () => {
         { value: 'AbuDhabi', label: 'Abu Dhabi' },
     ];
 
-    const Platzierungen = [
-        { value: 25, label: '1' },
-        { value: 18, label: '2' },
-        { value: 15, label: '3' },
-        { value: 12, label: '4' },
-        { value: 10, label: '5' },
-        { value: 8, label: '6' },
-        { value: 6, label: '7' },
-        { value: 4, label: '8' },
-        { value: 2, label: '9' },
-        { value: 1, label: '10' },
-        { value: 0, label: '11' },
-        { value: 0, label: '12' },
-        { value: 0, label: '13' },
-        { value: 0, label: '14' },
-        { value: 0, label: '15' },
-        { value: 0, label: '16' },
-        { value: 0, label: '17' },
-        { value: 0, label: '18' },
-        { value: 0, label: '19' },
-        { value: 0, label: '20' },
-        { value: "DNF", label: 'DNF' }
-    ]
+    const punkte = [
+        "DNF",
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "15",
+        "16",
+        "18",
+        "19",
+        "25",
+        "26"
+    ];
 
     const allDataAvailable = useCallback(() => {
         const pairringLiga = Liga.filter(liga => liga.adminUser === user);
@@ -177,6 +179,8 @@ const Einstellungen = () => {
                 snapshot.forEach((doc) => {
                     fahrerDatenList.push(doc.data());
                 });
+                console.log("FahrerdatenList: ", fahrerDatenList[0]);
+                setFahrerlistenObjekt(fahrerDatenList[0]);
                 const fahrerlistenObjekt = fahrerDatenList[0];
                 // Umwandlung des Objekts in ein Array von Objekten
                 const fahrerlistenArray = Object.entries(fahrerlistenObjekt).map(([fahrerName, daten]) => {
@@ -190,11 +194,13 @@ const Einstellungen = () => {
                 setFahrerliste(fahrerliste);
                 // Schritt 1: Hinzufügen von gesamtWertung zu jedem Objekt
                 fahrerlistenArray.forEach(fahrer => {
+                    // Stellen Sie sicher, dass fahrer.Wertung ein Objekt ist; falls nicht, verwenden Sie ein leeres Objekt
                     const wertungenArray = Object.values(fahrer.Wertung || {});
+                    // Anwenden von reduce auf das Array der Werte
                     fahrer.gesamtWertung = wertungenArray.reduce((summe, aktuelleWertung) => summe + aktuelleWertung, 0);
                 });
 
-                // Schritt 2: Sortieren des Arrays absteigend basierend auf gesamtWertung
+                // Sortieren des Arrays absteigend basierend auf gesamtWertung
                 fahrerlistenArray.sort((a, b) => b.gesamtWertung - a.gesamtWertung);
 
                 // Optional: Ausgabe des sortierten Arrays zur Überprüfung
@@ -266,36 +272,46 @@ const Einstellungen = () => {
         }
     };
 
-    const handleErgebnisEintragen = async (e) => {
-        e.preventDefault();
-        console.log("Ergebnis: ", ergebnis);
+    async function handleErgenisseEintragen() {
+        const ergebnisseAlsInteger = Object.keys(ergebnisse).reduce((acc, key) => {
+            acc[key] = parseInt(ergebnisse[key], 10);
+            return acc;
+        }, {});
+
+        console.log("Ergebnisse: ", ergebnisseAlsInteger);
+        console.log("Gefahrene Strecke: ", gefahreneStrecke);
+
+        Object.keys(fahrerlistenObjekt).forEach(fahrername => {
+            let fahrer = fahrerlistenObjekt[fahrername];
+            if (ergebnisseAlsInteger.hasOwnProperty(fahrername)) {
+                // Aktualisiere die Wertung für das Rennen in gefahreneStrecke
+                if (!fahrer.Wertung) {
+                    fahrer.Wertung = {};
+                }
+                fahrer.Wertung[gefahreneStrecke] = ergebnisseAlsInteger[fahrername];
+
+                // Aktualisiere die gesamtWertung basierend auf den neuen Ergebnissen
+                let gesamt = 0;
+                Object.values(fahrer.Wertung).forEach(wertung => {
+                    if (wertung) gesamt += wertung;
+                });
+                fahrer.gesamtWertung = gesamt;
+            }
+        });
+
+        Object.keys(fahrerlistenObjekt).forEach(fahrername => {
+            delete fahrerlistenObjekt[fahrername].gesamtWertung;
+        });
+        
+        console.log("Aktualisiertes FahrerlistenObjekt: ", fahrerlistenObjekt);
 
         const docRef = doc(db, ligaName, 'Fahrer');
-        const docSnap = await getDoc(docRef);
-        const daten = docSnap.data();
-
-        console.log("Daten: ", daten);
-
-        // Kopieren Sie das gesamte 'daten' Objekt
-        const aktualisierteDaten = { ...daten };
-
-        // Stellen Sie sicher, dass das Fahrerobjekt existiert
-        if (!aktualisierteDaten[ergebnis.fahrername]) {
-            aktualisierteDaten[ergebnis.fahrername] = { Wertung: {} };
+        try {
+            await updateDoc(docRef, fahrerlistenObjekt);
+        } catch (error) {
+            console.error("Error updating document: ", error);
         }
-
-        // Aktualisieren Sie den spezifischen Fahrer innerhalb des kopierten Objekts
-        if (ergebnis.platz !== "DNF") {
-            aktualisierteDaten[ergebnis.fahrername].Wertung[ergebnis.strecke] = parseInt(ergebnis.platz, 10);
-        } else {
-            aktualisierteDaten[ergebnis.fahrername].Wertung[ergebnis.strecke] = ergebnis.platz;
-        }
-
-        console.log("Aktualisierte Daten: ", aktualisierteDaten);
-
-        await updateDoc(docRef, aktualisierteDaten);
-
-    };
+    }
 
     return (
         <>
@@ -431,51 +447,52 @@ const Einstellungen = () => {
                 centered
                 size="md"
             >
-                <form onSubmit={handleErgebnisEintragen} style={{ display: 'flex', flexDirection: 'column', maxWidth: '300px', margin: '0 auto' }}>
-                    <label>
-                        Fahrername:
-                        <select 
-                            value={ergebnis.fahrername} 
-                            onChange={(e) => setErgebnis({...ergebnis, fahrername: e.target.value})}
-                            required
-                            style={{ width: '100%', padding: '10px', fontSize: '16px' }}
-                        >
-                            <option value="">--Bitte wählen Sie einen Fahrer--</option>
+                <Select
+                    label="Streckenauswahl"
+                    placeholder="Wähle hier die Strecke"
+                    data={StreckenSelect}
+                    searchable
+                    onChange={(value) => setGefahreneStrecke(value)}
+                />
+
+                <div style={{marginTop: '10px'}}>
+                    <BootstrapTable striped bordered hover>
+                        <thead>
+                            <tr style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                                <th>Fahrername</th>
+                                <th>Platzierung</th>
+                            </tr>
+                        </thead>
+                        <tbody>
                             {fahrerliste.map((fahrer, index) => (
-                                <option key={index} value={fahrer}>{fahrer}</option>
+                                <tr key={index} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                                    <td>{fahrer}</td>
+                                    <td>
+                                        <Select
+                                            placeholder="Punkte auswahl"
+                                            data={punkte.map(punkt => ({value: punkt, label: punkt}))}
+                                            onChange={(value) => setErgebnis(prevErgebnis => ({
+                                                ...prevErgebnis,
+                                                [fahrer]: value // Aktualisiert die Punkte für den spezifischen Fahrer
+                                            }))}
+                                        />
+                                    </td>
+                                </tr>
                             ))}
-                        </select>
-                    </label>
-                    <label>
-                        Strecke:
-                        <select 
-                            value={ergebnis.strecke}
-                            onChange={(e) => setErgebnis({...ergebnis, strecke: e.target.value})}
-                            required
-                            style={{ width: '100%', padding: '10px', fontSize: '16px' }}
-                        >
-                            <option value="">--Bitte wählen Sie eine Strecke--</option>
-                            {StreckenSelect.map((option, index) => (
-                                <option key={index} value={option.value}>{option.label}</option>
-                            ))}
-                        </select>
-                    </label>
-                    <label>
-                        Platzierung:
-                        <select 
-                            value={ergebnis.platz}
-                            onChange={(e) => setErgebnis({...ergebnis, platz: e.target.value})}
-                            required
-                            style={{ width: '100%', padding: '10px', fontSize: '16px' }}
-                        >
-                            <option value="">--Bitte wählen Sie eine Platzierung--</option>
-                            {Platzierungen.map((option, index) => (
-                                <option key={index} value={option.value}>{option.label}</option>
-                            ))}
-                        </select>
-                    </label>
-                    <input type="submit" value="Ergebnis hinzufügen" style={{marginTop: "30px"}}/>
-                </form>
+                        </tbody>
+                    </BootstrapTable>
+                </div>
+
+                <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '20px'}}>
+                    <Button 
+                        style={{marginTop: '20px'}}
+                        variant="filled" color="green" radius="xl"
+                        onClick={() => {handleErgenisseEintragen()}}
+                    >
+                        Ergebnisse eintragen
+                    </Button>
+                </div>
+
             </Modal>
         </>
     );
