@@ -1,5 +1,5 @@
 import { db } from './../utils/firebase';
-import { collection, onSnapshot, doc, setDoc, updateDoc, getDoc } from 'firebase/firestore';
+import { collection, onSnapshot, doc, setDoc, updateDoc, getDoc, deleteField } from 'firebase/firestore';
 import { useEffect, useState, useCallback } from 'react';
 import { Button, Table, Modal, ScrollArea, Box, Select, Divider, Loader, TextInput } from '@mantine/core';
 import BootstrapTable from 'react-bootstrap/Table';
@@ -25,6 +25,7 @@ const Einstellungen = () => {
     const [teams, setTeams] = useState();
     const [teamsArray, setTeamsArray] = useState([]);
     const [isLoading, setIsLoading] = useState("1");
+    const [reloadData, setReloadData] = useState(false);
 
     const [opened, { open, close }] = useDisclosure(false); // Modal Hinzufügen neuer Fahrer
     const [openEintragen, setOpenEintragen] = useState(false); // Modal Eintragen der Ergebnisse
@@ -113,6 +114,19 @@ const Einstellungen = () => {
         "26"
     ];
 
+    const f1Teams = [
+        { value: 'Mercedes', label: 'Mercedes' },
+        { value: 'RedBull', label: 'Red Bull' },
+        { value: 'McLaren', label: 'McLaren' },
+        { value: 'Ferrari', label: 'Ferrari' },
+        { value: 'AstonMartin', label: 'Aston Martin' },
+        { value: 'Alpine', label: 'Alpine' },
+        { value: 'VisaRB', label: 'Visa RB' },
+        { value: 'KickSauber', label: 'Kick Sauber' },
+        { value: 'Haas', label: 'Haas' },
+        { value: 'Williams', label: 'Williams' }
+    ];
+
     const allDataAvailable = useCallback(() => {
         const pairringLiga = Liga.filter(liga => liga.adminUser === user);
         if (pairringLiga.length > 0) {
@@ -175,7 +189,7 @@ const Einstellungen = () => {
                 ligaNameUnsubscribe();
             }
         }
-    }, [Daten]);
+    }, [Daten, ligaErstellt]);
 
    useEffect(() => {
         if (ligaErstellt) {
@@ -232,6 +246,7 @@ const Einstellungen = () => {
                         teamName,
                         ...docSnap.data()[teamName]
                     }));
+                    console.log("Teams vor der Verarbeitung: ", teams); // Nur zu Demonstrationszwecken
                     teams.forEach(team => {
                         // Extrahiere alle Werte außer 'teamName'
                         const rennenWerte = Object.keys(team).reduce((acc, key) => {
@@ -240,9 +255,19 @@ const Einstellungen = () => {
                             }
                             return acc;
                         }, []);
-                        // Da alle Werte `null` sind, wird die Summe 0 sein
-                        // Für zukünftige Anpassungen, wenn die Werte nicht null sind, kann die Summe berechnet werden
-                        const gesamtWertung = rennenWerte.reduce((summe, wert) => summe + (wert || 0), 0);
+                        // Berechne die gesamte Wertung, indem du sicherstellst, dass nur numerische Werte addiert werden
+                        const gesamtWertung = rennenWerte.reduce((summe, wert) => {
+                            // Hier müssen Sie entscheiden, wie Sie mit Objekten umgehen möchten
+                            // Zum Beispiel, wenn `wert` ein Objekt mit einer Eigenschaft `punkte` ist, die eine Zahl ist
+                            let numWert = 0;
+                            if (typeof wert === 'object' && wert !== null) {
+                                // Angenommen, Sie möchten eine Eigenschaft `punkte` aus dem Objekt extrahieren
+                                numWert = wert.punkte || 0;
+                            } else if (typeof wert === 'number') {
+                                numWert = wert;
+                            }
+                            return summe + numWert;
+                        }, 0);
                         team.gesamtWertung = gesamtWertung;
                     });
                     console.log("Verarbeitete Teams: ", teams); // Nur zu Demonstrationszwecken
@@ -256,7 +281,12 @@ const Einstellungen = () => {
                 console.error("Error getting document:", error);
             });
         }
-    }, [ligaErstellt, ligaName]);
+    }, [ligaErstellt, ligaName, reloadData]);
+
+    useEffect(() => {
+        console.log("LigaErstellt: ", ligaErstellt, "LigaDaten: ", ligaDaten, "loading: ", isLoading);
+    }, [ligaErstellt, ligaDaten, isLoading]);
+
 
     function createLigaCollection() {
         if (ligaName) {
@@ -309,11 +339,43 @@ const Einstellungen = () => {
                     }
                 }
             })
+            const docRefTeams = doc(db, ligaName, 'Teams');
+            updateDoc(docRefTeams, {
+                [teamname]: {
+                    Wertung: {
+                        Bahrain: null,
+                        SaudiArabien: null,
+                        Australien: null,
+                        Japan: null,
+                        China: null,
+                        Miami: null,
+                        Imola: null,
+                        Monaco: null,
+                        Kanada: null,
+                        Spanien: null,
+                        Österreich: null,
+                        Großbritannien: null,
+                        Ungarn: null,
+                        Belgien: null,
+                        Niederlande: null,
+                        Monza: null,
+                        Aserbaidschan: null,
+                        Singapur: null,
+                        Austin: null,
+                        Mexiko: null,
+                        Brasilien: null,
+                        LasVegas: null,
+                        Katar: null,
+                        AbuDhabi: null
+                    }
+                }
+            })
             .then(() => {
                 console.log("Document successfully written!");
                 close();
                 setFahrername("");
                 setTeamname("");
+                setReloadData(!reloadData);
                 notifications.show({
                     title: 'Fahrer hinzugefügt',
                     message: 'Fahrer wurde erfolgreich hinzugefügt ✅',
@@ -335,6 +397,24 @@ const Einstellungen = () => {
     };
 
     async function handleErgenisseEintragen() {
+
+        if (!gefahreneStrecke) {
+            notifications.show({
+                title: 'Fehler',
+                message: 'Bitte wählen Sie eine Strecke aus',
+                color: 'red',
+            });
+            return;
+        }
+
+        if (!ergebnisse.Pole || !ergebnisse.SchnellsteRunde || !ergebnisse.FahrerDesTages) {
+            notifications.show({
+                title: 'Warnung',
+                message: 'Du hast nicht alle Felder ausgefüllt, die Ergebnisse werden trotzdem eingetragen',
+                color: 'yellow',
+            });
+        }
+
         const ergebnisseAlsInteger = Object.keys(ergebnisse).reduce((acc, key) => {
             acc[key] = ergebnisse[key] === "DNF" ? "DNF" : parseInt(ergebnisse[key], 10);
             return acc;
@@ -523,6 +603,53 @@ const Einstellungen = () => {
         }
     }
 
+    async function handleDriverDelete(fahrer) {
+        const bestaetigung = window.confirm(`Möchten Sie den Fahrer ${fahrer.fahrername} wirklich löschen?`);
+        if (!bestaetigung) {
+            console.log("Löschen abgebrochen");
+        } else {
+            const docRef = doc(db, ligaName, 'Fahrer');
+            try {
+                const update = {};
+                update[fahrer.fahrername] = deleteField(); // Verwenden Sie deleteField() hier
+        
+                await updateDoc(docRef, update);
+                console.log("Fahrer erfolgreich gelöscht");
+                notifications.show({
+                    title: 'Fahrer gelöscht',
+                    message: `Fahrer ${fahrer.fahrername} wurde erfolgreich gelöscht ✅`,
+                    color: 'green',
+                });
+            } catch (error) {
+                console.error("Fehler beim Löschen des Fahrers: ", error);
+            }
+        }
+    }
+
+    async function handleTeamDelete(team) {
+        const bestaetigung = window.confirm(`Möchten Sie den Fahrer ${team.teamName} wirklich löschen?`);
+        if (!bestaetigung) {
+            console.log("Löschen abgebrochen");
+        } else {
+            const docRef = doc(db, ligaName, 'Teams');
+            try {
+                const update = {};
+                update[team.teamName] = deleteField(); // Verwenden Sie deleteField() hier
+        
+                await updateDoc(docRef, update);
+                console.log("Team erfolgreich gelöscht");
+                notifications.show({
+                    title: 'Team gelöscht',
+                    message: `Team ${team.teamName} wurde erfolgreich gelöscht ✅`,
+                    color: 'green',
+                });
+                setReloadData(!reloadData);
+            } catch (error) {
+                console.error("Fehler beim Löschen des Teams: ", error);
+            }
+        }
+    }
+
     return (
         <>
             <div>
@@ -613,7 +740,7 @@ const Einstellungen = () => {
                                                             <FaUserEdit color='black' size={20}/>
                                                         </div>
                                                         <div style={{ cursor: 'pointer'}}>
-                                                            <FaTrashAlt color='red' size={20}/>
+                                                            <FaTrashAlt color='red' size={20} onClick={() => handleDriverDelete(fahrer)}/>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -667,7 +794,7 @@ const Einstellungen = () => {
                                                             <HiUserGroup color='black' size={20}/>
                                                         </div>
                                                         <div style={{ cursor: 'pointer'}}>
-                                                            <FaTrashAlt color='red' size={20}/>
+                                                            <FaTrashAlt color='red' size={20} onClick={() => handleTeamDelete(team)}/>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -713,20 +840,8 @@ const Einstellungen = () => {
                     <Select
                         label="Team:"
                         placeholder="--Bitte wählen Sie ein Team--"
-                        value={teamname}
-                        onChange={setTeamname}
-                        data={[
-                            { value: 'Mercedes', label: 'Mercedes' },
-                            { value: 'RedBull', label: 'Red Bull' },
-                            { value: 'McLaren', label: 'McLaren' },
-                            { value: 'Ferrari', label: 'Ferrari' },
-                            { value: 'AstonMartin', label: 'Aston Martin' },
-                            { value: 'Alpine', label: 'Alpine' },
-                            { value: 'VisaRB', label: 'Visa RB' },
-                            { value: 'KickSauber', label: 'Kick Sauber' },
-                            { value: 'Haas', label: 'Haas' },
-                            { value: 'Williams', label: 'Williams' }
-                        ]}
+                        onChange={(value) => setTeamname(value)}
+                        data={f1Teams.map(team => ({ value: team.value, label: team.label }))}
                         searchable
                         required
                         style={{ width: '100%', padding: '10px', fontSize: '16px' }}
@@ -762,7 +877,7 @@ const Einstellungen = () => {
                             <thead>
                                 <tr style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                     <th>Fahrername</th>
-                                    <th>Platzierung</th>
+                                    <th>Punkte</th>
                                 </tr>
                             </thead>
                             <tbody>
