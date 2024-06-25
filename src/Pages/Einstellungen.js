@@ -1,11 +1,12 @@
 import { db } from './../utils/firebase';
 import { collection, onSnapshot, doc, setDoc, updateDoc, getDoc } from 'firebase/firestore';
 import { useEffect, useState, useCallback } from 'react';
-import { Button, Table, Modal, ScrollArea, Box, Select, NumberInput} from '@mantine/core';
+import { Button, Table, Modal, ScrollArea, Box, Select } from '@mantine/core';
 import BootstrapTable from 'react-bootstrap/Table';
 import { useDisclosure } from '@mantine/hooks';
 import { FaTrashAlt } from "react-icons/fa";
 import { FaUserEdit } from "react-icons/fa";
+import { notifications } from '@mantine/notifications';
 
 const Einstellungen = () => {  
 
@@ -20,11 +21,12 @@ const Einstellungen = () => {
     const [ligaDaten, setLigaDaten] = useState([]);
     const [fahrerliste, setFahrerliste] = useState([]);
     const [fahrerlistenObjekt, setFahrerlistenObjekt] = useState();
+    const [teams, setTeams] = useState();
 
     const [opened, { open, close }] = useDisclosure(false); // Modal Hinzufügen neuer Fahrer
     const [openEintragen, setOpenEintragen] = useState(false); // Modal Eintragen der Ergebnisse
-    const [ergebnisse, setErgebnis] = useState({});
-    const [gefahreneStrecke, setGefahreneStrecke] = useState(null);
+    const [ergebnisse, setErgebnis] = useState({}); // Ergebnisse für die Strecken
+    const [gefahreneStrecke, setGefahreneStrecke] = useState(null); // Strecke, für die die Ergebnisse eingetragen werden
 
     const Strecken = [
         "Bahrain",
@@ -210,6 +212,24 @@ const Einstellungen = () => {
         }
     }, [ligaErstellt]);
 
+    useEffect(() => {
+        if (ligaErstellt) {
+            const docRef = doc(db, ligaName, "Teams");
+            getDoc(docRef)
+            .then((docSnap) => {
+                if (docSnap.exists()) {
+                console.log("Teams document data:", docSnap.data());
+                setTeams(docSnap.data());
+                } else {
+                console.log("No such document!");
+                }
+            })
+            .catch((error) => {
+                console.error("Error getting document:", error);
+            });
+        }
+    }, [ligaErstellt, ligaName]);
+
     function createLigaCollection() {
         if (ligaName) {
             const docRef = doc(db, ligaName, 'Fahrer');
@@ -302,14 +322,139 @@ const Einstellungen = () => {
         Object.keys(fahrerlistenObjekt).forEach(fahrername => {
             delete fahrerlistenObjekt[fahrername].gesamtWertung;
         });
-        
+
         console.log("Aktualisiertes FahrerlistenObjekt: ", fahrerlistenObjekt);
 
         const docRef = doc(db, ligaName, 'Fahrer');
         try {
             await updateDoc(docRef, fahrerlistenObjekt);
+            await updateTeams();
         } catch (error) {
             console.error("Error updating document: ", error);
+        }
+    }
+
+    async function updateTeams() {
+        const teamErgebnisse = {};
+
+        // Sammeln der Teamergebnisse
+        Object.values(fahrerlistenObjekt).forEach(({ team, Wertung }) => {
+            if (!teamErgebnisse[team]) {
+                teamErgebnisse[team] = {};
+            }
+            Object.entries(Wertung).forEach(([strecke, punkte]) => {
+                // Initialisiere mit null, wenn die Strecke noch nicht existiert
+                if (teamErgebnisse[team][strecke] === undefined) {
+                    teamErgebnisse[team][strecke] = null;
+                }
+                // Aktualisiere die Punkte, wenn welche vorhanden sind
+                if (punkte !== null) {
+                    if (teamErgebnisse[team][strecke] === null) {
+                        teamErgebnisse[team][strecke] = punkte;
+                    } else {
+                        teamErgebnisse[team][strecke] += punkte;
+                    }
+                }
+                // Wenn keine Punkte vorhanden sind (null), aber die Strecke existiert, belasse den Wert bei null
+                // Diese Zeile ist eigentlich redundant, da die Logik oben bereits abdeckt, dass null-Werte beibehalten werden
+            });
+        });
+
+        console.log("Aktualisierte Teamergebnisse: ", teamErgebnisse);
+
+        // Aktualisieren des Teams-Dokuments
+        const teamsDocRef = doc(db, ligaName, 'Teams');
+        try {
+            await updateDoc(teamsDocRef, teamErgebnisse, { merge: true });
+            setErgebnis({});
+            console.log("Teams erfolgreich aktualisiert");
+            notifications.show({
+                title: 'Ergebnisse eingetragen',
+                message: 'Ergebnisse wurden erfolgreich eingetragen ✅',
+                color: 'green',
+            })
+
+        } catch (error) {
+            console.error("Fehler beim Aktualisieren der Teams: ", error);
+        }
+    }
+
+    async function handleReset() {
+        // Bestätigungsdialog anzeigen
+        const bestaetigung = window.confirm("Es werden alle Wertungen gelöscht und auf null gesetzt. Dieser Vorgang kann nicht rückgängig gemacht werden. Sind Sie sicher, dass Sie fortfahren möchten?");
+        if (!bestaetigung) {
+            console.log("Zurücksetzen abgebrochen.");
+            return; // Frühe Rückkehr, wenn der Benutzer abbricht
+        }
+
+        const resetObjektFahrer = {};
+        Object.keys(fahrerlistenObjekt).forEach(fahrername => {
+            resetObjektFahrer[fahrername] = {
+                team: fahrerlistenObjekt[fahrername].team,
+                Wertung: {
+                    Bahrain: null,
+                    SaudiArabien: null,
+                    Australien: null,
+                    Japan: null,
+                    China: null,
+                    Miami: null,
+                    Imola: null,
+                    Monaco: null,
+                    Kanada: null,
+                    Spanien: null,
+                    Österreich: null,
+                    Großbritannien: null,
+                    Ungarn: null,
+                    Belgien: null,
+                    Niederlande: null,
+                    Monza: null,
+                    Aserbaidschan: null,
+                    Singapur: null,
+                    Austin: null,
+                    Mexiko: null,
+                    Brasilien: null,
+                    LasVegas: null,
+                    Katar: null,
+                    AbuDhabi: null
+                }
+            };
+        });
+
+        console.log("Reset-Objekt: ", resetObjektFahrer);
+
+        const docRef = doc(db, ligaName, 'Fahrer');
+        try {
+            await updateDoc(docRef, resetObjektFahrer);
+            console.log("Fahrer erfolgreich zurückgesetzt");
+            notifications.show({
+                title: 'Fahrer zurückgesetzt',
+                message: 'Fahrer Wertungen wurden erfolrgreich zurückgesetzt ✅',
+                color: 'green',
+            })
+        } catch (error) {
+            console.error("Error updating document: ", error);
+        }
+
+        const resetObjektTeams = {};
+        Object.keys(teams).forEach(team => {
+            resetObjektTeams[team] = {};
+            Strecken.forEach(strecke => {
+                resetObjektTeams[team][strecke] = null;
+            });
+        });
+
+        console.log("Reset-Objekt Teams: ", resetObjektTeams);
+        try {
+            const teamsDocRef = doc(db, ligaName, 'Teams');
+            await updateDoc(teamsDocRef, resetObjektTeams);
+            console.log("Teams erfolgreich zurückgesetzt");
+            notifications.show({
+                title: 'Teams zurückgesetzt',
+                message: 'Team Wertungen wurden erfolrgreich zurückgesetzt ✅',
+                color: 'green',
+            })
+        }catch (error) {
+            console.error("Fehler beim Zurücksetzen der Teams: ", error);
         }
     }
 
@@ -389,6 +534,7 @@ const Einstellungen = () => {
             <div>
                 <Button onClick={open}>Fahrer hinzufügen</Button>
                 <Button onClick={() => setOpenEintragen(true)}>Ergebnisse eintragen</Button>
+                <Button variant="filled" color="red" onClick={() => handleReset()}>Alle Wertungen zurücksetzten</Button>
             </div>
 
             {/* Modal für das Hinzufügen eines Fahrers */}
@@ -442,7 +588,10 @@ const Einstellungen = () => {
             {/* Modal für das Eintragen der Ergebnisse */}
             <Modal
                 opened={openEintragen}
-                onClose={() => setOpenEintragen(false)}
+                onClose={() => {
+                    setOpenEintragen(false); // Schließt den Dialog oder das Pop-up
+                    setErgebnis({}); // Setzt den Zustand `ergebnis` zurück
+                }}
                 title="Ergebnisse eintragen"
                 centered
                 size="md"
@@ -456,31 +605,33 @@ const Einstellungen = () => {
                 />
 
                 <div style={{marginTop: '10px'}}>
-                    <BootstrapTable striped bordered hover>
-                        <thead>
-                            <tr style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                                <th>Fahrername</th>
-                                <th>Platzierung</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {fahrerliste.map((fahrer, index) => (
-                                <tr key={index} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                                    <td>{fahrer}</td>
-                                    <td>
-                                        <Select
-                                            placeholder="Punkte auswahl"
-                                            data={punkte.map(punkt => ({value: punkt, label: punkt}))}
-                                            onChange={(value) => setErgebnis(prevErgebnis => ({
-                                                ...prevErgebnis,
-                                                [fahrer]: value // Aktualisiert die Punkte für den spezifischen Fahrer
-                                            }))}
-                                        />
-                                    </td>
+                    <ScrollArea h={250}>
+                        <BootstrapTable striped bordered hover>
+                            <thead>
+                                <tr style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                                    <th>Fahrername</th>
+                                    <th>Platzierung</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </BootstrapTable>
+                            </thead>
+                            <tbody>
+                                {fahrerliste.map((fahrer, index) => (
+                                    <tr key={index} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                                        <td>{fahrer}</td>
+                                        <td>
+                                            <Select
+                                                placeholder="Punkte auswahl"
+                                                data={punkte.map(punkt => ({value: punkt, label: punkt}))}
+                                                onChange={(value) => setErgebnis(prevErgebnis => ({
+                                                    ...prevErgebnis,
+                                                    [fahrer]: value // Aktualisiert die Punkte für den spezifischen Fahrer
+                                                }))}
+                                            />
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </BootstrapTable>
+                    </ScrollArea>
                 </div>
 
                 <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '20px'}}>
