@@ -1,11 +1,12 @@
 import { db } from './../utils/firebase';
 import { collection, onSnapshot, doc, setDoc, updateDoc, getDoc } from 'firebase/firestore';
 import { useEffect, useState, useCallback } from 'react';
-import { Button, Table, Modal, ScrollArea, Box, Select, Checkbox } from '@mantine/core';
+import { Button, Table, Modal, ScrollArea, Box, Select, Divider, Loader, TextInput } from '@mantine/core';
 import BootstrapTable from 'react-bootstrap/Table';
 import { useDisclosure } from '@mantine/hooks';
 import { FaTrashAlt } from "react-icons/fa";
 import { FaUserEdit } from "react-icons/fa";
+import { HiUserGroup } from "react-icons/hi";
 import { notifications } from '@mantine/notifications';
 
 const Einstellungen = () => {  
@@ -23,6 +24,7 @@ const Einstellungen = () => {
     const [fahrerlistenObjekt, setFahrerlistenObjekt] = useState();
     const [teams, setTeams] = useState();
     const [teamsArray, setTeamsArray] = useState([]);
+    const [isLoading, setIsLoading] = useState("1");
 
     const [opened, { open, close }] = useDisclosure(false); // Modal Hinzufügen neuer Fahrer
     const [openEintragen, setOpenEintragen] = useState(false); // Modal Eintragen der Ergebnisse
@@ -162,8 +164,10 @@ const Einstellungen = () => {
             const ligaNameUnsubscribe = onSnapshot(ligaNameRef, (snapshot) => {
                 if (snapshot.empty) {
                     setLigaErstellt(false);
+                    setIsLoading("2");
                 } else {
                     setLigaErstellt(true);
+                    setIsLoading("2");
                 }
             });
 
@@ -211,6 +215,7 @@ const Einstellungen = () => {
                 // Optional: Ausgabe des sortierten Arrays zur Überprüfung
                 console.log("FahrerlistenArray: ", fahrerlistenArray);
                 setLigaDaten(fahrerlistenArray);
+                setIsLoading("3");
             });
         }
     }, [ligaErstellt]);
@@ -306,6 +311,20 @@ const Einstellungen = () => {
             })
             .then(() => {
                 console.log("Document successfully written!");
+                close();
+                setFahrername("");
+                setTeamname("");
+                notifications.show({
+                    title: 'Fahrer hinzugefügt',
+                    message: 'Fahrer wurde erfolgreich hinzugefügt ✅',
+                    color: 'green',
+                })
+                let weiterenFahrerHinzufügen = window.confirm("Möchten Sie einen weiteren Fahrer hinzufügen?");
+                if (!weiterenFahrerHinzufügen) {
+                    console.log("Fahrer hinzufügen abgebrochen");
+                } else {
+                    open();
+                }
             })
             .catch((error) => {
                 console.error("Error writing document: ", error);
@@ -525,15 +544,34 @@ const Einstellungen = () => {
                 </Table>
             </div>
             <div>
-                {!ligaErstellt &&(
+                {!ligaErstellt && isLoading === "2" &&(
                     <div>
                         Die Liga wurde noch nicht erstellt!
                         <Button variant="filled" color="rgba(0, 0, 0, 1)" onClick={createLigaCollection}>Liga erstellen</Button>
                     </div>
                 )}
-                {ligaErstellt && ligaDaten &&(
-                    <>
+
+                {ligaErstellt && isLoading === "2" &&(
                     <div>
+                        <Loader color="gray" size="lg" />
+                    </div>
+                )}
+
+                {ligaErstellt && isLoading === "3" && ligaDaten.length === 0 &&(
+                    <div style={{ display: 'flex', justifyContent: 'center'}}>
+                        <Box bg="transparent" my="xl" style={{ width: '40vh', height: '40vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            Keine Daten vorhanden...
+                        </Box>
+                    </div>
+                )}
+
+                {ligaErstellt && ligaDaten.length > 0 && isLoading === "3" &&(
+                    <>
+                    <div style={{ marginLeft: '20px', marginRight: '20px', marginTop: '20px'}}>
+                    <Divider orientation="horizontal" margins="md" label="Fahrerübersicht" />
+                    </div>
+
+                    <div style={{ marginLeft: '20px', marginRight: '20px'}}>
                         <ScrollArea w="auto" h="auto">
                             <Box w="70%">
                                 <BootstrapTable striped bordered hover>
@@ -542,9 +580,19 @@ const Einstellungen = () => {
                                             <th>Fahrername</th>
                                             <th>Team</th>
                                             {
-                                            Strecken.map((schlüssel) => (
-                                                <th key={schlüssel}>{schlüssel}</th>
-                                            ))
+                                                Strecken.map((schlüssel) => (
+                                                    <th key={schlüssel}>
+                                                        <img 
+                                                            src={require(`./../Components/Länderflaggen/${
+                                                                schlüssel.toLowerCase() === 'austin' || schlüssel.toLocaleLowerCase() === 'miami' || schlüssel.toLocaleLowerCase() === 'lasvegas' ? 'usa' : 
+                                                                schlüssel.toLowerCase() === 'imola' || schlüssel.toLowerCase() === 'monza' ? 'italien' : 
+                                                                schlüssel.toLowerCase()
+                                                            }.png`)} 
+                                                            alt={schlüssel} 
+                                                            style={{ width: '25px', height: '15px' }}
+                                                        />
+                                                    </th>
+                                                ))
                                             }
                                             <th>Gesamtwertung</th>
                                             <th>{/* Buttons */}</th>
@@ -576,7 +624,10 @@ const Einstellungen = () => {
                             </Box>
                         </ScrollArea>
                     </div>
-                    <div>
+                    <div style={{ marginLeft: '20px', marginRight: '20px', marginTop: '10px'}}>
+                        <Divider orientation="horizontal" margins="md" label="Teamübersicht" />
+                    </div>
+                    <div style={{ marginLeft: '20px', marginRight: '20px'}}>
                         <ScrollArea w="auto" h="auto">
                             <Box w="70%">
                                 <BootstrapTable striped bordered hover>
@@ -584,11 +635,22 @@ const Einstellungen = () => {
                                         <tr>
                                             <th>Team</th>
                                             {
-                                            Strecken.map((schlüssel) => (
-                                                <th key={schlüssel}>{schlüssel}</th>
-                                            ))
+                                                Strecken.map((schlüssel) => (
+                                                    <th key={schlüssel}>
+                                                        <img 
+                                                            src={require(`./../Components/Länderflaggen/${
+                                                                schlüssel.toLowerCase() === 'austin' || schlüssel.toLocaleLowerCase() === 'miami' || schlüssel.toLocaleLowerCase() === 'lasvegas' ? 'usa' : 
+                                                                schlüssel.toLowerCase() === 'imola' || schlüssel.toLowerCase() === 'monza' ? 'italien' : 
+                                                                schlüssel.toLowerCase()
+                                                            }.png`)} 
+                                                            alt={schlüssel} 
+                                                            style={{ width: '25px', height: '15px' }}
+                                                        />
+                                                    </th>
+                                                ))
                                             }
                                             <th>Gesamtwertung</th>
+                                            <th>{/* Buttons */}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -599,6 +661,16 @@ const Einstellungen = () => {
                                                     <td key={schlüssel}>{teams[team.teamName][schlüssel]}</td>
                                                 ))}
                                                 <td>{team.gesamtWertung}</td>
+                                                <td>
+                                                    <div style={{display: 'flex', marginLeft: '5px'}}>
+                                                        <div style={{marginRight: '10px', cursor: 'pointer'}}>
+                                                            <HiUserGroup color='black' size={20}/>
+                                                        </div>
+                                                        <div style={{ cursor: 'pointer'}}>
+                                                            <FaTrashAlt color='red' size={20}/>
+                                                        </div>
+                                                    </div>
+                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -609,10 +681,10 @@ const Einstellungen = () => {
                     </>
                 )}
             </div>
-            <div>
-                <Button onClick={open}>Fahrer hinzufügen</Button>
-                <Button onClick={() => setOpenEintragen(true)}>Ergebnisse eintragen</Button>
-                <Button variant="filled" color="red" onClick={() => handleReset()}>Alle Wertungen zurücksetzten</Button>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', padding: '20px' }}>
+                <Button onClick={open} style={{ flex: 1 }}>Fahrer hinzufügen</Button>
+                <Button onClick={() => setOpenEintragen(true)} style={{ flex: 1 }}>Ergebnisse eintragen</Button>
+                <Button variant="filled" color="red" onClick={() => handleReset()} style={{ flex: 1 }}>Alle Wertungen zurücksetzten</Button>
             </div>
 
             {/* Modal für das Hinzufügen eines Fahrers */}
@@ -628,38 +700,38 @@ const Einstellungen = () => {
                 size="md"
             >
                 <form onSubmit={handleCreateDriver} style={{ display: 'flex', flexDirection: 'column', maxWidth: '300px', margin: '0 auto' }}>
-                    <label>
-                        Fahrername:
-                        <input 
-                            type="text" 
-                            value={fahrername} 
-                            onChange={(e) => setFahrername(e.target.value)} 
-                            required
-                            style={{ width: '100%', padding: '10px', fontSize: '16px' }}
-                        />
-                    </label>
-                    <label>
-                        Team:
-                        <select 
-                            value={teamname} 
-                            onChange={(e) => setTeamname(e.target.value)} 
-                            required
-                            style={{ width: '100%', padding: '10px', fontSize: '16px' }}
-                        >
-                            <option value="">--Bitte wählen Sie ein Team--</option>
-                            <option value="Mercedes">Mercedes</option>
-                            <option value="Red Bull Racing">Red Bull Racing</option>
-                            <option value="McLaren">McLaren</option>
-                            <option value="Ferrari">Ferrari</option>
-                            <option value="Aston Martin">Aston Martin</option>
-                            <option value="Alpine">Alpine</option>
-                            <option value="Visa RB">AlphaTauri</option>
-                            <option value="Kick Sauber">Alfa Romeo</option>
-                            <option value="Haas">Haas</option>
-                            <option value="Williams">Williams</option>
-                        </select>
-                    </label>
-                    <input type="submit" value="Fahrer hinzufügen" style={{marginTop: "30px"}}/>
+                    <TextInput
+                        label="Fahrername"
+                        withAsterisk
+                        description="Geben Sie den Namen des Fahrers ein"
+                        placeholder="Fahrername"
+                        value={fahrername}
+                        onChange={(event) => setFahrername(event.currentTarget.value)}
+                        required
+                        style={{ width: '100%', padding: '10px', fontSize: '16px' }}
+                    />
+                    <Select
+                        label="Team:"
+                        placeholder="--Bitte wählen Sie ein Team--"
+                        value={teamname}
+                        onChange={setTeamname}
+                        data={[
+                            { value: 'Mercedes', label: 'Mercedes' },
+                            { value: 'RedBull', label: 'Red Bull' },
+                            { value: 'McLaren', label: 'McLaren' },
+                            { value: 'Ferrari', label: 'Ferrari' },
+                            { value: 'AstonMartin', label: 'Aston Martin' },
+                            { value: 'Alpine', label: 'Alpine' },
+                            { value: 'VisaRB', label: 'Visa RB' },
+                            { value: 'KickSauber', label: 'Kick Sauber' },
+                            { value: 'Haas', label: 'Haas' },
+                            { value: 'Williams', label: 'Williams' }
+                        ]}
+                        searchable
+                        required
+                        style={{ width: '100%', padding: '10px', fontSize: '16px' }}
+                    />
+                    <Button type="submit" style={{ marginTop: '10px' }}>Fahrer hinzufügen</Button>
                 </form>
             </Modal>
 
