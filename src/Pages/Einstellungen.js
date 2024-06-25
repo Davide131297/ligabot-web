@@ -22,6 +22,7 @@ const Einstellungen = () => {
     const [fahrerliste, setFahrerliste] = useState([]);
     const [fahrerlistenObjekt, setFahrerlistenObjekt] = useState();
     const [teams, setTeams] = useState();
+    const [teamsArray, setTeamsArray] = useState([]);
 
     const [opened, { open, close }] = useDisclosure(false); // Modal Hinzufügen neuer Fahrer
     const [openEintragen, setOpenEintragen] = useState(false); // Modal Eintragen der Ergebnisse
@@ -198,8 +199,10 @@ const Einstellungen = () => {
                 fahrerlistenArray.forEach(fahrer => {
                     // Stellen Sie sicher, dass fahrer.Wertung ein Objekt ist; falls nicht, verwenden Sie ein leeres Objekt
                     const wertungenArray = Object.values(fahrer.Wertung || {});
-                    // Anwenden von reduce auf das Array der Werte
-                    fahrer.gesamtWertung = wertungenArray.reduce((summe, aktuelleWertung) => summe + aktuelleWertung, 0);
+                    // Filtere alle "DNF" Werte heraus
+                    const gefilterteWertungenArray = wertungenArray.filter(wertung => wertung !== "DNF");
+                    // Anwenden von reduce auf das Array der gefilterten Werte
+                    fahrer.gesamtWertung = gefilterteWertungenArray.reduce((summe, aktuelleWertung) => summe + aktuelleWertung, 0);
                 });
 
                 // Sortieren des Arrays absteigend basierend auf gesamtWertung
@@ -218,10 +221,30 @@ const Einstellungen = () => {
             getDoc(docRef)
             .then((docSnap) => {
                 if (docSnap.exists()) {
-                console.log("Teams document data:", docSnap.data());
-                setTeams(docSnap.data());
+                    console.log("Teams", docSnap.data());
+                    // Verarbeitung der Teams, ohne das Ergebnis zu verwenden, da setTeams(docSnap.data()) bleibt
+                    const teams = Object.keys(docSnap.data()).map(teamName => ({
+                        teamName,
+                        ...docSnap.data()[teamName]
+                    }));
+                    teams.forEach(team => {
+                        // Extrahiere alle Werte außer 'teamName'
+                        const rennenWerte = Object.keys(team).reduce((acc, key) => {
+                            if (key !== 'teamName' && team[key] !== null) {
+                                acc.push(team[key]);
+                            }
+                            return acc;
+                        }, []);
+                        // Da alle Werte `null` sind, wird die Summe 0 sein
+                        // Für zukünftige Anpassungen, wenn die Werte nicht null sind, kann die Summe berechnet werden
+                        const gesamtWertung = rennenWerte.reduce((summe, wert) => summe + (wert || 0), 0);
+                        team.gesamtWertung = gesamtWertung;
+                    });
+                    console.log("Verarbeitete Teams: ", teams); // Nur zu Demonstrationszwecken
+                    setTeamsArray(teams);
+                    setTeams(docSnap.data());
                 } else {
-                console.log("No such document!");
+                    console.log("No such document!");
                 }
             })
             .catch((error) => {
@@ -294,7 +317,7 @@ const Einstellungen = () => {
 
     async function handleErgenisseEintragen() {
         const ergebnisseAlsInteger = Object.keys(ergebnisse).reduce((acc, key) => {
-            acc[key] = parseInt(ergebnisse[key], 10);
+            acc[key] = ergebnisse[key] === "DNF" ? "DNF" : parseInt(ergebnisse[key], 10);
             return acc;
         }, {});
 
@@ -347,12 +370,14 @@ const Einstellungen = () => {
                 if (teamErgebnisse[team][strecke] === undefined) {
                     teamErgebnisse[team][strecke] = null;
                 }
+                // Behandle DNF als 0
+                const effektivePunkte = punkte === "DNF" ? 0 : punkte;
                 // Aktualisiere die Punkte, wenn welche vorhanden sind
-                if (punkte !== null) {
+                if (effektivePunkte !== null) {
                     if (teamErgebnisse[team][strecke] === null) {
-                        teamErgebnisse[team][strecke] = punkte;
+                        teamErgebnisse[team][strecke] = effektivePunkte;
                     } else {
-                        teamErgebnisse[team][strecke] += punkte;
+                        teamErgebnisse[team][strecke] += effektivePunkte;
                     }
                 }
                 // Wenn keine Punkte vorhanden sind (null), aber die Strecke existiert, belasse den Wert bei null
@@ -486,6 +511,7 @@ const Einstellungen = () => {
                     </div>
                 )}
                 {ligaErstellt && ligaDaten &&(
+                    <>
                     <div>
                         <ScrollArea w="auto" h="auto">
                             <Box w="70%">
@@ -529,6 +555,37 @@ const Einstellungen = () => {
                             </Box>
                         </ScrollArea>
                     </div>
+                    <div>
+                        <ScrollArea w="auto" h="auto">
+                            <Box w="70%">
+                                <BootstrapTable striped bordered hover>
+                                    <thead>
+                                        <tr>
+                                            <th>Team</th>
+                                            {
+                                            Strecken.map((schlüssel) => (
+                                                <th key={schlüssel}>{schlüssel}</th>
+                                            ))
+                                            }
+                                            <th>Gesamtwertung</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {teamsArray.map((team, index) => (
+                                            <tr key={index}>
+                                                <td>{team.teamName}</td>
+                                                {Strecken.map((schlüssel) => (
+                                                    <td key={schlüssel}>{teams[team.teamName][schlüssel]}</td>
+                                                ))}
+                                                <td>{team.gesamtWertung}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </BootstrapTable>
+                            </Box>
+                        </ScrollArea>
+                    </div>
+                    </>
                 )}
             </div>
             <div>
