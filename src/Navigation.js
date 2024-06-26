@@ -55,10 +55,12 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
                     </>
                     ) : (
                     <>
-                        <Button variant='white' color='rgba(0, 0, 0, 1)' onClick={() => handleLogout()}>
-                            Logout
-                        </Button>
-                        <Text size="md">Angemeldet als {nutzername}</Text>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <Button variant='white' color='rgba(0, 0, 0, 1)' onClick={() => handleLogout()}>
+                                Logout
+                            </Button>
+                            <Text size="md">Angemeldet als {nutzername}</Text>
+                        </div>
                     </>
                 )}
             </Group>
