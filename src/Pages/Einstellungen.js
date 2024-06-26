@@ -698,6 +698,12 @@ const Einstellungen = () => {
         navigate(`/LigaSeite/${ligaName}`);
     }
 
+    function inviteBot() {
+        console.log("Bot einladen");
+        const einladungsLink = `https://discord.com/oauth2/authorize?client_id=1255477848039362651&permissions=2147486720&integration_type=0&scope=bot+applications.commands`;
+        window.open(einladungsLink, '_blank');
+    }
+
     return (
         <>
             <div>
@@ -719,6 +725,11 @@ const Einstellungen = () => {
                             </Menu.Item>
                             <Menu.Item color="red" onClick={() => handleReset()}>
                                 Zurücksetzen
+                            </Menu.Item>
+                        <Menu.Divider />
+                        <Menu.Label>Discrod Bot</Menu.Label>
+                            <Menu.Item onClick={() => inviteBot()}>
+                                Bot Einladen
                             </Menu.Item>
                     </Menu.Dropdown>
                 </Menu>
@@ -749,11 +760,18 @@ const Einstellungen = () => {
                 </div>
                 <div>
                 <Button
-                    variant="subtle"
+                    variant="filled" radius="xl"
                     rightSection={<FaArrowUpRightFromSquare size={14} />}
                     onClick={() => handleLigaPageClick()}
                 >
-                    Einstellungen
+                    Zur Liga-Seite
+                </Button>
+                <Button
+                    variant="filled" radius="xl" color="grape"
+                    rightSection={<FaArrowUpRightFromSquare size={14} />}
+                    onClick={() => inviteBot()}
+                >
+                    Bot einladen
                 </Button>
                 </div>
             </div>
