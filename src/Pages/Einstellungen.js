@@ -7,8 +7,10 @@ import { useDisclosure } from '@mantine/hooks';
 import { FaTrashAlt } from "react-icons/fa";
 import { FaUserEdit } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
+import { FaArrowUpRightFromSquare } from "react-icons/fa6";
 import { HiUserGroup } from "react-icons/hi";
 import { notifications } from '@mantine/notifications';
+import { useNavigate } from 'react-router-dom';
 
 const Einstellungen = () => {  
 
@@ -28,6 +30,7 @@ const Einstellungen = () => {
     const [teamsArray, setTeamsArray] = useState([]);
     const [isLoading, setIsLoading] = useState("1");
     const [reloadData, setReloadData] = useState(false);
+    const navigate = useNavigate();
 
     const [opened, { open, close }] = useDisclosure(false); // Modal Hinzufügen neuer Fahrer
     const [openEintragen, setOpenEintragen] = useState(false); // Modal Eintragen der Ergebnisse
@@ -683,29 +686,45 @@ const Einstellungen = () => {
         }
     }
 
+    function handleLigaPageClick() {
+        console.log("Liga-Seite öffnen");
+        navigate(`/LigaSeite/${ligaName}`);
+    }
+
     return (
         <>
             <div>
-                <Table>
-                    <Table.Thead>
-                        <Table.Tr>
-                            <Table.Th>Nutzername</Table.Th>
-                            <Table.Th>Liga</Table.Th>
-                            <Table.Th>Discord Server ID</Table.Th>
-                            <Table.Th>{/* Buttons */}</Table.Th>
-                        </Table.Tr>
-                        </Table.Thead>
-                        <Table.Tbody>
+                <div>
+                    <Table>
+                        <Table.Thead>
                             <Table.Tr>
-                                <Table.Td>{Daten?.pairringLiga?.adminUser}</Table.Td>
-                                <Table.Td>{Daten?.pairringLiga?.ligaName}</Table.Td>
-                                <Table.Td>{Daten?.pairringDiscrodServer?.serverId}</Table.Td>
-                                <Table.Td style={{cursor: 'pointer'}}>
-                                    <MdEdit color='black' size={20} onClick={() => handleEditData()}/>
-                                </Table.Td>
+                                <Table.Th>Nutzername</Table.Th>
+                                <Table.Th>Liga</Table.Th>
+                                <Table.Th>Discord Server ID</Table.Th>
+                                <Table.Th>{/* Buttons */}</Table.Th>
                             </Table.Tr>
-                    </Table.Tbody>
-                </Table>
+                            </Table.Thead>
+                            <Table.Tbody>
+                                <Table.Tr>
+                                    <Table.Td>{Daten?.pairringLiga?.adminUser}</Table.Td>
+                                    <Table.Td>{Daten?.pairringLiga?.ligaName}</Table.Td>
+                                    <Table.Td>{Daten?.pairringDiscrodServer?.serverId}</Table.Td>
+                                    <Table.Td style={{cursor: 'pointer'}}>
+                                        <MdEdit color='black' size={20} onClick={() => handleEditData()}/>
+                                    </Table.Td>
+                                </Table.Tr>
+                        </Table.Tbody>
+                    </Table>
+                </div>
+                <div>
+                <Button
+                    variant="subtle"
+                    rightSection={<FaArrowUpRightFromSquare size={14} />}
+                    onClick={() => handleLigaPageClick()}
+                >
+                    Einstellungen
+                </Button>
+                </div>
             </div>
             <div>
                 {!ligaErstellt && isLoading === "2" &&(

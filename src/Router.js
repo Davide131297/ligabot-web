@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Home from './Pages/Home';
 import Einstellungen from './Pages/Einstellungen';
+import LigaSeite from './Pages/LigaSeite';
 
 import { AppShell } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
@@ -29,8 +30,9 @@ export function Router() {
                 />
                 <AppShell.Main>
                     <Routes>
-                            <Route path="/" element={<Home />} />
-                            <Route path="/Einstellungen" element={<Einstellungen />} />
+                        <Route path="/" element={<Home />} />
+                        <Route path="/Einstellungen" element={<Einstellungen />} />
+                        <Route path="/LigaSeite/:id" element={<LigaSeite />} />
                     </Routes>
                 </AppShell.Main>
             </AppShell>
