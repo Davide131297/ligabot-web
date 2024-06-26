@@ -273,6 +273,10 @@ const Einstellungen = () => {
                         }, 0);
                         team.gesamtWertung = gesamtWertung;
                     });
+
+                    // Sortiere die Teams absteigend nach gesamtWertung
+                    teams.sort((a, b) => b.gesamtWertung - a.gesamtWertung);
+                    
                     setTeamsArray(teams);
                     setTeams(docSnap.data());
                 } else {
