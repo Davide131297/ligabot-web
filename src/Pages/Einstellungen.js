@@ -1,9 +1,4 @@
 import { db } from './../utils/firebase';
-<<<<<<< HEAD
-import { collection, onSnapshot } from 'firebase/firestore';
-import { useEffect, useState } from 'react';
-import Table from 'react-bootstrap/Table';
-=======
 import { collection, onSnapshot, doc, setDoc, updateDoc, getDoc, deleteField, where, getDocs, query } from 'firebase/firestore';
 import { useEffect, useState, useCallback } from 'react';
 import { Button, Table, Modal, ScrollArea, Box, Select, Divider, Loader, TextInput } from '@mantine/core';
@@ -14,7 +9,6 @@ import { FaUserEdit } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { HiUserGroup } from "react-icons/hi";
 import { notifications } from '@mantine/notifications';
->>>>>>> c020369dadf18a7d4cb0dc5196b9862c31e374c7
 
 const Einstellungen = () => {  
 
@@ -183,12 +177,6 @@ const Einstellungen = () => {
     }, [DiscordServer, Liga, user, allDataAvailable]);
 
     useEffect(() => {
-<<<<<<< HEAD
-        if (nutzerDaten) {
-            console.log(JSON.stringify(nutzerDaten));
-        }
-    }, [nutzerDaten]);
-=======
         if (Daten?.pairringLiga?.ligaName) {
             const ligaNameRef = collection(db, Daten.pairringLiga.ligaName);
             const ligaNameUnsubscribe = onSnapshot(ligaNameRef, (snapshot) => {
@@ -200,7 +188,6 @@ const Einstellungen = () => {
                     setIsLoading("2");
                 }
             });
->>>>>>> c020369dadf18a7d4cb0dc5196b9862c31e374c7
 
             return () => {
                 ligaNameUnsubscribe();
@@ -697,30 +684,6 @@ const Einstellungen = () => {
     }
 
     return (
-<<<<<<< HEAD
-        <div>
-            <Table striped bordered hover>
-                <thead>
-                    <tr>
-                        <th>Liga Name</th>
-                        <th>Registrierungsdatum Liga</th>
-                        <th>Admin User</th>
-                        <th>Liga Key</th>
-                        <th>Server ID</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>{nutzerDaten?.LigaZugehörigkeit?.ligaName}</td>
-                        <td>{new Date(nutzerDaten?.LigaZugehörigkeit?.registrierungsDatum.seconds * 1000).toLocaleDateString()}</td>
-                        <td>{nutzerDaten?.LigaZugehörigkeit?.adminUser}</td>
-                        <td>{nutzerDaten?.LigaZugehörigkeit?.key}</td>
-                        <td>{nutzerDaten?.DiscordServerZugehörigkeit?.serverId}</td>
-                    </tr>
-                </tbody>
-            </Table>
-        </div>
-=======
         <>
             <div>
                 <Table>
@@ -1032,7 +995,6 @@ const Einstellungen = () => {
 
             </Modal>
         </>
->>>>>>> c020369dadf18a7d4cb0dc5196b9862c31e374c7
     );
 }
 export default Einstellungen;
