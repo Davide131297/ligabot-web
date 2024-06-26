@@ -27,8 +27,13 @@ function Login({geöffnet, setGeöffnet, setAngemeldet, setNutzername}) {
         setAngemeldet(true);
         navigate('/Einstellungen');
         } catch (error) {
-        // Fehlerbehandlung
-        console.error(error);
+            console.error(error);
+            notifications.show({
+                title: 'Fehler beim Anmelden! 😞',
+                message: 'Fehler beim Anmelden: ',
+                color: 'red',
+                autoClose: 2000,
+            });
         }
     };
 
