@@ -11,7 +11,7 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
     const navigate = useNavigate();
     const [geöffnet, setGeöffnet] = useState(false); //Modal für Login
     const [modalOpen, setModalOpen] = useState(false); //Modal für Registrierung
-    const [angemeldet, setAngemeldet] = useState(null); //Angemeldet oder nicht
+    const [angemeldet, setAngemeldet] = useState(false); //Angemeldet oder nicht
     const [nutzername, setNutzername] = useState(null); //Nutzername
 
     useEffect(() => {
@@ -72,14 +72,16 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
                     </Text>
                 </div>
             </AppShell.Section>
-            <AppShell.Section>
-                <div style={{ display: 'flex', alignItems: 'center', marginTop: '20px', cursor: 'pointer'}} onClick={() => handleNavigation("/Einstellungen")}> {/* Flex Container */}
-                    <IoMdSettings size={26} />
-                    <Text size="xl" weight={700} ml="sm">
-                        Einstellungen
-                    </Text>
-                </div>
-            </AppShell.Section>
+            {angemeldet && (
+                <AppShell.Section>
+                    <div style={{ display: 'flex', alignItems: 'center', marginTop: '20px', cursor: 'pointer'}} onClick={() => handleNavigation("/Einstellungen")}> {/* Flex Container */}
+                        <IoMdSettings size={26} />
+                        <Text size="xl" weight={700} ml="sm">
+                            Einstellungen
+                        </Text>
+                    </div>
+                </AppShell.Section>
+            )}
         </AppShell.Navbar>
 
         <Login geöffnet={geöffnet} setGeöffnet={setGeöffnet} setAngemeldet={setAngemeldet} setNutzername={setNutzername}/>
