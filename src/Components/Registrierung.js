@@ -106,7 +106,7 @@ const Registrierung = ({ modalOpen, setModalOpen}) => {
                         <input
                         type="email"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => setEmail(e.target.value.toLowerCase())}
                         required
                         style={{ width: '100%', padding: '10px', fontSize: '16px' }}
                         />
