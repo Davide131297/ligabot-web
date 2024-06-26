@@ -25,9 +25,9 @@ const Einstellungen = () => {
     const [ligaErstellt, setLigaErstellt] = useState(false);
     const [fahrername, setFahrername] = useState("");
     const [teamname, setTeamname] = useState("");
-    const [ligaDaten, setLigaDaten] = useState([]);
+    const [ligaDaten, setLigaDaten] = useState([]); // Fahrerdaten als Array
     const [fahrerliste, setFahrerliste] = useState([]);
-    const [fahrerlistenObjekt, setFahrerlistenObjekt] = useState();
+    const [fahrerlistenObjekt, setFahrerlistenObjekt] = useState(); // Fahrerdaten als Objekt direkt aus der Datenbank
     const [teams, setTeams] = useState();
     const [teamsArray, setTeamsArray] = useState([]);
     const [isLoading, setIsLoading] = useState("1");
@@ -139,11 +139,14 @@ const Einstellungen = () => {
         if (pairringLiga.length > 0) {
             setLigaName(pairringLiga[0].ligaName);
             const pairringDiscrodServer = DiscordServer.find(server => server.ligaKey === pairringLiga[0].key);
-            console.log("PairringDiscordServer: ", pairringDiscrodServer);
             setEigenerDiscordServer(pairringDiscrodServer);
             setDaten({ pairringLiga: pairringLiga[0], pairringDiscrodServer });
         }
     }, [DiscordServer, Liga, user, setDaten]);
+
+    useEffect(() => {
+        console.log("Loading: ", isLoading);
+    }, [isLoading, reloadData]);
 
     useEffect(() => {
         const discordServerRef = collection(db, 'discordServers');
@@ -190,7 +193,7 @@ const Einstellungen = () => {
                     setIsLoading("2");
                 } else {
                     setLigaErstellt(true);
-                    setIsLoading("2");
+                    setIsLoading("3");
                 }
             });
 
@@ -704,6 +707,42 @@ const Einstellungen = () => {
         window.open(einladungsLink, '_blank');
     }
 
+    async function handleDriverEdit(fahrer) {
+
+        if (!fahrer || !fahrer.fahrername) {
+            console.error("Fahrer oder Fahrername fehlt", fahrer);
+            return;
+        }
+
+        const gesuchterFahrerSchlüssel = Object.keys(fahrerlistenObjekt).find(schlüssel => schlüssel === fahrer.fahrername);
+        const gesuchterFahrer = fahrerlistenObjekt[gesuchterFahrerSchlüssel];
+
+        if (!gesuchterFahrer) {
+        } else {
+            const neuerName = window.prompt("Bitte geben Sie den neuen Fahrernamen ein:", gesuchterFahrerSchlüssel);
+            if (neuerName && !fahrerlistenObjekt[neuerName]) {
+                fahrerlistenObjekt[neuerName] = gesuchterFahrer;
+                delete fahrerlistenObjekt[gesuchterFahrerSchlüssel];
+
+                // Speichern des aktualisierten fahrerlistenObjekt in der Datenbank
+                const fahrerDocRef = doc(db, ligaName, "Fahrer");
+                try {
+                    await setDoc(fahrerDocRef, fahrerlistenObjekt);
+                    notifications.show({
+                        title: 'Fahrer aktualisiert',
+                        message: `Fahrer ${gesuchterFahrerSchlüssel} wurde erfolgreich in ${neuerName} umbenannt ✅`,
+                        color: 'green',
+                    });
+                    console.log("Speichern erfolgreich");
+                } catch (error) {
+                    console.error("Fehler beim Speichern der Fahrerliste", error);
+                }
+            } else {
+                console.error("Ungültiger neuer Name oder Name bereits vorhanden.");
+            }
+        }
+    }
+
     return (
         <>
             <div>
@@ -848,7 +887,7 @@ const Einstellungen = () => {
                                                 <td>
                                                     <div style={{display: 'flex', marginLeft: '5px'}}>
                                                         <div style={{marginRight: '10px', cursor: 'pointer'}}>
-                                                            <FaUserEdit color='black' size={20}/>
+                                                            <FaUserEdit color='black' size={20} onClick={() => handleDriverEdit(fahrer)}/>
                                                         </div>
                                                         <div style={{ cursor: 'pointer'}}>
                                                             <FaTrashAlt color='red' size={20} onClick={() => handleDriverDelete(fahrer)}/>
