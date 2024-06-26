@@ -6,6 +6,8 @@ import { auth } from '../utils/firebase';
 import { db } from '../utils/firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import { Timestamp } from 'firebase/firestore';
+import { LoadingOverlay, Box } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 
 const Registrierung = ({ modalOpen, setModalOpen}) => {
     const [email, setEmail] = useState("");
@@ -13,9 +15,11 @@ const Registrierung = ({ modalOpen, setModalOpen}) => {
     const [displayName, setDisplayName] = useState("");
     const [leagueName, setLeagueName] = useState("");
     const [serverId, setServerID] = useState("");
+    const [visible, { toggle }] = useDisclosure(false);
 
     const handleSubmit = (event) => {
         event.preventDefault(); // Verhindert das automatische Neuladen der Seite
+        toggle();
 
         // Registrieren
         createUserWithEmailAndPassword(auth, email, password)
@@ -84,6 +88,7 @@ const Registrierung = ({ modalOpen, setModalOpen}) => {
         .then((docRef) => {
             console.log("Dokument erfolgreich erstellt mit ID: ", docRef.id);
             setModalOpen(false);
+            toggle();
         })
         .catch((error) => {
             console.error("Fehler beim Erstellen des Dokuments: ", error);
@@ -99,66 +104,69 @@ const Registrierung = ({ modalOpen, setModalOpen}) => {
             closeOnClickOutside={false}
             centered
         >
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', maxWidth: '300px', margin: '0 auto' }}>
-                    <label style={{ marginBottom: '10px' }}>
-                        E-Mail:
-                        <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value.toLowerCase())}
-                        required
-                        style={{ width: '100%', padding: '10px', fontSize: '16px' }}
-                        />
-                    </label>
-                    <label style={{ marginBottom: '10px' }}>
-                        Nutzername:
-                        <input
-                            type="text"
-                            value={displayName}
-                            onChange={(e) => setDisplayName(e.target.value)}
-                            required
-                            style={{ width: '100%', padding: '10px', fontSize: '16px' }}
-                        />
-                    </label>
-                    <label style={{ marginBottom: '10px' }}>
-                        Passwort:
-                        <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        style={{ width: '100%', padding: '10px', fontSize: '16px' }}
-                        />
-                    </label>
+            <Box pos="relative">
+                <LoadingOverlay visible={visible} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
+                    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', maxWidth: '300px', margin: '0 auto' }}>
+                            <label style={{ marginBottom: '10px' }}>
+                                E-Mail:
+                                <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value.toLowerCase())}
+                                required
+                                style={{ width: '100%', padding: '10px', fontSize: '16px' }}
+                                />
+                            </label>
+                            <label style={{ marginBottom: '10px' }}>
+                                Nutzername:
+                                <input
+                                    type="text"
+                                    value={displayName}
+                                    onChange={(e) => setDisplayName(e.target.value)}
+                                    required
+                                    style={{ width: '100%', padding: '10px', fontSize: '16px' }}
+                                />
+                            </label>
+                            <label style={{ marginBottom: '10px' }}>
+                                Passwort:
+                                <input
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                                style={{ width: '100%', padding: '10px', fontSize: '16px' }}
+                                />
+                            </label>
 
-                    <label style={{ marginBottom: '10px' }}>
-                        Liganame:
-                        <input
-                            type="text"
-                            value={leagueName}
-                            onChange={(e) => setLeagueName(e.target.value)}
-                            required
-                            style={{ width: '100%', padding: '10px', fontSize: '16px' }}
-                        />
-                    </label>
+                            <label style={{ marginBottom: '10px' }}>
+                                Liganame:
+                                <input
+                                    type="text"
+                                    value={leagueName}
+                                    onChange={(e) => setLeagueName(e.target.value)}
+                                    required
+                                    style={{ width: '100%', padding: '10px', fontSize: '16px' }}
+                                />
+                            </label>
 
-                    <label style={{ marginBottom: '10px' }}>
-                        ServerID:
-                        <input
-                            type="text"
-                            value={serverId}
-                            onChange={(e) => setServerID(e.target.value)}
-                            required
-                            style={{ width: '100%', padding: '10px', fontSize: '16px' }}
-                        />
-                    </label>
+                            <label style={{ marginBottom: '10px' }}>
+                                ServerID:
+                                <input
+                                    type="text"
+                                    value={serverId}
+                                    onChange={(e) => setServerID(e.target.value)}
+                                    required
+                                    style={{ width: '100%', padding: '10px', fontSize: '16px' }}
+                                />
+                            </label>
 
-                    <button type="submit" style={{ padding: '10px', fontSize: '16px', cursor: 'pointer' }}>
-                        Registrieren
-                    </button>
-                </form>
-            </div>
+                            <button type="submit" style={{ padding: '10px', fontSize: '16px', cursor: 'pointer' }}>
+                                Registrieren
+                            </button>
+                        </form>
+                    </div>
+            </Box>
         </Modal>
     );
 }
