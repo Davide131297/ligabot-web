@@ -1,16 +1,18 @@
 import { db } from './../utils/firebase';
 import { collection, onSnapshot, doc, setDoc, updateDoc, getDoc, deleteField, where, getDocs, query } from 'firebase/firestore';
 import { useEffect, useState, useCallback } from 'react';
-import { Button, Table, Modal, ScrollArea, Box, Select, Divider, Loader, TextInput } from '@mantine/core';
+import { Button, Table, Modal, ScrollArea, Box, Select, Divider, Loader, TextInput, Menu, ActionIcon } from '@mantine/core';
 import BootstrapTable from 'react-bootstrap/Table';
 import { useDisclosure } from '@mantine/hooks';
 import { FaTrashAlt } from "react-icons/fa";
 import { FaUserEdit } from "react-icons/fa";
+import { CiMenuKebab } from "react-icons/ci";
 import { MdEdit } from "react-icons/md";
 import { FaArrowUpRightFromSquare } from "react-icons/fa6";
 import { HiUserGroup } from "react-icons/hi";
 import { notifications } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
+import './Einstellungen.css';
 
 const Einstellungen = () => {  
 
@@ -694,7 +696,30 @@ const Einstellungen = () => {
     return (
         <>
             <div>
+                {window.innerWidth < 768 && (
+                <Menu shadow="md" width={200}>
+                    <Menu.Target>
+                        <ActionIcon variant="transparent" color="rgba(0, 0, 0, 1)">
+                            <CiMenuKebab size={20} />
+                        </ActionIcon>
+                    </Menu.Target>
+
+                    <Menu.Dropdown>
+                        <Menu.Label>Management</Menu.Label>
+                            <Menu.Item onClick={open}>
+                                Fahrer Hinzufügen
+                            </Menu.Item>
+                            <Menu.Item onClick={() => setOpenEintragen(true)}>
+                                Ergebnisse eintragen
+                            </Menu.Item>
+                            <Menu.Item color="red" onClick={() => handleReset()}>
+                                Zurücksetzen
+                            </Menu.Item>
+                    </Menu.Dropdown>
+                </Menu>
+                )}
                 <div>
+                    <ScrollArea w="auto" h="auto">
                     <Table>
                         <Table.Thead>
                             <Table.Tr>
@@ -715,6 +740,7 @@ const Einstellungen = () => {
                                 </Table.Tr>
                         </Table.Tbody>
                     </Table>
+                    </ScrollArea>
                 </div>
                 <div>
                 <Button
@@ -754,21 +780,21 @@ const Einstellungen = () => {
 
                 {ligaErstellt && ligaDaten.length > 0 && isLoading === "3" &&(
                     <>
-                    <div style={{ marginLeft: '20px', marginRight: '20px', marginTop: '20px'}}>
+                    <div className='divider'>
                     <Divider orientation="horizontal" margins="md" label="Fahrerübersicht" />
                     </div>
 
-                    <div style={{ marginLeft: '20px', marginRight: '20px'}}>
+                    <div className='tabellenPosition'>
                         <ScrollArea w="auto" h="auto">
                             <Box w="70%">
-                                <BootstrapTable striped bordered hover>
+                                <BootstrapTable striped bordered hover className='Eintragungübersicht'>
                                     <thead>
                                         <tr>
                                             <th>Fahrername</th>
                                             <th>Team</th>
                                             {
                                                 Strecken.map((schlüssel) => (
-                                                    <th key={schlüssel}>
+                                                    <th key={schlüssel} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                                         <img 
                                                             src={require(`./../Components/Länderflaggen/${
                                                                 schlüssel.toLowerCase() === 'austin' || schlüssel.toLocaleLowerCase() === 'miami' || schlüssel.toLocaleLowerCase() === 'lasvegas' ? 'usa' : 
@@ -776,7 +802,7 @@ const Einstellungen = () => {
                                                                 schlüssel.toLowerCase()
                                                             }.png`)} 
                                                             alt={schlüssel} 
-                                                            style={{ width: '25px', height: '15px' }}
+                                                            className='ÜbersichtFlaggen'
                                                         />
                                                     </th>
                                                 ))
@@ -787,7 +813,7 @@ const Einstellungen = () => {
                                     </thead>
                                     <tbody>
                                         {ligaDaten.map((fahrer, index) => (
-                                            <tr key={index}>
+                                            <tr key={index} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                                 <td>{fahrer.fahrername}</td>
                                                 <td>{fahrer.team}</td>
                                                 {Strecken.map((schlüssel) => (
@@ -811,19 +837,19 @@ const Einstellungen = () => {
                             </Box>
                         </ScrollArea>
                     </div>
-                    <div style={{ marginLeft: '20px', marginRight: '20px', marginTop: '10px'}}>
+                    <div className='divider'>
                         <Divider orientation="horizontal" margins="md" label="Teamübersicht" />
                     </div>
-                    <div style={{ marginLeft: '20px', marginRight: '20px'}}>
+                    <div className='tabellenPosition'>
                         <ScrollArea w="auto" h="auto">
                             <Box w="70%">
-                                <BootstrapTable striped bordered hover>
+                                <BootstrapTable striped bordered hover className='Eintragungübersicht'>
                                     <thead>
                                         <tr>
                                             <th>Team</th>
                                             {
                                                 Strecken.map((schlüssel) => (
-                                                    <th key={schlüssel}>
+                                                    <th key={schlüssel} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                                         <img 
                                                             src={require(`./../Components/Länderflaggen/${
                                                                 schlüssel.toLowerCase() === 'austin' || schlüssel.toLocaleLowerCase() === 'miami' || schlüssel.toLocaleLowerCase() === 'lasvegas' ? 'usa' : 
@@ -831,7 +857,7 @@ const Einstellungen = () => {
                                                                 schlüssel.toLowerCase()
                                                             }.png`)} 
                                                             alt={schlüssel} 
-                                                            style={{ width: '25px', height: '15px' }}
+                                                            className='ÜbersichtFlaggen'
                                                         />
                                                     </th>
                                                 ))
@@ -842,7 +868,7 @@ const Einstellungen = () => {
                                     </thead>
                                     <tbody>
                                         {teamsArray.map((team, index) => (
-                                            <tr key={index}>
+                                            <tr key={index} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                                 <td>{team.teamName}</td>
                                                 {Strecken.map((schlüssel) => (
                                                     <td key={schlüssel}>{teams[team.teamName][schlüssel]}</td>
@@ -868,11 +894,13 @@ const Einstellungen = () => {
                     </>
                 )}
             </div>
+            {window.innerWidth >= 768 && (
             <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', padding: '20px' }}>
                 <Button onClick={open} style={{ flex: 1 }}>Fahrer hinzufügen</Button>
                 <Button onClick={() => setOpenEintragen(true)} style={{ flex: 1 }}>Ergebnisse eintragen</Button>
                 <Button variant="filled" color="red" onClick={() => handleReset()} style={{ flex: 1 }}>Alle Wertungen zurücksetzten</Button>
             </div>
+            )}
 
             {/* Modal für das Hinzufügen eines Fahrers */}
             <Modal
@@ -933,7 +961,7 @@ const Einstellungen = () => {
 
                 <div style={{marginTop: '10px'}}>
                     <ScrollArea h="auto">
-                        <BootstrapTable striped bordered hover>
+                        <BootstrapTable striped bordered hover className='Eintragungübersicht'>
                             <thead>
                                 <tr style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                     <th>Fahrername</th>

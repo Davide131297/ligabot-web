@@ -1,0 +1,38 @@
+.divider {
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 20px;
+}
+
+.tabellenPosition {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.ÜbersichtFlaggen {
+    width: 25px;
+    height: 15px;
+}
+
+@media screen and (max-width: 768px){
+
+    .divider {
+        margin-left: 5px;
+        margin-right: 5px;
+        margin-top: 10px;
+    }
+
+    .tabellenPosition {
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+
+    .Eintragungübersicht{
+        font-size: xx-small;
+    }
+
+    .ÜbersichtFlaggen {
+        width: 20px;
+        height: 10px;
+    }
+}
