@@ -280,18 +280,29 @@ const Einstellungen = () => {
         }
     }, [ligaErstellt, ligaName, reloadData]);
 
-    function createLigaCollection() {
+    async function createLigaCollection() {
         if (ligaName) {
-            const docRef = doc(db, ligaName, 'Fahrer');
-            setDoc(docRef, {})
+            // Erstelle das Dokument "Fahrer" in der Collection mit dem Namen ligaName
+            const fahrerDocRef = doc(db, ligaName, 'Fahrer');
+            setDoc(fahrerDocRef, {})
             .then(() => {
-                console.log("Document successfully written!");
+                console.log("Dokument 'Fahrer' erfolgreich erstellt!");
             })
             .catch((error) => {
-                console.error("Error writing document: ", error);
+                console.error("Fehler beim Erstellen des Dokuments 'Fahrer': ", error);
+            });
+
+            // Erstelle das Dokument "Teams" in der Collection mit dem Namen ligaName
+            const teamsDocRef = doc(db, ligaName, 'Teams');
+            setDoc(teamsDocRef, {})
+            .then(() => {
+                console.log("Dokument 'Teams' erfolgreich erstellt!");
+            })
+            .catch((error) => {
+                console.error("Fehler beim Erstellen des Dokuments 'Teams': ", error);
             });
         } else {
-            console.error("Error: Liga name is empty");
+            console.error("Fehler: Liga-Name ist leer");
         }
     }
 
@@ -698,9 +709,13 @@ const Einstellungen = () => {
             </div>
             <div>
                 {!ligaErstellt && isLoading === "2" &&(
-                    <div>
+                    <div style={{marginTop: '20px'}}>
                         Die Liga wurde noch nicht erstellt!
-                        <Button variant="filled" color="rgba(0, 0, 0, 1)" onClick={createLigaCollection}>Liga erstellen</Button>
+                        <Button variant="filled" color="rgba(0, 0, 0, 1)" onClick={createLigaCollection}
+                        style={{marginLeft: '10px'}}
+                        >
+                            Liga erstellen
+                        </Button>
                     </div>
                 )}
 
