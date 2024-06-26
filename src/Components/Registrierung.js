@@ -6,8 +6,10 @@ import { auth } from '../utils/firebase';
 import { db } from '../utils/firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import { Timestamp } from 'firebase/firestore';
-import { LoadingOverlay, Box } from '@mantine/core';
+import { LoadingOverlay, Box, ActionIcon } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { AiOutlineQuestionCircle } from "react-icons/ai";
+import ServerIDPhoto from './ServerID.png';
 
 const Registrierung = ({ modalOpen, setModalOpen}) => {
     const [email, setEmail] = useState("");
@@ -16,6 +18,7 @@ const Registrierung = ({ modalOpen, setModalOpen}) => {
     const [leagueName, setLeagueName] = useState("");
     const [serverId, setServerID] = useState("");
     const [visible, { toggle }] = useDisclosure(false);
+    const [showHowToModal, setShowHowToModal] = useState(false);
 
     const handleSubmit = (event) => {
         event.preventDefault(); // Verhindert das automatische Neuladen der Seite
@@ -96,6 +99,7 @@ const Registrierung = ({ modalOpen, setModalOpen}) => {
     }
 
     return (
+        <>
         <Modal 
             opened={modalOpen} 
             onClose={() => setModalOpen(false)} 
@@ -150,16 +154,22 @@ const Registrierung = ({ modalOpen, setModalOpen}) => {
                                 />
                             </label>
 
-                            <label style={{ marginBottom: '10px' }}>
-                                ServerID:
-                                <input
-                                    type="text"
-                                    value={serverId}
-                                    onChange={(e) => setServerID(e.target.value)}
-                                    required
-                                    style={{ width: '100%', padding: '10px', fontSize: '16px' }}
-                                />
-                            </label>
+                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                                <label style={{ flex: 1 }}>
+                                    Discrod-ServerID:
+                                    <input
+                                        type="text"
+                                        value={serverId}
+                                        onChange={(e) => setServerID(e.target.value)}
+                                        required
+                                        style={{ width: '100%', padding: '10px', fontSize: '16px', marginRight: '10px' }}
+                                    />
+                                </label>
+
+                                <ActionIcon variant="transparent" radius="xl" aria-label="Settings">
+                                    <AiOutlineQuestionCircle color='black' size={20} onClick={() => setShowHowToModal(true)}/>
+                                </ActionIcon>
+                            </div>
 
                             <button type="submit" style={{ padding: '10px', fontSize: '16px', cursor: 'pointer' }}>
                                 Registrieren
@@ -168,6 +178,21 @@ const Registrierung = ({ modalOpen, setModalOpen}) => {
                     </div>
             </Box>
         </Modal>
+
+        <Modal
+            opened={showHowToModal}
+            onClose={() => setShowHowToModal(false)}
+            title="ServerID finden"
+            size="md"
+            closeOnClickOutside={false}
+            centered
+        >
+            <p>So findest du die Server-ID um deine Ligadaten mit dem Bot zu koppeln.</p>
+            <p>Gehe in deinem Discord-Server und klicke auf den Namen mit einem Rechtsklick.</p>
+            <img src={ServerIDPhoto} alt="ServerID" style={{ width: '100%', height: 'auto' }} />
+
+        </Modal>
+        </>
     );
 }
 export default Registrierung;
