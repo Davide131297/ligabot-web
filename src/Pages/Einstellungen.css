@@ -14,6 +14,13 @@
     height: 15px;
 }
 
+.stickySpalte {
+    position: sticky;
+    left: 0;
+    background-color: white; /* Hintergrundfarbe, um Überlappungstext zu vermeiden */
+    z-index: 1; /* Stellt sicher, dass es über anderen Inhalten schwebt */
+}
+
 @media screen and (max-width: 768px){
 
     .divider {

@@ -766,6 +766,7 @@ const Einstellungen = () => {
                 >
                     Zur Liga-Seite
                 </Button>
+                {window.innerWidth >= 768 && (
                 <Button
                     variant="filled" radius="xl" color="grape"
                     rightSection={<FaArrowUpRightFromSquare size={14} />}
@@ -773,6 +774,7 @@ const Einstellungen = () => {
                 >
                     Bot einladen
                 </Button>
+                )}
                 </div>
             </div>
             <div>
@@ -813,7 +815,7 @@ const Einstellungen = () => {
                                 <BootstrapTable striped bordered hover className='Eintragungübersicht'>
                                     <thead>
                                         <tr>
-                                            <th>Fahrername</th>
+                                            <th className="stickySpalte">Fahrername</th>
                                             <th>Team</th>
                                             {
                                                 Strecken.map((schlüssel) => (
@@ -837,7 +839,7 @@ const Einstellungen = () => {
                                     <tbody>
                                         {ligaDaten.map((fahrer, index) => (
                                             <tr key={index} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                                                <td>{fahrer.fahrername}</td>
+                                                <td className="stickySpalte">{fahrer.fahrername}</td>
                                                 <td>{fahrer.team}</td>
                                                 {Strecken.map((schlüssel) => (
                                                     <td key={schlüssel}>{fahrer.Wertung[schlüssel]}</td>
@@ -869,7 +871,7 @@ const Einstellungen = () => {
                                 <BootstrapTable striped bordered hover className='Eintragungübersicht'>
                                     <thead>
                                         <tr>
-                                            <th>Team</th>
+                                            <th className="stickySpalte">Team</th>
                                             {
                                                 Strecken.map((schlüssel) => (
                                                     <th key={schlüssel} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
@@ -892,7 +894,7 @@ const Einstellungen = () => {
                                     <tbody>
                                         {teamsArray.map((team, index) => (
                                             <tr key={index} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                                                <td>{team.teamName}</td>
+                                                <td className="stickySpalte">{team.teamName}</td>
                                                 {Strecken.map((schlüssel) => (
                                                     <td key={schlüssel}>{teams[team.teamName][schlüssel]}</td>
                                                 ))}
