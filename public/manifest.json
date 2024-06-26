@@ -1,19 +1,19 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "F1 Liga Bot",
+  "name": "F1 Liga Bot",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "race-car.png",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },
     {
-      "src": "logo192.png",
+      "src": "race-car.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "logo512.png",
+      "src": "race-car.png",
       "type": "image/png",
       "sizes": "512x512"
     }

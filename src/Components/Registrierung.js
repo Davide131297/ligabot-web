@@ -6,7 +6,6 @@ import { auth } from '../utils/firebase';
 import { db } from '../utils/firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import { Timestamp } from 'firebase/firestore';
-import { useEffect } from 'react';
 
 const Registrierung = ({ modalOpen, setModalOpen}) => {
     const [email, setEmail] = useState("");
@@ -14,10 +13,6 @@ const Registrierung = ({ modalOpen, setModalOpen}) => {
     const [displayName, setDisplayName] = useState("");
     const [leagueName, setLeagueName] = useState("");
     const [serverId, setServerID] = useState("");
-
-    useEffect(() => {
-        console.log("Registrierung.js: modalOpen: ", modalOpen);
-    }, [modalOpen]);
 
     const handleSubmit = (event) => {
         event.preventDefault(); // Verhindert das automatische Neuladen der Seite
@@ -111,7 +106,7 @@ const Registrierung = ({ modalOpen, setModalOpen}) => {
                         <input
                         type="email"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => setEmail(e.target.value.toLowerCase())}
                         required
                         style={{ width: '100%', padding: '10px', fontSize: '16px' }}
                         />
