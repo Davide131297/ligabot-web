@@ -27,6 +27,7 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
 
     const handleNavigation = (path) => {
         toggleMobile();
+        toggleDesktop();
         navigate(path);
     };
 

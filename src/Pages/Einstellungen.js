@@ -1,17 +1,19 @@
 import { db } from './../utils/firebase';
-import { collection, onSnapshot, doc, setDoc, updateDoc, getDoc, deleteField } from 'firebase/firestore';
+import { collection, onSnapshot, doc, setDoc, updateDoc, getDoc, deleteField, where, getDocs, query } from 'firebase/firestore';
 import { useEffect, useState, useCallback } from 'react';
 import { Button, Table, Modal, ScrollArea, Box, Select, Divider, Loader, TextInput } from '@mantine/core';
 import BootstrapTable from 'react-bootstrap/Table';
 import { useDisclosure } from '@mantine/hooks';
 import { FaTrashAlt } from "react-icons/fa";
 import { FaUserEdit } from "react-icons/fa";
+import { MdEdit } from "react-icons/md";
 import { HiUserGroup } from "react-icons/hi";
 import { notifications } from '@mantine/notifications';
 
 const Einstellungen = () => {  
 
     const [DiscordServer, setDiscordServer] = useState([]);
+    const [eigenerDiscordServer, setEigenerDiscordServer] = useState([]);
     const [Liga, setLiga] = useState([]);
     const [user, setUser] = useState(null);
     const [Daten, setDaten] = useState(null);
@@ -132,6 +134,8 @@ const Einstellungen = () => {
         if (pairringLiga.length > 0) {
             setLigaName(pairringLiga[0].ligaName);
             const pairringDiscrodServer = DiscordServer.find(server => server.ligaKey === pairringLiga[0].key);
+            console.log("PairringDiscordServer: ", pairringDiscrodServer);
+            setEigenerDiscordServer(pairringDiscrodServer);
             setDaten({ pairringLiga: pairringLiga[0], pairringDiscrodServer });
         }
     }, [DiscordServer, Liga, user, setDaten]);
@@ -193,14 +197,12 @@ const Einstellungen = () => {
 
    useEffect(() => {
         if (ligaErstellt) {
-            console.log("Liga wurde erstellt");
             const fahrerDatenRef = collection(db, `${ligaName}`);
             const discordUnsubscribe = onSnapshot(fahrerDatenRef, (snapshot) => {
                 let fahrerDatenList = [];
                 snapshot.forEach((doc) => {
                     fahrerDatenList.push(doc.data());
                 });
-                console.log("FahrerdatenList: ", fahrerDatenList[0]);
                 setFahrerlistenObjekt(fahrerDatenList[0]);
                 const fahrerlistenObjekt = fahrerDatenList[0];
                 // Umwandlung des Objekts in ein Array von Objekten
@@ -210,7 +212,6 @@ const Einstellungen = () => {
                         ...daten
                     };
                 });
-                console.log("Fahrerdaten: ", fahrerlistenArray);
                 const fahrerliste = fahrerlistenArray.map((fahrer) => fahrer.fahrername);
                 setFahrerliste(fahrerliste);
                 // Schritt 1: Hinzufügen von gesamtWertung zu jedem Objekt
@@ -227,7 +228,6 @@ const Einstellungen = () => {
                 fahrerlistenArray.sort((a, b) => b.gesamtWertung - a.gesamtWertung);
 
                 // Optional: Ausgabe des sortierten Arrays zur Überprüfung
-                console.log("FahrerlistenArray: ", fahrerlistenArray);
                 setLigaDaten(fahrerlistenArray);
                 setIsLoading("3");
             });
@@ -240,13 +240,11 @@ const Einstellungen = () => {
             getDoc(docRef)
             .then((docSnap) => {
                 if (docSnap.exists()) {
-                    console.log("Teams", docSnap.data());
                     // Verarbeitung der Teams, ohne das Ergebnis zu verwenden, da setTeams(docSnap.data()) bleibt
                     const teams = Object.keys(docSnap.data()).map(teamName => ({
                         teamName,
                         ...docSnap.data()[teamName]
                     }));
-                    console.log("Teams vor der Verarbeitung: ", teams); // Nur zu Demonstrationszwecken
                     teams.forEach(team => {
                         // Extrahiere alle Werte außer 'teamName'
                         const rennenWerte = Object.keys(team).reduce((acc, key) => {
@@ -270,7 +268,6 @@ const Einstellungen = () => {
                         }, 0);
                         team.gesamtWertung = gesamtWertung;
                     });
-                    console.log("Verarbeitete Teams: ", teams); // Nur zu Demonstrationszwecken
                     setTeamsArray(teams);
                     setTeams(docSnap.data());
                 } else {
@@ -282,11 +279,6 @@ const Einstellungen = () => {
             });
         }
     }, [ligaErstellt, ligaName, reloadData]);
-
-    useEffect(() => {
-        console.log("LigaErstellt: ", ligaErstellt, "LigaDaten: ", ligaDaten, "loading: ", isLoading);
-    }, [ligaErstellt, ligaDaten, isLoading]);
-
 
     function createLigaCollection() {
         if (ligaName) {
@@ -305,7 +297,6 @@ const Einstellungen = () => {
 
     const handleCreateDriver = (e) => {
         e.preventDefault();
-        console.log("Fahrername: ", fahrername);
         if (ligaName) {
             const docRef = doc(db, ligaName, 'Fahrer');
             updateDoc(docRef, {
@@ -420,9 +411,6 @@ const Einstellungen = () => {
             return acc;
         }, {});
 
-        console.log("Ergebnisse: ", ergebnisseAlsInteger);
-        console.log("Gefahrene Strecke: ", gefahreneStrecke);
-
         Object.keys(fahrerlistenObjekt).forEach(fahrername => {
             let fahrer = fahrerlistenObjekt[fahrername];
             if (ergebnisseAlsInteger.hasOwnProperty(fahrername)) {
@@ -465,8 +453,6 @@ const Einstellungen = () => {
             delete fahrerlistenObjekt[fahrername].gesamtWertung;
         });
 
-        console.log("Aktualisiertes FahrerlistenObjekt: ", fahrerlistenObjekt);
-
         const docRef = doc(db, ligaName, 'Fahrer');
         try {
             await updateDoc(docRef, fahrerlistenObjekt);
@@ -503,8 +489,6 @@ const Einstellungen = () => {
                 // Diese Zeile ist eigentlich redundant, da die Logik oben bereits abdeckt, dass null-Werte beibehalten werden
             });
         });
-
-        console.log("Aktualisierte Teamergebnisse: ", teamErgebnisse);
 
         // Aktualisieren des Teams-Dokuments
         const teamsDocRef = doc(db, ligaName, 'Teams');
@@ -565,8 +549,6 @@ const Einstellungen = () => {
             };
         });
 
-        console.log("Reset-Objekt: ", resetObjektFahrer);
-
         const docRef = doc(db, ligaName, 'Fahrer');
         try {
             await updateDoc(docRef, resetObjektFahrer);
@@ -588,7 +570,6 @@ const Einstellungen = () => {
             });
         });
 
-        console.log("Reset-Objekt Teams: ", resetObjektTeams);
         try {
             const teamsDocRef = doc(db, ligaName, 'Teams');
             await updateDoc(teamsDocRef, resetObjektTeams);
@@ -650,6 +631,47 @@ const Einstellungen = () => {
         }
     }
 
+    async function handleEditData() {
+        console.log("Bearbeiten der Daten");
+        const ligaCollection = collection(db, 'discordServers'); // Ersetzen Sie 'IhreCollectionName' mit dem Namen Ihrer Collection
+        const q = query(ligaCollection, where('ligaKey', '==', eigenerDiscordServer.ligaKey));
+        let data = []
+        let documentID = null;
+    
+        try {
+            const querySnapshot = await getDocs(q);
+            querySnapshot.forEach((doc) => {
+                data = doc.data();
+                documentID = doc.id;
+            });
+            if (data) {
+                console.log("Daten gefunden:", data);
+                console.log("Dokument ID:", documentID);
+                const neuerServerID = prompt("Bitte geben Sie die neue Server ID ein", data.serverId);
+
+                let updateData = {
+                    ligaKey: data.ligaKey,
+                    registrierungsDatum: data.registrierungsDatum,
+                    serverId: neuerServerID
+                };
+
+                const docRef = doc(db, 'discordServers', documentID);
+                await updateDoc(docRef, updateData);
+                console.log("Daten erfolgreich aktualisiert");
+                notifications.show({
+                    title: 'Daten aktualisiert',
+                    message: 'Daten wurden erfolgreich aktualisiert ✅',
+                    color: 'green',
+                });
+                setIsLoading("3");
+            } else {
+                console.log("Keine Daten gefunden");
+            }
+        } catch (error) {
+            console.error("Fehler beim Abrufen des Dokuments:", error);
+        }
+    }
+
     return (
         <>
             <div>
@@ -659,6 +681,7 @@ const Einstellungen = () => {
                             <Table.Th>Nutzername</Table.Th>
                             <Table.Th>Liga</Table.Th>
                             <Table.Th>Discord Server ID</Table.Th>
+                            <Table.Th>{/* Buttons */}</Table.Th>
                         </Table.Tr>
                         </Table.Thead>
                         <Table.Tbody>
@@ -666,6 +689,9 @@ const Einstellungen = () => {
                                 <Table.Td>{Daten?.pairringLiga?.adminUser}</Table.Td>
                                 <Table.Td>{Daten?.pairringLiga?.ligaName}</Table.Td>
                                 <Table.Td>{Daten?.pairringDiscrodServer?.serverId}</Table.Td>
+                                <Table.Td style={{cursor: 'pointer'}}>
+                                    <MdEdit color='black' size={20} onClick={() => handleEditData()}/>
+                                </Table.Td>
                             </Table.Tr>
                     </Table.Tbody>
                 </Table>
