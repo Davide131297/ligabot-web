@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Home from './Pages/Home';
 import Einstellungen from './Pages/Einstellungen';
 
-import { AppShell  } from '@mantine/core';
+import { AppShell } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Navigation } from './Navigation'; // Stellen Sie sicher, dass der Pfad korrekt ist
 
