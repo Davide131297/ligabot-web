@@ -276,7 +276,7 @@ const Einstellungen = () => {
 
                     // Sortiere die Teams absteigend nach gesamtWertung
                     teams.sort((a, b) => b.gesamtWertung - a.gesamtWertung);
-                    
+
                     setTeamsArray(teams);
                     setTeams(docSnap.data());
                 } else {
@@ -516,6 +516,7 @@ const Einstellungen = () => {
             await updateDoc(teamsDocRef, teamErgebnisse, { merge: true });
             setErgebnis({});
             setOpenEintragen(false);
+            setReloadData(!reloadData);
             console.log("Teams erfolgreich aktualisiert");
             notifications.show({
                 title: 'Ergebnisse eingetragen',
