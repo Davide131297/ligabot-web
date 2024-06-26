@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaHome } from "react-icons/fa";
 import { IoMdSettings } from "react-icons/io";
-import {Text } from '@mantine/core';
-import { AppShell, Group, Burger, Button } from '@mantine/core';
+import { AppShell, Group, Burger, Button, Text } from '@mantine/core';
 import Login from './Components/login';
 import Registrierung from './Components/Registrierung';
 import Logo from './Components/Logo/race-car.png';
@@ -12,11 +11,14 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
     const navigate = useNavigate();
     const [geöffnet, setGeöffnet] = useState(false); //Modal für Login
     const [modalOpen, setModalOpen] = useState(false); //Modal für Registrierung
-    const [angemeldet, setAngemeldet] = useState(null);
+    const [angemeldet, setAngemeldet] = useState(null); //Angemeldet oder nicht
+    const [nutzername, setNutzername] = useState(null); //Nutzername
 
     useEffect(() => {
         const user = localStorage.getItem('user');
         if (user) {
+            const userObj = JSON.parse(user);
+            setNutzername(userObj.displayName);
             setAngemeldet(true);
         } else {
             setAngemeldet(false);
@@ -51,9 +53,12 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
                         </Button>
                     </>
                     ) : (
-                    <Button variant='white' color='rgba(0, 0, 0, 1)' onClick={() => handleLogout()}>
-                        Logout
-                    </Button>
+                    <>
+                        <Button variant='white' color='rgba(0, 0, 0, 1)' onClick={() => handleLogout()}>
+                            Logout
+                        </Button>
+                        <Text size="md">Angemeldet als {nutzername}</Text>
+                    </>
                 )}
             </Group>
         </AppShell.Header>
@@ -76,7 +81,7 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
             </AppShell.Section>
         </AppShell.Navbar>
 
-        <Login geöffnet={geöffnet} setGeöffnet={setGeöffnet} setAngemeldet={setAngemeldet}/>
+        <Login geöffnet={geöffnet} setGeöffnet={setGeöffnet} setAngemeldet={setAngemeldet} setNutzername={setNutzername}/>
         <Registrierung modalOpen={modalOpen} setModalOpen={setModalOpen} />
         </>
     );

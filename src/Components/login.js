@@ -5,7 +5,7 @@ import { auth } from './../utils/firebase';
 import { notifications } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
 
-function Login({geöffnet, setGeöffnet, setAngemeldet}) {
+function Login({geöffnet, setGeöffnet, setAngemeldet, setNutzername}) {
   const [email, setEmail] = useState('');
   const [passwort, setPasswort] = useState('');
   const navigate = useNavigate();
@@ -22,6 +22,7 @@ function Login({geöffnet, setGeöffnet, setAngemeldet}) {
             color: 'green',
             autoClose: 2000,
         });
+        setNutzername(userCredential.user.displayName);
         setGeöffnet(false);
         setAngemeldet(true);
         navigate('/Einstellungen');
