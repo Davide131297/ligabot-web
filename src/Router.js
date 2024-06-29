@@ -2,11 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Home from './Pages/Home';
 import Einstellungen from './Pages/Einstellungen';
-import LigaSeite from './Pages/LigaSeite';
+
+import LigaSeite from './Pages/LigaSeiten/LigaSeite'
+import LigaSeiteHome from './Pages/LigaSeiten/LigaSeiteHome';
+import LigaSeiteFahrertabelle from './Pages/LigaSeiten/LigaSeiteFahrertabelle';
+import LigaSeiteKonstrukteurtabelle from './Pages/LigaSeiten/LigaSeiteKonstrukteurtabelle';
 
 import { AppShell } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { Navigation } from './Navigation'; // Stellen Sie sicher, dass der Pfad korrekt ist
+import { Navigation } from './Navigation';
+
 
 export function Router() {
     const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
@@ -35,7 +40,11 @@ export function Router() {
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/Einstellungen" element={<Einstellungen ligaName={ligaName} setLigaName={setLigaName}/>} />
+
                         <Route path="/:id" element={<LigaSeite ligaName={ligaName}/>} />
+                        <Route path="/:id/home" element={<LigaSeiteHome />} />
+                        <Route path="/:id/fahrertabelle" element={<LigaSeiteFahrertabelle />} />
+                        <Route path="/:id/konstrukteurstabelle" element={<LigaSeiteKonstrukteurtabelle />} />
                     </Routes>
                 </AppShell.Main>
             </AppShell>

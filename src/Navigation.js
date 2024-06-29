@@ -9,7 +9,7 @@ import Registrierung from './Components/Registrierung';
 import Logo from './Components/Logo/race-car.png';
 import { doc, getDoc } from 'firebase/firestore';
 import { useLocation } from 'react-router-dom';
-
+import SeitenNavbar from './Components/SeitenNavbar';
 
 export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOpened, ligaName}) {
     const navigate = useNavigate();
@@ -114,6 +114,7 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
                 )}
             </Group>
         </AppShell.Header>
+        {location.pathname === "/" || location.pathname === "/Einstellungen" ? (
         <AppShell.Navbar p="md">
             <AppShell.Section>
                 <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px', cursor: 'pointer' }} onClick={() => handleNavigation("/")}> {/* Flex Container */}
@@ -134,6 +135,8 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
                 </AppShell.Section>
             )}
         </AppShell.Navbar>
+        ) : ( <SeitenNavbar /> 
+        )}
 
         <Login geöffnet={geöffnet} setGeöffnet={setGeöffnet} setAngemeldet={setAngemeldet} setNutzername={setNutzername}/>
         <Registrierung modalOpen={modalOpen} setModalOpen={setModalOpen} />
