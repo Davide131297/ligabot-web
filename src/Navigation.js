@@ -135,7 +135,7 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
                 </AppShell.Section>
             )}
         </AppShell.Navbar>
-        ) : ( <SeitenNavbar /> 
+        ) : ( <SeitenNavbar toggleMobile={toggleMobile} toggleDesktop={toggleDesktop}/> 
         )}
 
         <Login geöffnet={geöffnet} setGeöffnet={setGeöffnet} setAngemeldet={setAngemeldet} setNutzername={setNutzername}/>

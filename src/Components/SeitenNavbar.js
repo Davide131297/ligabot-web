@@ -5,7 +5,7 @@ import { RiGroup3Fill } from "react-icons/ri";
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 
-const SeitenNavbar = () => {
+const SeitenNavbar = ({toggleMobile, toggleDesktop}) => {
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -15,6 +15,8 @@ const SeitenNavbar = () => {
     const handleNavigation = (path) => {
         console.log("Navigiere zu: ", path);
         navigate(path);
+        toggleMobile();
+        toggleDesktop();
     }
 
     return (
