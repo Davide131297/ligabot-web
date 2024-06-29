@@ -52,6 +52,10 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
         navigate(path);
     };
 
+    const handleNavigationFromLogo = (path) => {
+        navigate(path);
+    };
+
     const handleLogout = () => {
         localStorage.removeItem('user');
         setAngemeldet(false);
@@ -82,7 +86,7 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
                 {location.pathname === "/" || location.pathname === "/Einstellungen" ? (
                     <img src={Logo} height={40} width={40} alt='Logo Bot' style={{cursor: 'pointer'}} onClick={() => handleNavigation("/")}/>
                 ) : logo ? (
-                    <img src={logo} height={40} width={40} alt='Logo Bot' style={{cursor: 'pointer'}} onClick={() => handleNavigation("/")}/>
+                    <img src={logo} height={40} width={40} alt='Logo Bot' style={{cursor: 'pointer'}} onClick={() => handleNavigationFromLogo(`/${newLocation}`)}/>
                 ) : (
                     <Loader color='blue'/>
                 )}
