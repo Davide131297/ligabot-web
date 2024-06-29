@@ -22,9 +22,7 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
     const [newLocation, setNewLocation] = useState(null);
 
     useEffect(() => {
-        console.log("Lokalisierung auf: ", location.pathname);
         if (location.pathname !== "/" && location.pathname !== "/Einstellungen") {
-            console.log("Lokalisierung auf: ", location.pathname);
             const path = location.pathname.split("/");
             setNewLocation(path[1]);
             searchLigaLogo(path[1]);
@@ -62,13 +60,11 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
 
     function searchLigaLogo(LigaPfad) {
         const collectionPfad = ligaName || LigaPfad;
-        console.log("Aktueller Pfad: ", collectionPfad);
         if (!collectionPfad) return;
         const logoDocRef = doc(db, collectionPfad, "Logo");
         getDoc(logoDocRef).then((docSnap) => {
             if (docSnap.exists()) {
                 setLogo(docSnap.data().url);
-                console.log("Document data:", docSnap.data());
             } else {
                 console.log("No such document!");
             }
