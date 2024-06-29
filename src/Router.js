@@ -32,7 +32,7 @@ export function Router() {
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/Einstellungen" element={<Einstellungen />} />
-                        <Route path="/LigaSeite/:id" element={<LigaSeite />} />
+                        <Route path="/:id" element={<LigaSeite />} />
                     </Routes>
                 </AppShell.Main>
             </AppShell>

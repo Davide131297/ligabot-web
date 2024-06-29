@@ -698,7 +698,7 @@ const Einstellungen = () => {
 
     function handleLigaPageClick() {
         console.log("Liga-Seite öffnen");
-        navigate(`/LigaSeite/${ligaName}`);
+        navigate(`/${ligaName}`);
     }
 
     function inviteBot() {
