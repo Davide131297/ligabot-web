@@ -1,11 +1,14 @@
 import React, { useEffect } from 'react';
 import { Title, Center } from '@mantine/core';
 import { useLocation } from 'react-router-dom';
+import { useMediaQuery } from '@mantine/hooks';
 
 const LigaSeite = () => {
     const location = useLocation();
     const path = location.pathname.split("/");
     const ligaName = path[1];
+    const matches = useMediaQuery('(max-width: 768px)');
+
 
     useEffect(() => {
         const path = location.pathname.split("/");
@@ -16,7 +19,7 @@ const LigaSeite = () => {
     return (
         <>
             <Center>
-                <Title order={1}>Willkommen bei der Liga {ligaName}</Title>
+                <Title order={matches ? 4 : 1}>Willkommen bei der Liga {ligaName}</Title>
             </Center>
         </>
     );
