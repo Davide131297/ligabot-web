@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaHome } from "react-icons/fa";
 import { IoMdSettings } from "react-icons/io";
-import { AppShell, Group, Burger, Button, Text, Avatar } from '@mantine/core';
+import { AppShell, Group, Burger, Button, Text, Avatar, Loader } from '@mantine/core';
 import { db } from './utils/firebase';
 import Login from './Components/login';
 import Registrierung from './Components/Registrierung';
 import Logo from './Components/Logo/race-car.png';
 import { doc, getDoc } from 'firebase/firestore';
+import { useLocation } from 'react-router-dom';
 
 
 export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOpened, ligaName}) {
@@ -17,6 +18,16 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
     const [angemeldet, setAngemeldet] = useState(false); //Angemeldet oder nicht
     const [nutzername, setNutzername] = useState(null); //Nutzername
     const [logo, setLogo] = useState(null); //Logo speicherung
+    const location = useLocation();
+
+    useEffect(() => {
+        console.log("Lokalisierung auf: ", location.pathname);
+        if (location.pathname !== "/" && location.pathname !== "/Einstellungen") {
+            console.log("Lokalisierung auf: ", location.pathname);
+            const path = location.pathname.split("/");
+            searchLigaLogo(path[1]);
+        }
+    }, [location]);
 
     useEffect(() => {
         const user = localStorage.getItem('user');
@@ -47,16 +58,19 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
         navigate('/');
     }
 
-    function searchLigaLogo() {
-        const logoDocRef = doc(db, ligaName, "Logo");
+    function searchLigaLogo(LigaPfad) {
+        const collectionPfad = ligaName || LigaPfad;
+        console.log("Aktueller Pfad: ", collectionPfad);
+        if (!collectionPfad) return;
+        const logoDocRef = doc(db, collectionPfad, "Logo");
         getDoc(logoDocRef).then((docSnap) => {
             if (docSnap.exists()) {
                 setLogo(docSnap.data().url);
+                console.log("Document data:", docSnap.data());
             } else {
                 console.log("No such document!");
             }
-        }
-        ).catch((error) => {
+        }).catch((error) => {
             console.log("Error getting document:", error);
         });
     }
@@ -67,7 +81,13 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
             <Group h="100%" px="md">
                 <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" />
                 <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="md" />
-                <img src={Logo} height={40} width={40} alt='Logo Bot' style={{cursor: 'pointer'}} onClick={() => handleNavigation("/")}/>
+                {location.pathname === "/" || location.pathname === "/Einstellungen" ? (
+                    <img src={Logo} height={40} width={40} alt='Logo Bot' style={{cursor: 'pointer'}} onClick={() => handleNavigation("/")}/>
+                ) : logo ? (
+                    <img src={logo} height={40} width={40} alt='Logo Bot' style={{cursor: 'pointer'}} onClick={() => handleNavigation("/")}/>
+                ) : (
+                    <Loader color='blue'/>
+                )}
                 {!angemeldet ? (
                     <>
                         <Button variant="white" color="rgba(0, 0, 0, 1)" onClick={() => setModalOpen(true)}>
