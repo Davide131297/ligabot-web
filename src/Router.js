@@ -4,7 +4,6 @@ import Home from './Pages/Home';
 import Einstellungen from './Pages/Einstellungen';
 
 import LigaSeite from './Pages/LigaSeiten/LigaSeite'
-import LigaSeiteHome from './Pages/LigaSeiten/LigaSeiteHome';
 import LigaSeiteFahrertabelle from './Pages/LigaSeiten/LigaSeiteFahrertabelle';
 import LigaSeiteKonstrukteurtabelle from './Pages/LigaSeiten/LigaSeiteKonstrukteurtabelle';
 
@@ -42,7 +41,6 @@ export function Router() {
                         <Route path="/Einstellungen" element={<Einstellungen ligaName={ligaName} setLigaName={setLigaName}/>} />
 
                         <Route path="/:id" element={<LigaSeite ligaName={ligaName}/>} />
-                        <Route path="/:id/home" element={<LigaSeiteHome />} />
                         <Route path="/:id/fahrertabelle" element={<LigaSeiteFahrertabelle />} />
                         <Route path="/:id/konstrukteurstabelle" element={<LigaSeiteKonstrukteurtabelle />} />
                     </Routes>

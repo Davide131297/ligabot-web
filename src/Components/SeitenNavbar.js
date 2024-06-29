@@ -20,7 +20,7 @@ const SeitenNavbar = () => {
     return (
         <AppShell.Navbar p="md">
             <AppShell.Section>
-                <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px', cursor: 'pointer' }} onClick={() => handleNavigation(`/${ligaName}/home`)}>
+                <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px', cursor: 'pointer' }} onClick={() => handleNavigation(`/${ligaName}`)}>
                     <FaHome size={26} />
                     <Text size="xl" weight={700} ml="sm">
                         Startseite
