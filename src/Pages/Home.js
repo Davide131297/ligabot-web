@@ -1,19 +1,22 @@
 import { Stepper, Text, Image, Title, SimpleGrid, Center, Space } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 
 import BefehlAntworten from '../Components/HomeBilder/BefehlAntworten.png';
 import BotBefehle from '../Components/HomeBilder/BotBefehle.png';
 
 const Home = () => {
 
+    const isMobile = useMediaQuery('(max-width: 768px)');
+
     return (
         <>
             <Center>
-                <Title order={1}>Willkommen beim F1 Ligabot</Title>
+                <Title order={isMobile ? 2 : 1}>Willkommen beim F1 Ligabot</Title>
             </Center>
 
             <Space h="xl" />
 
-            <SimpleGrid cols={3}>
+            <SimpleGrid cols={isMobile ? 1 : 3}>
                 <div>
                     <Title order={2}>Das sind die Schritte zum F1 Ligabot</Title>
                     <Space h="sm" />
