@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Home from './Pages/Home';
 import Einstellungen from './Pages/Einstellungen';
@@ -10,6 +11,7 @@ import { Navigation } from './Navigation'; // Stellen Sie sicher, dass der Pfad 
 export function Router() {
     const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
     const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(false);
+    const [ligaName, setLigaName] = useState(null);
 
     return (
         <BrowserRouter>
@@ -27,11 +29,12 @@ export function Router() {
                     toggleDesktop={toggleDesktop}
                     mobileOpened={mobileOpened}
                     desktopOpened={desktopOpened}
+                    ligaName={ligaName}
                 />
                 <AppShell.Main>
                     <Routes>
                         <Route path="/" element={<Home />} />
-                        <Route path="/Einstellungen" element={<Einstellungen />} />
+                        <Route path="/Einstellungen" element={<Einstellungen ligaName={ligaName} setLigaName={setLigaName}/>} />
                         <Route path="/:id" element={<LigaSeite />} />
                     </Routes>
                 </AppShell.Main>

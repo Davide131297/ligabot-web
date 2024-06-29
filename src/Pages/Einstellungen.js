@@ -15,16 +15,14 @@ import { notifications } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
 import { CgProfile } from "react-icons/cg";
 import './Einstellungen.css';
-import { create } from '@mui/material/styles/createTransitions';
 
-const Einstellungen = () => {  
+const Einstellungen = ({ ligaName, setLigaName}) => {  
 
     const [DiscordServer, setDiscordServer] = useState([]);
     const [eigenerDiscordServer, setEigenerDiscordServer] = useState([]);
     const [Liga, setLiga] = useState([]);
     const [user, setUser] = useState(null);
     const [Daten, setDaten] = useState(null);
-    const [ligaName, setLigaName] = useState(null);
     const [ligaErstellt, setLigaErstellt] = useState(false);
     const [fahrername, setFahrername] = useState("");
     const [teamname, setTeamname] = useState("");

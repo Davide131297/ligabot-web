@@ -3,16 +3,20 @@ import { useNavigate } from 'react-router-dom';
 import { FaHome } from "react-icons/fa";
 import { IoMdSettings } from "react-icons/io";
 import { AppShell, Group, Burger, Button, Text, Avatar } from '@mantine/core';
+import { db } from './utils/firebase';
 import Login from './Components/login';
 import Registrierung from './Components/Registrierung';
 import Logo from './Components/Logo/race-car.png';
+import { doc, getDoc } from 'firebase/firestore';
 
-export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOpened}) {
+
+export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOpened, ligaName}) {
     const navigate = useNavigate();
     const [geöffnet, setGeöffnet] = useState(false); //Modal für Login
     const [modalOpen, setModalOpen] = useState(false); //Modal für Registrierung
     const [angemeldet, setAngemeldet] = useState(false); //Angemeldet oder nicht
     const [nutzername, setNutzername] = useState(null); //Nutzername
+    const [logo, setLogo] = useState(null); //Logo speicherung
 
     useEffect(() => {
         const user = localStorage.getItem('user');
@@ -25,6 +29,12 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
         }
     }, []);
 
+    useEffect(() => {
+        if (ligaName) {
+            searchLigaLogo()
+        }
+    }, [ligaName]);
+
     const handleNavigation = (path) => {
         toggleMobile();
         toggleDesktop();
@@ -35,6 +45,20 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
         localStorage.removeItem('user');
         setAngemeldet(false);
         navigate('/');
+    }
+
+    function searchLigaLogo() {
+        const logoDocRef = doc(db, ligaName, "Logo");
+        getDoc(logoDocRef).then((docSnap) => {
+            if (docSnap.exists()) {
+                setLogo(docSnap.data().url);
+            } else {
+                console.log("No such document!");
+            }
+        }
+        ).catch((error) => {
+            console.log("Error getting document:", error);
+        });
     }
 
     return (
@@ -59,7 +83,7 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
                             <Button variant='white' color='rgba(0, 0, 0, 1)' onClick={() => handleLogout()}>
                                 Logout
                             </Button>
-                            <Avatar alt="it's me" />
+                            <Avatar alt="it's me" src={logo} />
                             <Text size="xs">Angemeldet als {nutzername}</Text>
                         </div>
                     </>
