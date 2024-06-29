@@ -1,7 +1,8 @@
-import { db } from './../utils/firebase';
+import { db, storage } from './../utils/firebase';
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { collection, onSnapshot, doc, setDoc, updateDoc, getDoc, deleteField, where, getDocs, query } from 'firebase/firestore';
 import { useEffect, useState, useCallback } from 'react';
-import { Button, Table, Modal, ScrollArea, Box, Select, Divider, Loader, TextInput, Menu, ActionIcon } from '@mantine/core';
+import { Button, Table, Modal, ScrollArea, Box, Select, Divider, Loader, TextInput, Menu, ActionIcon, FileButton } from '@mantine/core';
 import BootstrapTable from 'react-bootstrap/Table';
 import { useDisclosure } from '@mantine/hooks';
 import { FaTrashAlt } from "react-icons/fa";
@@ -12,7 +13,9 @@ import { FaArrowUpRightFromSquare } from "react-icons/fa6";
 import { HiUserGroup } from "react-icons/hi";
 import { notifications } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
+import { CgProfile } from "react-icons/cg";
 import './Einstellungen.css';
+import { create } from '@mui/material/styles/createTransitions';
 
 const Einstellungen = () => {  
 
@@ -38,6 +41,8 @@ const Einstellungen = () => {
     const [openEintragen, setOpenEintragen] = useState(false); // Modal Eintragen der Ergebnisse
     const [ergebnisse, setErgebnis] = useState({}); // Ergebnisse für die Strecken
     const [gefahreneStrecke, setGefahreneStrecke] = useState(null); // Strecke, für die die Ergebnisse eingetragen werden
+    const [file, setFile] = useState(null);
+
 
     const Strecken = [
         "Bahrain",
@@ -143,6 +148,13 @@ const Einstellungen = () => {
             setDaten({ pairringLiga: pairringLiga[0], pairringDiscrodServer });
         }
     }, [DiscordServer, Liga, user, setDaten]);
+
+    useEffect(() => {
+        if (file)  {
+            console.log("File: ", file);
+            handleLogoUpload();
+        }
+    }, [file]);
 
     useEffect(() => {
         console.log("Loading: ", isLoading);
@@ -743,6 +755,37 @@ const Einstellungen = () => {
         }
     }
 
+    async function handleLogoUpload() {
+        if (!file) {
+            console.error("Keine Datei zum Hochladen bereitgestellt.");
+            return;
+        }
+
+        console.log("Bild wird hochgeladen...");
+        const storage = getStorage();
+        const imageRef = ref(storage, `images/${ligaName}`);
+
+        try {
+            const snapshot = await uploadBytes(imageRef, file);
+            const downloadURL = await getDownloadURL(snapshot.ref);
+            
+            // URL in Firestore speichern
+            await setDoc(doc(db, ligaName, 'Logo'), {
+                url: downloadURL,
+                name: file.name,
+            });
+            
+            console.log('Bild erfolgreich hochgeladen und URL in Firestore gespeichert.');
+            notifications.show({
+                title: 'Logo hochgeladen',
+                message: 'Bild wurde erfolgreich hochgeladen ✅',
+                color: 'green',
+            });
+        } catch (error) {
+            console.error('Fehler beim Hochladen des Bildes:', error);
+        }
+    }
+
     return (
         <>
             <div>
@@ -806,6 +849,7 @@ const Einstellungen = () => {
                     Zur Liga-Seite
                 </Button>
                 {window.innerWidth >= 768 && (
+                    <>
                 <Button
                     variant="filled" radius="xl" color="grape"
                     rightSection={<FaArrowUpRightFromSquare size={14} />}
@@ -813,6 +857,18 @@ const Einstellungen = () => {
                 >
                     Bot einladen
                 </Button>
+                <FileButton onChange={setFile} accept="image/png,image/jpeg">
+                {(props) => 
+                    <Button
+                        {...props}
+                        variant="filled" radius="xl" color="lime"
+                        rightSection={<CgProfile size={14} />}
+                    >
+                        Liga Logo ändern
+                    </Button>
+                }
+                </FileButton>
+                </>
                 )}
                 </div>
             </div>

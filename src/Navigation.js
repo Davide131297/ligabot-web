@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaHome } from "react-icons/fa";
 import { IoMdSettings } from "react-icons/io";
-import { AppShell, Group, Burger, Button, Text } from '@mantine/core';
+import { AppShell, Group, Burger, Button, Text, Avatar } from '@mantine/core';
 import Login from './Components/login';
 import Registrierung from './Components/Registrierung';
 import Logo from './Components/Logo/race-car.png';
@@ -59,7 +59,8 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
                             <Button variant='white' color='rgba(0, 0, 0, 1)' onClick={() => handleLogout()}>
                                 Logout
                             </Button>
-                            <Text size="md">Angemeldet als {nutzername}</Text>
+                            <Avatar alt="it's me" />
+                            <Text size="xs">Angemeldet als {nutzername}</Text>
                         </div>
                     </>
                 )}
