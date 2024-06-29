@@ -1,15 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../utils/firebase';
+import React, { useState } from 'react';
+import { Title, Center } from '@mantine/core';
+import { useLocation } from 'react-router-dom';
 
 
-const LigaSeite = ({ligaName}) => { 
-    const [logo, setLogo] = useState(null);  
+const LigaSeite = () => {
+    const location = useLocation();
+    const path = location.pathname.split("/");
+    const ligaName = path[1];
 
     return (
-        <div>
-            <h1>LigaSeite</h1>
-        </div>
+        <>
+            <Center>
+                <Title order={1}>Willkommen bei der Liga {ligaName}</Title>
+            </Center>
+        </>
     );
 }
 export default LigaSeite;

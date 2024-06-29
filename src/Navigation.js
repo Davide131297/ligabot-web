@@ -19,12 +19,14 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
     const [nutzername, setNutzername] = useState(null); //Nutzername
     const [logo, setLogo] = useState(null); //Logo speicherung
     const location = useLocation();
+    const [newLocation, setNewLocation] = useState(null);
 
     useEffect(() => {
         console.log("Lokalisierung auf: ", location.pathname);
         if (location.pathname !== "/" && location.pathname !== "/Einstellungen") {
             console.log("Lokalisierung auf: ", location.pathname);
             const path = location.pathname.split("/");
+            setNewLocation(path[1]);
             searchLigaLogo(path[1]);
         }
     }, [location]);
@@ -88,17 +90,17 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
                 ) : (
                     <Loader color='blue'/>
                 )}
-                {!angemeldet ? (
-                    <>
-                        <Button variant="white" color="rgba(0, 0, 0, 1)" onClick={() => setModalOpen(true)}>
-                            Registrieren
-                        </Button>
-                        <Button variant='white' color='rgba(0, 0, 0, 1)' onClick={() => setGeöffnet(true)}>
-                            Anmelden
-                        </Button>
-                    </>
+                {location.pathname === "/" || location.pathname === "/Einstellungen" ? (
+                    !angemeldet ? (
+                        <>
+                            <Button variant="white" color="rgba(0, 0, 0, 1)" onClick={() => setModalOpen(true)}>
+                                Registrieren
+                            </Button>
+                            <Button variant='white' color='rgba(0, 0, 0, 1)' onClick={() => setGeöffnet(true)}>
+                                Anmelden
+                            </Button>
+                        </>
                     ) : (
-                    <>
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                             <Button variant='white' color='rgba(0, 0, 0, 1)' onClick={() => handleLogout()}>
                                 Logout
@@ -106,7 +108,9 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
                             <Avatar alt="it's me" src={logo} />
                             <Text size="xs">Angemeldet als {nutzername}</Text>
                         </div>
-                    </>
+                    )
+                ) : (
+                    <Text size="md"> {newLocation} </Text>
                 )}
             </Group>
         </AppShell.Header>
