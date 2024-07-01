@@ -42,7 +42,6 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
     const [gefahreneStrecke, setGefahreneStrecke] = useState(null); // Strecke, für die die Ergebnisse eingetragen werden
     const [file, setFile] = useState(null);
 
-
     const Strecken = [
         "Bahrain",
         "SaudiArabien",
@@ -147,6 +146,20 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
             setDaten({ pairringLiga: pairringLiga[0], pairringDiscrodServer });
         }
     }, [DiscordServer, Liga, user, setDaten]);
+
+    useEffect(() => {
+        const user = localStorage.getItem('user');
+        if (user) {
+            console.log("User: ", user);
+        } else {
+            navigate('/');
+            notifications.show({
+                title: 'Fehler',
+                message: 'Sie sind nicht angemeldet, bitte melden Sie sich an',
+                color: 'red',
+            });
+        }
+    }, []);
 
     useEffect(() => {
         if (file)  {
