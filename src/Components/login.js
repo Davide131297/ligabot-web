@@ -42,7 +42,7 @@ function Login({geöffnet, setGeöffnet, setAngemeldet, setNutzername}) {
             await sendPasswordResetEmail(auth, email);
             notifications.show({
                 title: 'Passwort-Reset-Email gesendet! 📧',
-                message: 'Überprüfen Sie Ihre E-Mail, um Ihr Passwort zurückzusetzen.',
+                message: 'Überprüfe deine E-Mail, um Ihr Passwort zurückzusetzen.',
                 color: 'green',
                 autoClose: 2000,
             });

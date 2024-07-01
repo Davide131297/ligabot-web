@@ -156,7 +156,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
             navigate('/');
             notifications.show({
                 title: 'Fehler',
-                message: 'Sie sind nicht angemeldet, bitte melden Sie sich an',
+                message: 'Du bist nicht angemeldet, bitte melde dich an',
                 color: 'red',
             });
         }
@@ -420,7 +420,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                     message: 'Fahrer wurde erfolgreich hinzugefügt ✅',
                     color: 'green',
                 })
-                let weiterenFahrerHinzufügen = window.confirm("Möchten Sie einen weiteren Fahrer hinzufügen?");
+                let weiterenFahrerHinzufügen = window.confirm("Möchtest du einen weiteren Fahrer hinzufügen?");
                 if (!weiterenFahrerHinzufügen) {
                     console.log("Fahrer hinzufügen abgebrochen");
                 } else {
@@ -440,7 +440,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
         if (!gefahreneStrecke) {
             notifications.show({
                 title: 'Fehler',
-                message: 'Bitte wählen Sie eine Strecke aus',
+                message: 'Bitte wähle eine Strecke aus',
                 color: 'red',
             });
             return;
@@ -559,7 +559,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
 
     async function handleReset() {
         // Bestätigungsdialog anzeigen
-        const bestaetigung = window.confirm("Es werden alle Wertungen gelöscht und auf null gesetzt. Dieser Vorgang kann nicht rückgängig gemacht werden. Sind Sie sicher, dass Sie fortfahren möchten?");
+        const bestaetigung = window.confirm("Es werden alle Wertungen gelöscht und auf null gesetzt. Dieser Vorgang kann nicht rückgängig gemacht werden. Bist du sicher, dass du fortfahren möchten?");
         if (!bestaetigung) {
             console.log("Zurücksetzen abgebrochen.");
             return; // Frühe Rückkehr, wenn der Benutzer abbricht
@@ -635,7 +635,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
     }
 
     async function handleDriverDelete(fahrer) {
-        const bestaetigung = window.confirm(`Möchten Sie den Fahrer ${fahrer.fahrername} wirklich löschen?`);
+        const bestaetigung = window.confirm(`Möchtest du den Fahrer ${fahrer.fahrername} wirklich löschen?`);
         if (!bestaetigung) {
             console.log("Löschen abgebrochen");
         } else {
@@ -1069,7 +1069,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                     <TextInput
                         label="Fahrername"
                         withAsterisk
-                        description="Geben Sie den Namen des Fahrers ein"
+                        description="Gib den Namen des Fahrers ein"
                         placeholder="Fahrername"
                         value={fahrername}
                         onChange={(event) => setFahrername(event.currentTarget.value)}
@@ -1078,7 +1078,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                     />
                     <Select
                         label="Team:"
-                        placeholder="--Bitte wählen Sie ein Team--"
+                        placeholder="--Bitte wähle ein Team--"
                         onChange={(value) => setTeamname(value)}
                         data={f1Teams.map(team => ({ value: team.value, label: team.label }))}
                         searchable
