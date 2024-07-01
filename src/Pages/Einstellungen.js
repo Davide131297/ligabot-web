@@ -682,11 +682,11 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
 
     async function handleEditData() {
         console.log("Bearbeiten der Daten");
-        const ligaCollection = collection(db, 'discordServers'); // Ersetzen Sie 'IhreCollectionName' mit dem Namen Ihrer Collection
+        const ligaCollection = collection(db, 'discordServers');
         const q = query(ligaCollection, where('ligaKey', '==', eigenerDiscordServer.ligaKey));
         let data = []
         let documentID = null;
-    
+
         try {
             const querySnapshot = await getDocs(q);
             querySnapshot.forEach((doc) => {
@@ -698,21 +698,26 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                 console.log("Dokument ID:", documentID);
                 const neuerServerID = prompt("Bitte geben Sie die neue Server ID ein", data.serverId);
 
-                let updateData = {
-                    ligaKey: data.ligaKey,
-                    registrierungsDatum: data.registrierungsDatum,
-                    serverId: neuerServerID
-                };
+                // Überprüfen, ob neuerServerID nicht null ist
+                if (neuerServerID !== null && neuerServerID.trim() !== "") {
+                    let updateData = {
+                        ligaKey: data.ligaKey,
+                        registrierungsDatum: data.registrierungsDatum,
+                        serverId: neuerServerID
+                    };
 
-                const docRef = doc(db, 'discordServers', documentID);
-                await updateDoc(docRef, updateData);
-                console.log("Daten erfolgreich aktualisiert");
-                notifications.show({
-                    title: 'Daten aktualisiert',
-                    message: 'Daten wurden erfolgreich aktualisiert ✅',
-                    color: 'green',
-                });
-                setIsLoading("3");
+                    const docRef = doc(db, 'discordServers', documentID);
+                    await updateDoc(docRef, updateData);
+                    console.log("Daten erfolgreich aktualisiert");
+                    notifications.show({
+                        title: 'Server ID aktualisiert',
+                        message: 'Server ID wurden erfolgreich aktualisiert ✅',
+                        color: 'green',
+                    });
+                    setIsLoading("3");
+                } else {
+                    console.log("Aktualisierung abgebrochen");
+                }
             } else {
                 console.log("Keine Daten gefunden");
             }
