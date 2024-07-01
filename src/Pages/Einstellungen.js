@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { CgProfile } from "react-icons/cg";
 import './Einstellungen.css';
 import Statistiken from '../Components/Statistiken';
+import RichText from '../Components/RichText/Richtext';
 
 const Einstellungen = ({ ligaName, setLigaName}) => {  
 
@@ -1254,9 +1255,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                 centered
                 size="xl"
                 >
-                <div>
-                    Test
-                </div>
+                <RichText />
             </Modal>
         </>
     );
