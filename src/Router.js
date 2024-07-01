@@ -6,6 +6,7 @@ import Einstellungen from './Pages/Einstellungen';
 import LigaSeite from './Pages/LigaSeiten/LigaSeite'
 import LigaSeiteFahrertabelle from './Pages/LigaSeiten/LigaSeiteFahrertabelle';
 import LigaSeiteKonstrukteurtabelle from './Pages/LigaSeiten/LigaSeiteKonstrukteurtabelle';
+import LigaSeiteStatistiken from './Pages/LigaSeiten/LigaSeiteStatistiken';
 
 import { AppShell } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
@@ -43,6 +44,7 @@ export function Router() {
                         <Route path="/:id" element={<LigaSeite ligaName={ligaName}/>} />
                         <Route path="/:id/fahrertabelle" element={<LigaSeiteFahrertabelle />} />
                         <Route path="/:id/konstrukteurstabelle" element={<LigaSeiteKonstrukteurtabelle />} />
+                        <Route path="/:id/statistiken" element={<LigaSeiteStatistiken />} />
                     </Routes>
                 </AppShell.Main>
             </AppShell>

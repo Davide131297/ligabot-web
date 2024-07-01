@@ -9,13 +9,6 @@ const LigaSeite = () => {
     const ligaName = path[1];
     const matches = useMediaQuery('(max-width: 768px)');
 
-
-    useEffect(() => {
-        const path = location.pathname.split("/");
-        const ligaName = path[1];
-        console.log("Liga: ", ligaName);
-    }, [location]);
-
     return (
         <>
             <Center>

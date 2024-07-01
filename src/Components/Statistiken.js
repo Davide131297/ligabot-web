@@ -1,7 +1,5 @@
 import { DonutChart } from '@mantine/charts';
 import React, { useState, useEffect } from 'react';
-import { db } from './../utils/firebase';
-import { collection, onSnapshot } from 'firebase/firestore';
 import { Table } from 'react-bootstrap';
 import { SimpleGrid, Center } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
@@ -58,6 +56,8 @@ const Statistiken = ({ ligaName, fahrerlistenObjekt, teamsArray }) => {
     }, [ligaName, fahrerlistenObjekt]);
 
     useEffect(() => {
+        if (!teamsArray) return;
+        console.log('Teams Array:', teamsArray);
         const chartData = teamsArray.map(team => {
             // Berechnen der Summe der Integer-Werte für jedes Team, Nullen ignorieren
             const sum = Object.values(team).reduce((acc, curr) => {

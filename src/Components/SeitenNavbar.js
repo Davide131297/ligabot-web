@@ -45,6 +45,14 @@ const SeitenNavbar = ({toggleMobile, toggleDesktop}) => {
                     </Text>
                 </div>
             </AppShell.Section>
+            <AppShell.Section>
+                <div style={{ display: 'flex', alignItems: 'center', marginTop: '20px', cursor: 'pointer'}} onClick={() => handleNavigation(`/${ligaName}/statistiken`)}>
+                    <RiGroup3Fill size={26} />
+                    <Text size="xl" weight={700} ml="sm">
+                        Statistiken
+                    </Text>
+                </div>
+            </AppShell.Section>
         </AppShell.Navbar>
     )
 }
