@@ -2,7 +2,7 @@ import { db, storage } from './../utils/firebase';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { collection, onSnapshot, doc, setDoc, updateDoc, getDoc, deleteField, where, getDocs, query } from 'firebase/firestore';
 import { useEffect, useState, useCallback } from 'react';
-import { Button, Table, Modal, ScrollArea, Box, Select, Divider, Loader, TextInput, Menu, ActionIcon, FileButton } from '@mantine/core';
+import { Button, Table, Modal, ScrollArea, Box, Select, Divider, Loader, TextInput, Menu, ActionIcon, FileButton, Group, Text } from '@mantine/core';
 import BootstrapTable from 'react-bootstrap/Table';
 import { useDisclosure } from '@mantine/hooks';
 import { FaTrashAlt } from "react-icons/fa";
@@ -34,6 +34,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
     const [teamsArray, setTeamsArray] = useState([]);
     const [isLoading, setIsLoading] = useState("1");
     const [reloadData, setReloadData] = useState(false);
+    const [newLogo, setNewLogo] = useState(false);
     const navigate = useNavigate();
 
     const [opened, { open, close }] = useDisclosure(false); // Modal Hinzufügen neuer Fahrer
@@ -796,9 +797,12 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
             console.log('Bild erfolgreich hochgeladen und URL in Firestore gespeichert.');
             notifications.show({
                 title: 'Logo hochgeladen',
-                message: 'Bild wurde erfolgreich hochgeladen ✅',
+                message: 'Bild wurde erfolgreich hochgeladen ✅. Sobald du die Seite neu lädst, wird das neue Logo angezeigt.',
                 color: 'green',
             });
+            if (window.innerWidth < 768) {
+                setNewLogo(!newLogo);
+            }
         } catch (error) {
             console.error('Fehler beim Hochladen des Bildes:', error);
         }
@@ -825,6 +829,9 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                             </Menu.Item>
                             <Menu.Item color="red" onClick={() => handleReset()}>
                                 Zurücksetzen
+                            </Menu.Item>
+                            <Menu.Item onClick={() => setNewLogo(true)}>
+                                Liga Logo ändern
                             </Menu.Item>
                         <Menu.Divider />
                         <Menu.Label>Discrod Bot</Menu.Label>
@@ -1184,6 +1191,26 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                     </Button>
                 </div>
 
+            </Modal>
+
+            {/* Modal für das Hochladen des Logos */}
+            <Modal
+                opened={newLogo}
+                onClose={() => {
+                    setNewLogo(false);
+                    setFile(null);
+                }}
+                title="Liga Logo ändern"
+                centered
+                size="md"
+            >
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <Group justify="center">
+                        <FileButton onChange={setFile} accept="image/png,image/jpeg">
+                        {(props) => <Button {...props}>Upload image</Button>}
+                        </FileButton>
+                    </Group>
+                </div>
             </Modal>
         </>
     );
