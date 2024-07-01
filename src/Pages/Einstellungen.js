@@ -15,6 +15,7 @@ import { notifications } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
 import { CgProfile } from "react-icons/cg";
 import './Einstellungen.css';
+import Statistiken from '../Components/Statistiken';
 
 const Einstellungen = ({ ligaName, setLigaName}) => {  
 
@@ -613,6 +614,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                 message: 'Team Wertungen wurden erfolrgreich zurückgesetzt ✅',
                 color: 'green',
             })
+            setReloadData(!reloadData);
         }catch (error) {
             console.error("Fehler beim Zurücksetzen der Teams: ", error);
         }
@@ -1019,6 +1021,12 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                 <Button variant="filled" color="red" onClick={() => handleReset()} style={{ flex: 1 }}>Alle Wertungen zurücksetzten</Button>
             </div>
             )}
+            <div className='divider'>
+                <Divider orientation="horizontal" margins="md" label="Statistiken" />
+            </div>
+            <div className="Statisiken">
+                <Statistiken ligaName={ligaName} fahrerlistenObjekt={fahrerlistenObjekt}/>
+            </div>
 
             {/* Modal für das Hinzufügen eines Fahrers */}
             <Modal
