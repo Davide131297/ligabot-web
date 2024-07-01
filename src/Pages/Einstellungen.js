@@ -1,4 +1,4 @@
-import { db, storage } from './../utils/firebase';
+import { db } from './../utils/firebase';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { collection, onSnapshot, doc, setDoc, updateDoc, getDoc, deleteField, where, getDocs, query } from 'firebase/firestore';
 import { useEffect, useState, useCallback } from 'react';
@@ -8,6 +8,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { FaTrashAlt } from "react-icons/fa";
 import { FaUserEdit } from "react-icons/fa";
 import { CiMenuKebab } from "react-icons/ci";
+import { MdWebAsset } from "react-icons/md";
 import { MdEdit } from "react-icons/md";
 import { FaArrowUpRightFromSquare } from "react-icons/fa6";
 import { HiUserGroup } from "react-icons/hi";
@@ -34,7 +35,8 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
     const [teamsArray, setTeamsArray] = useState([]);
     const [isLoading, setIsLoading] = useState("1");
     const [reloadData, setReloadData] = useState(false);
-    const [newLogo, setNewLogo] = useState(false);
+    const [newLogo, setNewLogo] = useState(false); // Neues Logo hochladen mobiles Modal
+    const [editPage, setEditPage] = useState(false); // Modal für das Bearbeiten der Ligaseite
     const navigate = useNavigate();
 
     const [opened, { open, close }] = useDisclosure(false); // Modal Hinzufügen neuer Fahrer
@@ -337,6 +339,26 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
             })
             .catch((error) => {
                 console.error("Fehler beim Erstellen des Dokuments 'Teams': ", error);
+            });
+
+            // Erstelle das Dokument "Logo" in der Collection mit dem Namen ligaName
+            const logoDocRef = doc(db, ligaName, 'Logo');
+            setDoc(logoDocRef, {})
+            .then(() => {
+                console.log("Dokument 'Logo' erfolgreich erstellt!");
+            })
+            .catch((error) => {
+                console.error("Fehler beim Erstellen des Dokuments 'Logo': ", error);
+            });
+
+            // Erstelle das Dokument "Startseite" in der Collection mit dem Namen ligaName
+            const startseiteDocRef = doc(db, ligaName, 'Startseite');
+            setDoc(startseiteDocRef, {})
+            .then(() => {
+                console.log("Dokument 'Startseite' erfolgreich erstellt!");
+            })
+            .catch((error) => {
+                console.error("Fehler beim Erstellen des Dokuments 'Startseite': ", error);
             });
         } else {
             console.error("Fehler: Liga-Name ist leer");
@@ -820,7 +842,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                     </Menu.Target>
 
                     <Menu.Dropdown>
-                        <Menu.Label>Management</Menu.Label>
+                        <Menu.Label>Liga Management</Menu.Label>
                             <Menu.Item onClick={open}>
                                 Fahrer Hinzufügen
                             </Menu.Item>
@@ -834,6 +856,10 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                                 Liga Logo ändern
                             </Menu.Item>
                         <Menu.Divider />
+                        <Menu.Label>Ligaseite Design</Menu.Label>
+                            <Menu.Item>
+                                Seite Home anpassen
+                            </Menu.Item>
                         <Menu.Label>Discrod Bot</Menu.Label>
                             <Menu.Item onClick={() => inviteBot()}>
                                 Bot Einladen
@@ -875,25 +901,32 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                 </Button>
                 {window.innerWidth >= 768 && (
                     <>
-                <Button
-                    variant="filled" radius="xl" color="grape"
-                    rightSection={<FaArrowUpRightFromSquare size={14} />}
-                    onClick={() => inviteBot()}
-                >
-                    Bot einladen
-                </Button>
-                <FileButton onChange={setFile} accept="image/png,image/jpeg">
-                {(props) => 
-                    <Button
-                        {...props}
-                        variant="filled" radius="xl" color="lime"
-                        rightSection={<CgProfile size={14} />}
-                    >
-                        Liga Logo ändern
-                    </Button>
-                }
-                </FileButton>
-                </>
+                        <Button
+                            variant="filled" radius="xl" color="grape"
+                            rightSection={<FaArrowUpRightFromSquare size={14} />}
+                            onClick={() => inviteBot()}
+                        >
+                            Bot einladen
+                        </Button>
+                        <FileButton onChange={setFile} accept="image/png,image/jpeg">
+                        {(props) => 
+                            <Button
+                                {...props}
+                                variant="filled" radius="xl" color="lime"
+                                rightSection={<CgProfile size={14} />}
+                            >
+                                Liga Logo ändern
+                            </Button>
+                        }
+                        </FileButton>
+                        <Button
+                            variant="filled" radius="xl" color="yellow"
+                            rightSection={<MdWebAsset size={14} />}
+                            onClick={() => setEditPage(true)}
+                        >
+                            Seite Home anpassen
+                        </Button>
+                    </>
                 )}
                 </div>
             </div>
@@ -1210,6 +1243,19 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                         {(props) => <Button {...props}>Upload image</Button>}
                         </FileButton>
                     </Group>
+                </div>
+            </Modal>
+
+            {/* Modal für das Bearbeiten der Startseite */}
+            <Modal
+                opened={editPage}
+                onClose={() => setEditPage(false)}
+                title="Startseite bearbeiten"
+                centered
+                size="xl"
+                >
+                <div>
+                    Test
                 </div>
             </Modal>
         </>
