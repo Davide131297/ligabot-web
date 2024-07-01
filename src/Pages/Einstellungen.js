@@ -1025,7 +1025,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                 <Divider orientation="horizontal" margins="md" label="Statistiken" />
             </div>
             <div className="Statisiken">
-                <Statistiken ligaName={ligaName} fahrerlistenObjekt={fahrerlistenObjekt}/>
+                <Statistiken ligaName={ligaName} fahrerlistenObjekt={fahrerlistenObjekt} teamsArray={teamsArray}/>
             </div>
 
             {/* Modal für das Hinzufügen eines Fahrers */}

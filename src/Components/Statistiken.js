@@ -3,12 +3,15 @@ import React, { useState, useEffect } from 'react';
 import { db } from './../utils/firebase';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { Table } from 'react-bootstrap';
-import { SimpleGrid } from '@mantine/core';
+import { SimpleGrid, Center } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
+import './Statistiken.css';
 
-const Statistiken = ({ ligaName, fahrerlistenObjekt }) => {
+const Statistiken = ({ ligaName, fahrerlistenObjekt, teamsArray }) => {
     const [poleData, setPoleData] = useState([]);
     const [fastestLapData, setFastestLapData] = useState([]);
     const [driverOfTheDayData, setDriverOfTheDayData] = useState([]);
+    const [teamData, setTeamData] = useState([]);
     const teamColors = {
         'Ferrari': '#FF0000',
         'Mercedes': '#788086',
@@ -21,98 +24,106 @@ const Statistiken = ({ ligaName, fahrerlistenObjekt }) => {
         'Haas': 'red',
         'Williams': '#049cdc'
     };
+    const matches = useMediaQuery('(max-width: 768px)');
+
 
     useEffect(() => {
         // Stellen Sie sicher, dass fahrerlistenObjekt nicht null oder undefined ist
         const safeFahrerlistenObjekt = fahrerlistenObjekt || {};
-        const transformedData = Object.entries(safeFahrerlistenObjekt).map(([name, details], index) => {
+        const poleData = [];
+        const fastestLapData = [];
+        const driverOfTheDayData = [];
+
+        Object.entries(safeFahrerlistenObjekt).forEach(([name, details], index) => {
             const poleCount = Object.values(details.Pole || {}).filter(isPole => isPole).length;
-            const team = details.team;
-            const color = teamColors[team] || `hsl(${index * 360 / Object.keys(safeFahrerlistenObjekt).length}, 70%, 50%)`;
-            return {
-                name: name,
-                value: poleCount,
-                color: color
-            };
-        }).filter(data => data.value > 0);
-        setPoleData(transformedData);
-    }, [ligaName, fahrerlistenObjekt, teamColors]);
-
-    useEffect(() => {
-        // Stellen Sie sicher, dass fahrerlistenObjekt nicht null oder undefined ist
-        const safeFahrerlistenObjekt = fahrerlistenObjekt || {};
-        const transformedData = Object.entries(safeFahrerlistenObjekt).map(([name, details], index) => {
             const SchnellsteRunde = Object.values(details.SchnellsteRunde || {}).filter(SchnellsteRunde => SchnellsteRunde).length;
-            const team = details.team;
-            const color = teamColors[team] || `hsl(${index * 360 / Object.keys(safeFahrerlistenObjekt).length}, 70%, 50%)`;
-            return {
-                name: name,
-                value: SchnellsteRunde,
-                color: color
-            };
-        }).filter(data => data.value > 0);
-        setFastestLapData(transformedData);
-    }, [ligaName, fahrerlistenObjekt, teamColors]);
-
-    useEffect(() => {
-        // Stellen Sie sicher, dass fahrerlistenObjekt nicht null oder undefined ist
-        const safeFahrerlistenObjekt = fahrerlistenObjekt || {};
-        const transformedData = Object.entries(safeFahrerlistenObjekt).map(([name, details], index) => {
             const FahrerDesTages = Object.values(details.FahrerDesTages || {}).filter(FahrerDesTages => FahrerDesTages).length;
             const team = details.team;
             const color = teamColors[team] || `hsl(${index * 360 / Object.keys(safeFahrerlistenObjekt).length}, 70%, 50%)`;
+
+            if (poleCount > 0) {
+                poleData.push({ name, value: poleCount, color });
+            }
+            if (SchnellsteRunde > 0) {
+                fastestLapData.push({ name, value: SchnellsteRunde, color });
+            }
+            if (FahrerDesTages > 0) {
+                driverOfTheDayData.push({ name, value: FahrerDesTages, color });
+            }
+        });
+
+        setPoleData(poleData);
+        setFastestLapData(fastestLapData);
+        setDriverOfTheDayData(driverOfTheDayData);
+    }, [ligaName, fahrerlistenObjekt]);
+
+    useEffect(() => {
+        const chartData = teamsArray.map(team => {
+            // Berechnen der Summe der Integer-Werte für jedes Team, Nullen ignorieren
+            const sum = Object.values(team).reduce((acc, curr) => {
+                if (typeof curr === 'number' && curr !== 0) {
+                    return acc + curr;
+                }
+                return acc;
+            }, 0);
+
+            // Erstellen des Datenobjekts für das Chart
             return {
-                name: name,
-                value: FahrerDesTages,
-                color: color
+                name: team.teamName, // Annahme: teamName ist der Schlüssel für den Teamnamen
+                value: sum,
+                color: teamColors[team.teamName] || 'gray'
             };
-        }).filter(data => data.value > 0);
-        setDriverOfTheDayData(transformedData);
-    }, [ligaName, fahrerlistenObjekt, teamColors]);
+        });
 
-
+        // Aktualisieren der poleData Variable (oder State, wenn poleData ein State ist)
+        setTeamData(chartData); // Annahme: poleData ist ein State, der mit useState gesetzt wird
+    }, [teamsArray]); // Abhängigkeit von teamsArray, um Effekt bei Änderungen neu auszuführen
 
     return (
         <>
-            <SimpleGrid cols={3}>
+            <SimpleGrid cols={matches ? 2 : 4}>
                 <div>
-                    <DonutChart
-                        withLabelsLine
-                        withLabels
-                        radius={60}
-                        data={poleData}
-                        style={{ width: '100%', maxWidth: '200px' }}
-                    />
-                    <Table striped bordered hover size="sm" style={{ width: '100%', maxWidth: '200px' }}>
-                        <thead>
-                            <tr>
-                                <th>Fahrer</th>
-                                <th>Pole</th>
-                                <th>Farbe</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {poleData.map(({ name, value, color }) => (
-                                <tr key={name}>
-                                    <td>{name}</td>
-                                    <td>{value}</td>
-                                    <td>
-                                        <div style={{ backgroundColor: color, width: '20px', height: '20px', borderRadius: '50%' }}></div>
-                                    </td>
+                    <Center style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <DonutChart
+                            withLabelsLine
+                            withLabels
+                            chartLabel="Poles"
+                            data={poleData}
+                            strokeWidth={2}
+                            size={matches ? 130 : 150} thickness={matches ? 12: 15}
+                        />
+                        <Table striped bordered hover size="sm" className='StatisticTable'>
+                            <thead>
+                                <tr>
+                                    <th>Fahrer</th>
+                                    <th>Pole</th>
+                                    <th>Farbe</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </Table>
+                            </thead>
+                            <tbody>
+                                {poleData.map(({ name, value, color }) => (
+                                    <tr key={name}>
+                                        <td>{name}</td>
+                                        <td>{value}</td>
+                                        <td>
+                                            <div style={{ backgroundColor: color, width: '20px', height: '20px', borderRadius: '50%' }}></div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </Table>
+                    </Center>
                 </div>
                 <div>
                     <DonutChart
                         withLabelsLine
                         withLabels
-                        radius={60}
+                        chartLabel="Fastest Lap"
                         data={fastestLapData}
-                        style={{ width: '100%', maxWidth: '200px' }}
+                        strokeWidth={2}
+                        size={matches ? 130 : 150} thickness={matches ? 12: 15}
                     />
-                    <Table striped bordered hover size="sm" style={{ width: '100%', maxWidth: '200px' }}>
+                    <Table striped bordered hover size="sm" className='StatisticTable'>
                         <thead>
                             <tr>
                                 <th>Fahrer</th>
@@ -137,11 +148,12 @@ const Statistiken = ({ ligaName, fahrerlistenObjekt }) => {
                     <DonutChart
                         withLabelsLine
                         withLabels
-                        radius={60}
+                        chartLabel="Fahrer des Tages"
                         data={driverOfTheDayData}
-                        style={{ width: '100%', maxWidth: '200px' }}
+                        strokeWidth={2}
+                        size={matches ? 130 : 150} thickness={matches ? 12: 15}
                     />
-                    <Table striped bordered hover size="sm" style={{ width: '100%', maxWidth: '200px' }}>
+                    <Table striped bordered hover size="sm" className='StatisticTable'>
                         <thead>
                             <tr>
                                 <th>Fahrer</th>
@@ -151,6 +163,36 @@ const Statistiken = ({ ligaName, fahrerlistenObjekt }) => {
                         </thead>
                         <tbody>
                             {driverOfTheDayData.map(({ name, value, color }) => (
+                                <tr key={name}>
+                                    <td>{name}</td>
+                                    <td>{value}</td>
+                                    <td>
+                                        <div style={{ backgroundColor: color, width: '20px', height: '20px', borderRadius: '50%' }}></div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </Table>
+                </div>
+                <div>
+                    <DonutChart
+                        withLabelsLine
+                        withLabels
+                        data={teamData}
+                        chartLabel="Team Punkte"
+                        strokeWidth={2}
+                        size={matches ? 130 : 150} thickness={matches ? 12: 15}
+                    />
+                    <Table striped bordered hover size="sm" className='StatisticTable'>
+                        <thead>
+                            <tr>
+                                <th>Fahrer</th>
+                                <th>Punkte</th>
+                                <th>Farbe</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {teamData.map(({ name, value, color }) => (
                                 <tr key={name}>
                                     <td>{name}</td>
                                     <td>{value}</td>
