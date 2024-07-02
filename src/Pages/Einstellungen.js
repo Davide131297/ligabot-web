@@ -367,6 +367,15 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
     }
 
     const handleCreateDriver = (e) => {
+        if (!fahrername && !teamname) {
+            console.error("Fahrername und Teamname sind leer");
+            notifications.show({
+                title: 'Fehler',
+                message: 'Bitte fülle alle Felder aus',
+                color: 'red',
+            });
+            return;
+        }
         e.preventDefault();
         if (ligaName) {
             const docRef = doc(db, ligaName, 'Fahrer');
@@ -436,19 +445,13 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                 console.log("Document successfully written!");
                 close();
                 setFahrername("");
-                setTeamname("");
+                setTeamname(null);
                 setReloadData(!reloadData);
                 notifications.show({
                     title: 'Fahrer hinzugefügt',
                     message: 'Fahrer wurde erfolgreich hinzugefügt ✅',
                     color: 'green',
-                })
-                let weiterenFahrerHinzufügen = window.confirm("Möchtest du einen weiteren Fahrer hinzufügen?");
-                if (!weiterenFahrerHinzufügen) {
-                    console.log("Fahrer hinzufügen abgebrochen");
-                } else {
-                    open();
-                }
+                });
             })
             .catch((error) => {
                 console.error("Error writing document: ", error);
@@ -902,6 +905,9 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                 </Button>
                 {window.innerWidth >= 768 && (
                     <>
+                        <Button variant="filled" radius="xl" color="cyan" onClick={open} style={{ flex: 1 }}>Fahrer hinzufügen</Button>
+                        <Button variant="filled" radius="xl" color="cyan" onClick={() => setOpenEintragen(true)} style={{ flex: 1 }}>Ergebnisse eintragen</Button>
+                        <Button variant="filled" radius="xl" color="red" onClick={() => handleReset()} style={{ flex: 1 }}>Alle Wertungen zurücksetzten</Button>
                         <Button
                             variant="filled" radius="xl" color="grape"
                             rightSection={<FaArrowUpRightFromSquare size={14} />}
@@ -1073,13 +1079,6 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                     </>
                 )}
             </div>
-            {window.innerWidth >= 768 && (
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', padding: '20px' }}>
-                <Button onClick={open} style={{ flex: 1 }}>Fahrer hinzufügen</Button>
-                <Button onClick={() => setOpenEintragen(true)} style={{ flex: 1 }}>Ergebnisse eintragen</Button>
-                <Button variant="filled" color="red" onClick={() => handleReset()} style={{ flex: 1 }}>Alle Wertungen zurücksetzten</Button>
-            </div>
-            )}
             <div className='divider'>
                 <Divider orientation="horizontal" margins="md" label="Statistiken" />
             </div>
