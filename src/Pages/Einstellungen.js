@@ -1255,7 +1255,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                 centered
                 size="xl"
                 >
-                <RichText />
+                <RichText ligaName={ligaName} setEditPage={setEditPage}/>
             </Modal>
         </>
     );

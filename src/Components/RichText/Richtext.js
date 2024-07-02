@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { RichTextEditor, Link, useRichTextEditorContext } from '@mantine/tiptap';
+import { RichTextEditor, Link } from '@mantine/tiptap';
 import { useEditor } from '@tiptap/react';
 import Highlight from '@tiptap/extension-highlight';
 import StarterKit from '@tiptap/starter-kit';
@@ -14,8 +14,13 @@ import { Image } from '@tiptap/extension-image';
 import { CiImageOn } from "react-icons/ci";
 import Youtube from '@tiptap/extension-youtube'
 import { RiMovieLine } from "react-icons/ri";
+import { db } from './../../utils/firebase';
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { notifications } from '@mantine/notifications';
+import { Button, Space, Group } from '@mantine/core';
+import { RiUploadLine } from "react-icons/ri";
 
-export default function RichText() {
+export default function RichText({ligaName, setEditPage}) {
 
     const [height, setHeight] = React.useState(480)
     const [width, setWidth] = React.useState(640)
@@ -48,6 +53,33 @@ export default function RichText() {
         ],
     });
 
+    React.useEffect(() => {
+        const fetchData = async () => {
+            if (ligaName) {
+                console.log("Liganame: ", ligaName);
+                const docRef = doc(db, ligaName, "Ligastartseite");
+                try {
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        console.log("Daten: ", data);
+                        if (editor && editor.commands && typeof editor.commands.setContent === 'function') {
+                            editor.commands.setContent(data);
+                        } else {
+                            console.error("Editor ist nicht korrekt initialisiert oder `setContent` ist keine Funktion.");
+                        }
+                    } else {
+                        console.log("Kein Dokument gefunden für: ", ligaName);
+                    }
+                } catch (error) {
+                    console.error("Fehler beim Abrufen des Dokuments: ", error);
+                }
+            }
+        };
+
+        fetchData();
+    }, [ligaName, editor]);
+
     const addImage = useCallback(() => {
     // Erstellen eines 'input' Elements für Dateiauswahl
         const input = document.createElement('input');
@@ -58,8 +90,6 @@ export default function RichText() {
         input.onchange = async (e) => {
             const file = e.target.files[0];
             if (file) {
-                // Hier könnte man das Bild zum Server hochladen und eine URL zurückbekommen
-                // Für dieses Beispiel lesen wir stattdessen das Bild als Data-URL
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     const src = e.target.result;
@@ -71,8 +101,25 @@ export default function RichText() {
         };
     }, [editor]);
 
-    function showEditor() {
+    async function showEditor() {
         console.log(editor.getJSON());
+        const docRef = doc(db, ligaName, "Ligastartseite");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            // Dokument aktualisieren, wenn es existiert
+            await setDoc(docRef, editor.getJSON(), { merge: true });
+            console.log("Dokument aktualisiert");
+        } else {
+            // Dokument erstellen, wenn es nicht existiert
+            await setDoc(docRef, editor.getJSON());
+            console.log("Dokument erstellt");
+        }
+        setEditPage(false);
+        notifications.show({
+            title: 'Startseite aktualisiert',
+            message: 'Startseite wurde erfolgreich aktualisiert. ✅',
+            color: 'green',
+        })
     }
 
     const addYoutubeVideo = () => {
@@ -171,7 +218,10 @@ export default function RichText() {
                 <RichTextEditor.Content h={300} style={{ overflowY: 'scroll' }}/>
             </RichTextEditor>
 
-            <button onClick={() => showEditor()}>Testen</button>
+            <Space h="md" />
+            <Group justify="flex-end">
+                <Button onClick={() => showEditor()} rightSection={<RiUploadLine size={14} />}>Speichern</Button>
+            </Group>
         </>
     );
 }
