@@ -996,7 +996,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                                                 <td className="stickySpalte">{fahrer.fahrername}</td>
                                                 <td>{fahrer.team}</td>
                                                 {Strecken.map((schlüssel) => (
-                                                    <td key={schlüssel}>{fahrer.Wertung[schlüssel]}</td>
+                                                    <td key={schlüssel}>{fahrer?.Wertung[schlüssel]}</td>
                                                 ))}
                                                 <td>{fahrer.gesamtWertung}</td>
                                                 <td>
