@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Home from './Pages/Home';
 import Einstellungen from './Pages/Einstellungen';
+import Dokumentation from './Pages/Dokumentation';
 
 import LigaSeite from './Pages/LigaSeiten/LigaSeite'
 import LigaSeiteFahrertabelle from './Pages/LigaSeiten/LigaSeiteFahrertabelle';
@@ -47,6 +48,7 @@ export function Router() {
                                 />
                             } 
                         />
+                        <Route path="/Dokumentation" element={<Dokumentation />} />
                         <Route path="/:id" element={<LigaSeite ligaName={ligaName}/>} />
                         <Route path="/:id/fahrertabelle" element={<LigaSeiteFahrertabelle />} />
                         <Route path="/:id/konstrukteurstabelle" element={<LigaSeiteKonstrukteurtabelle />} />

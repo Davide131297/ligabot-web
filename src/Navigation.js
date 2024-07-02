@@ -10,6 +10,7 @@ import Logo from './Components/Logo/race-car.png';
 import { doc, getDoc } from 'firebase/firestore';
 import { useLocation } from 'react-router-dom';
 import SeitenNavbar from './Components/SeitenNavbar';
+import { FaBook } from "react-icons/fa";
 
 export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOpened, ligaName}) {
     const navigate = useNavigate();
@@ -83,14 +84,14 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
             <Group h="100%" px="md">
                 <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" />
                 <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="md" />
-                {location.pathname === "/" || location.pathname === "/Einstellungen" ? (
+                {location.pathname === "/" || location.pathname === "/Einstellungen" || location.pathname === "/Dokumentation" ? (
                     <img src={Logo} height={40} width={40} alt='Logo Bot' style={{cursor: 'pointer'}} onClick={() => handleNavigation("/")}/>
                 ) : logo ? (
                     <img src={logo} height={40} width={40} alt='Logo Bot' style={{cursor: 'pointer'}} onClick={() => handleNavigationFromLogo(`/${newLocation}`)}/>
                 ) : (
                     <Loader color='blue'/>
                 )}
-                {location.pathname === "/" || location.pathname === "/Einstellungen" ? (
+                {location.pathname === "/" || location.pathname === "/Einstellungen" || location.pathname === "/Dokumentation" ? (
                     !angemeldet ? (
                         <>
                             <Button variant="white" color="rgba(0, 0, 0, 1)" onClick={() => setModalOpen(true)}>
@@ -114,13 +115,21 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
                 )}
             </Group>
         </AppShell.Header>
-        {location.pathname === "/" || location.pathname === "/Einstellungen" ? (
+        {location.pathname === "/" || location.pathname === "/Einstellungen" || location.pathname === "/Dokumentation" ? (
         <AppShell.Navbar p="md">
             <AppShell.Section>
                 <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px', cursor: 'pointer' }} onClick={() => handleNavigation("/")}> {/* Flex Container */}
                     <FaHome size={26} />
                     <Text size="xl" weight={700} ml="sm">
                         Startseite
+                    </Text>
+                </div>
+            </AppShell.Section>
+            <AppShell.Section>
+                <div style={{ display: 'flex', alignItems: 'center', marginTop: '20px', cursor: 'pointer' }} onClick={() => handleNavigation("/Dokumentation")}> {/* Flex Container */}
+                    <FaBook size={22} />
+                    <Text size="xl" weight={700} ml="sm">
+                        Dokumentation
                     </Text>
                 </div>
             </AppShell.Section>
