@@ -12,8 +12,13 @@ import TextStyle from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
 import { Image } from '@tiptap/extension-image';
 import { CiImageOn } from "react-icons/ci";
+import Youtube from '@tiptap/extension-youtube'
+import { RiMovieLine } from "react-icons/ri";
 
 export default function RichText() {
+
+    const [height, setHeight] = React.useState(480)
+    const [width, setWidth] = React.useState(640)
 
     const editor = useEditor({
         extensions: [
@@ -31,6 +36,12 @@ export default function RichText() {
                 alt: 'Ligastartseite',
                 style: 'width: 100px; height: auto;',
             },
+          }),
+          Youtube.configure({
+            inline: true,
+            nocookie: true,
+            autoplay: true,
+            interfaceLanguage: 'de',
           }),
           TextAlign.configure({ types: ['heading', 'paragraph'] }),
           Placeholder.configure({ placeholder: 'Hier kannst du die Ligastartseite anpassen.' })
@@ -62,6 +73,18 @@ export default function RichText() {
 
     function showEditor() {
         console.log(editor.getJSON());
+    }
+
+    const addYoutubeVideo = () => {
+        const url = prompt('YouTube URL')
+    
+        if (url) {
+          editor.commands.setYoutubeVideo({
+            src: url,
+            width: Math.max(320, parseInt(width, 10)) || 640,
+            height: Math.max(180, parseInt(height, 10)) || 480,
+          })
+        }
     }
 
     return (
@@ -135,7 +158,12 @@ export default function RichText() {
                         onClick={() => addImage()}
                     >
                         <CiImageOn />
-                        </RichTextEditor.Control>
+                    </RichTextEditor.Control>
+                    <RichTextEditor.Control
+                        onClick={() => addYoutubeVideo()}
+                    >
+                        <RiMovieLine />
+                    </RichTextEditor.Control>
                     </RichTextEditor.ControlsGroup>
 
                 </RichTextEditor.Toolbar>
