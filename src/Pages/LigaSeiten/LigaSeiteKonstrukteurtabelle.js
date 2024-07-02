@@ -106,7 +106,7 @@ const LigaSeiteKonstrukteurtabelle = () => {
     return (
         <>
         <Center>
-            <Title order={matches ? 4 : 1}>Fahrertabelle für die Liga {ligaDaten?.ligaName}</Title>
+            <Title order={matches ? 4 : 1}>Konstrukteurstabelle für die Liga {ligaDaten?.ligaName}</Title>
         </Center>
 
         <Space h="xl" />
