@@ -858,7 +858,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                             </Menu.Item>
                         <Menu.Divider />
                         <Menu.Label>Ligaseite Design</Menu.Label>
-                            <Menu.Item>
+                            <Menu.Item onClick={() => setEditPage(true)}>
                                 Seite Home anpassen
                             </Menu.Item>
                         <Menu.Label>Discrod Bot</Menu.Label>
