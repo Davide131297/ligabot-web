@@ -2,7 +2,7 @@ import { db } from './../utils/firebase';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { collection, onSnapshot, doc, setDoc, updateDoc, getDoc, deleteField, where, getDocs, query } from 'firebase/firestore';
 import { useEffect, useState, useCallback } from 'react';
-import { Button, Table, Modal, ScrollArea, Box, Select, Divider, Loader, TextInput, Menu, ActionIcon, FileButton, Group, Text } from '@mantine/core';
+import { Button, Table, Modal, ScrollArea, Box, Select, Divider, Loader, TextInput, Menu, ActionIcon, FileButton, Group } from '@mantine/core';
 import BootstrapTable from 'react-bootstrap/Table';
 import { useDisclosure } from '@mantine/hooks';
 import { FaTrashAlt } from "react-icons/fa";
@@ -142,7 +142,10 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
     ];
 
     const allDataAvailable = useCallback(() => {
-        const pairringLiga = Liga.filter(liga => liga.adminUser === user);
+        console.log("User: ", user)
+        console.log("Liga: ", JSON.stringify(Liga[0]));
+        const pairringLiga = Liga.filter(liga => liga.adminUser.includes(user));
+        console.log("Paarung Liga: ", pairringLiga);
         if (pairringLiga.length > 0) {
             setLigaName(pairringLiga[0].ligaName);
             const pairringDiscrodServer = DiscordServer.find(server => server.ligaKey === pairringLiga[0].key);
@@ -153,9 +156,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
 
     useEffect(() => {
         const user = localStorage.getItem('user');
-        if (user) {
-            console.log("User: ", user);
-        } else {
+        if (!user) {
             navigate('/');
             notifications.show({
                 title: 'Fehler',
@@ -876,7 +877,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                     <Table>
                         <Table.Thead>
                             <Table.Tr>
-                                <Table.Th>Nutzername</Table.Th>
+                                <Table.Th>Admin(s)</Table.Th>
                                 <Table.Th>Liga</Table.Th>
                                 <Table.Th>Discord Server ID</Table.Th>
                                 <Table.Th>{/* Buttons */}</Table.Th>
@@ -884,7 +885,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                             </Table.Thead>
                             <Table.Tbody>
                                 <Table.Tr>
-                                    <Table.Td>{Daten?.pairringLiga?.adminUser}</Table.Td>
+                                    <Table.Td>{Daten?.pairringLiga?.adminUser.join(', ')}</Table.Td>
                                     <Table.Td>{Daten?.pairringLiga?.ligaName}</Table.Td>
                                     <Table.Td>{Daten?.pairringDiscrodServer?.serverId}</Table.Td>
                                     <Table.Td style={{cursor: 'pointer'}}>
