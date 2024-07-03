@@ -129,7 +129,23 @@ const LigaSeiteFahrertabelle = () => {
           return <img src={Haas} alt="Haas Logo" style={{ width: '40px', height: '15px' }} />;
         }
         return null;
-      }
+    }
+
+    function getCellStyle(value) {
+        if (value === 25 || value === 26) {
+            return { backgroundColor: 'gold' };
+        }
+        if (value === 18 || value === 19) {
+            return { backgroundColor: 'silver' };
+        }
+        if (value === 15 || value === 16) {
+            return { backgroundColor: 'peru' };
+        }
+        if (value === "DNF") {
+            return { backgroundColor: 'black', color: 'white' };
+        }
+        return { backgroundColor: 'transparent' };
+    }
 
     return (
         <>
@@ -171,7 +187,7 @@ const LigaSeiteFahrertabelle = () => {
                                     <td className="stickySpalte">{fahrer.fahrername}</td>
                                     <td>{renderTeamLogo(fahrer.team)}</td>
                                     {Strecken.map((schlüssel) => (
-                                        <td key={schlüssel}>{fahrer.Wertung[schlüssel]}</td>
+                                        <td key={schlüssel} style={getCellStyle(fahrer?.Wertung[schlüssel])}>{fahrer.Wertung[schlüssel]}</td>
                                     ))}
                                     <td>{fahrer.gesamtWertung}</td>
                                 </tr>
