@@ -6,7 +6,7 @@ import { auth } from '../utils/firebase';
 import { db } from '../utils/firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import { Timestamp } from 'firebase/firestore';
-import { LoadingOverlay, Box, ActionIcon } from '@mantine/core';
+import { LoadingOverlay, Box, ActionIcon, Popover, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { AiOutlineQuestionCircle } from "react-icons/ai";
 import ServerIDPhoto from './ServerID.png';
@@ -143,16 +143,28 @@ const Registrierung = ({ modalOpen, setModalOpen}) => {
                                 />
                             </label>
 
-                            <label style={{ marginBottom: '10px' }}>
-                                Liganame:
-                                <input
-                                    type="text"
-                                    value={leagueName}
-                                    onChange={(e) => setLeagueName(e.target.value)}
-                                    required
-                                    style={{ width: '100%', padding: '10px', fontSize: '16px' }}
-                                />
-                            </label>
+                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                                <label style={{ marginBottom: '10px' }}>
+                                    Liganame:
+                                    <input
+                                        type="text"
+                                        value={leagueName}
+                                        onChange={(e) => setLeagueName(e.target.value.replace(/\s/g, ''))}
+                                        required
+                                        style={{ width: '100%', padding: '10px', fontSize: '16px' }}
+                                    />
+                                </label>
+                                <Popover width={200} position="bottom" withArrow shadow="md">
+                                    <Popover.Target>
+                                        <ActionIcon variant="transparent" radius="xl" aria-label="Settings">
+                                            <AiOutlineQuestionCircle color='black' size={20}/>
+                                        </ActionIcon>
+                                    </Popover.Target>
+                                    <Popover.Dropdown>
+                                        <Text size="xs">Liganamen werden ohne Leerzeichen angegeben</Text>
+                                    </Popover.Dropdown>
+                                </Popover>
+                            </div>
 
                             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
                                 <label style={{ flex: 1 }}>
