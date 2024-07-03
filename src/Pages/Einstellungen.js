@@ -1062,9 +1062,6 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                                                 <td>{team.gesamtWertung}</td>
                                                 <td>
                                                     <div style={{display: 'flex', marginLeft: '5px'}}>
-                                                        <div style={{marginRight: '10px', cursor: 'pointer'}}>
-                                                            <HiUserGroup color='black' size={20}/>
-                                                        </div>
                                                         <div style={{ cursor: 'pointer'}}>
                                                             <FaTrashAlt color='red' size={20} onClick={() => handleTeamDelete(team)}/>
                                                         </div>
