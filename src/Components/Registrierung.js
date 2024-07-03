@@ -44,7 +44,7 @@ const Registrierung = ({ modalOpen, setModalOpen}) => {
                         console.log("Authentifizierungs-E-Mail gesendet an:", email);
                         notifications.show({
                             title: 'Registrierung erfolgreich! 🎉',
-                            message: 'Du hast dich erfolgreich registriert! Bitte bestätige deine E-Mail-Adresse.',
+                            message: 'Du hast dich erfolgreich registriert!',
                             color: 'green',
                             autoClose: 2000,
                         });
