@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { notifications } from '@mantine/notifications';
 import { auth } from '../utils/firebase';
 import { db } from '../utils/firebase';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, getDocs, query, limit, updateDoc } from 'firebase/firestore';
 import { Timestamp } from 'firebase/firestore';
 import { LoadingOverlay, Box, ActionIcon, Popover, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
@@ -20,11 +20,101 @@ const Registrierung = ({ modalOpen, setModalOpen}) => {
     const [visible, { toggle }] = useDisclosure(false);
     const [showHowToModal, setShowHowToModal] = useState(false);
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault(); // Verhindert das automatische Neuladen der Seite
         toggle();
 
-        // Registrieren
+        console.log(leagueName);
+
+        const ligaNameRef = collection(db, leagueName);
+        const ligaKeysRef = collection(db, "ligaKeys");
+        const q = query(ligaNameRef, limit(1)); // Limitiert die Abfrage auf ein Dokument
+        const q2 = query(ligaKeysRef); // Limitiert die Abfrage auf ein Dokument
+
+        try {
+            const querySnapshot = await getDocs(q);
+            if (querySnapshot.size > 0) {
+                console.log("Kollektion existiert und hat Dokumente.");
+                const querySnapshot2 = await getDocs(q2);
+                if (querySnapshot2.size > 0) {
+                    querySnapshot2.forEach((doc) => {
+                        const data = doc.data();
+                        console.log(doc.id, " => ", data);
+                        if (data.ligaName === leagueName) {
+                            console.log("Liganame existiert bereits in der Datenbank.");
+                            // Überprüft, ob data.adminUsers existiert und ein Array ist. Wenn nicht, wird ein neues Array mit displayName initialisiert.
+                            const updatedData = {
+                                ...data,
+                                adminUser: Array.isArray(data.adminUser) ? [...data.adminUser, displayName] : [displayName]
+                            };
+                            console.log("UPDATE", updatedData); 
+                            try {
+                                updateDoc(doc.ref, updatedData);
+                                console.log("AdminUser hinzugefügt.");
+                                createOnlyUser();
+                                notifications.show({
+                                    title: 'Registrierung läuft!',
+                                    message: 'Bitte warte einen Moment, du wirst einer bestehenden Liga hinzugefügt.',
+                                    color: 'yellow',
+                                    autoClose: 2000,
+                                });
+                            } catch (error) {
+                                console.error("Fehler beim Hinzufügen des AdminUsers:", error);
+                            }
+                            return;  
+                        } else {
+                            console.log("Liganame existiert noch nicht in der Datenbank.");
+                        }
+                    });
+                } else {
+                    console.log("Kollektion existiert nicht oder hat keine Dokumente.");
+                }
+            } else {
+                createUserWithEmailAndPassword(auth, email, password)
+                    .then((userCredential) => {
+                        // Hinzufügen des Anzeigenamens zum Benutzerprofil
+                        return updateProfile(userCredential.user, {
+                            displayName: displayName,
+                        }).then(() => {
+                            // Nach dem Hinzufügen des Anzeigenamens, zurückgeben des userCredential für die weitere Verarbeitung
+                            return userCredential;
+                        });
+                    })
+                    .then((userCredential) => {
+                        const user = userCredential.user;
+                        console.log("Erfolgreich registriert:", user);
+                        // Senden der Authentifizierungs-E-Mail
+                        sendEmailVerification(user)
+                            .then(() => {
+                                console.log("Authentifizierungs-E-Mail gesendet an:", email);
+                                notifications.show({
+                                    title: 'Registrierung erfolgreich! 🎉',
+                                    message: 'Du hast dich erfolgreich registriert!',
+                                    color: 'green',
+                                    autoClose: 2000,
+                                });
+                                saveLeagueInDB();
+                            })
+                            .catch((error) => {
+                                console.error("Fehler beim Senden der Authentifizierungs-E-Mail:", error.message);
+                            });
+                    })
+                    .catch((error) => {
+                        console.error("Fehler bei der Registrierung:", error.message);
+                        notifications.show({
+                            title: 'Registrierung fehlgeschlagen! 😞',
+                            message: 'Fehler bei der Registrierung: ' + error.message,
+                            color: 'red',
+                            autoClose: 4000,
+                        });
+                    });
+                }
+        } catch (error) {
+            console.error("Fehler bei der Überprüfung der Kollektion:", error);
+        }
+    };
+
+    function createOnlyUser() {
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 // Hinzufügen des Anzeigenamens zum Benutzerprofil
@@ -48,22 +138,22 @@ const Registrierung = ({ modalOpen, setModalOpen}) => {
                             color: 'green',
                             autoClose: 2000,
                         });
-                        saveLeagueInDB();
+                        setModalOpen(false);
                     })
                     .catch((error) => {
                         console.error("Fehler beim Senden der Authentifizierungs-E-Mail:", error.message);
                     });
             })
-            .catch((error) => {
-                console.error("Fehler bei der Registrierung:", error.message);
-                notifications.show({
-                    title: 'Registrierung fehlgeschlagen! 😞',
-                    message: 'Fehler bei der Registrierung: ' + error.message,
-                    color: 'red',
-                    autoClose: 4000,
-                });
+        .catch((error) => {
+            console.error("Fehler bei der Registrierung:", error.message);
+            notifications.show({
+                title: 'Registrierung fehlgeschlagen! 😞',
+                message: 'Fehler bei der Registrierung: ' + error.message,
+                color: 'red',
+                autoClose: 4000,
             });
-    };
+        });
+    }
 
     function saveLeagueInDB() {
         // Generieren eines zufälligen Strings von 12 Zeichen für ligaKey
