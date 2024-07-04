@@ -159,6 +159,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
         if (streckenPopup) {
           setTempStreckenVisible({ ...streckenVisible });
         }
+        console.log("StreckenVisible: ", streckenVisible);
     }, [streckenPopup, streckenVisible]);
 
     useEffect(() => {
@@ -383,6 +384,34 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
             })
             .catch((error) => {
                 console.error("Fehler beim Erstellen des Dokuments 'Startseite': ", error);
+            });
+
+            const StreckenDocRef = doc(db, ligaName, 'Strecken');
+            setDoc(StreckenDocRef, {
+                AbuDhabi: true,
+                Aserbaidschan: true,
+                Austin: true,
+                Australien: true,
+                Bahrain: true,
+                Belgien: true,
+                Brasilien: true,
+                China: true,
+                Großbritannien: true,
+                Imola: true,
+                Japan: true,
+                Kanada: true,
+                Katar: true,
+                LasVegas: true,
+                Mexiko: true,
+                Miami: true,
+                Monaco: true,
+                Monza: true,
+                Niederlande: true,
+                SaudiArabien: true,
+                Singapur: true,
+                Spanien: true,
+                Ungarn: true,
+                Österreich: true
             });
         } else {
             console.error("Fehler: Liga-Name ist leer");
