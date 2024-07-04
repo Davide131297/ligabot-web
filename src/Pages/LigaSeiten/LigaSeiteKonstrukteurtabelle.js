@@ -12,6 +12,7 @@ const LigaSeiteKonstrukteurtabelle = () => {
     const matches = useMediaQuery('(max-width: 768px)');
     const [teamsArray, setTeamsArray] = useState([]);
     const [teams, setTeams] = useState(null);
+    const [streckenVisible, setStreckenVisible] = useState(null);
 
     useEffect(() => {
         const path = location.pathname.split("/");
@@ -76,6 +77,25 @@ const LigaSeiteKonstrukteurtabelle = () => {
         }
     }, [location, ligaDaten]);
 
+    useEffect(() => {
+        const fetchStreckenDaten = async () => {
+            if (ligaDaten) { // Stellen Sie sicher, dass ligaName nicht leer oder undefined ist
+                try {
+                    const StreckenRef = doc(db, ligaDaten.ligaName, "Strecken");
+                    const StreckenDoc = await getDoc(StreckenRef);
+                    if (StreckenDoc.exists()) {
+                        setStreckenVisible(StreckenDoc.data());
+                    } else {
+                        console.log("Keine Strecken gefunden");
+                    }
+                } catch (error) {
+                    console.error("Fehler beim Abrufen der Strecken Daten:", error);
+                }
+            }
+        };
+        fetchStreckenDaten();
+    }, [ligaDaten]);
+
     const Strecken = [
         "Bahrain",
         "SaudiArabien",
@@ -119,7 +139,7 @@ const LigaSeiteKonstrukteurtabelle = () => {
                             <tr>
                                 <th className="stickySpalte">Team</th>
                                 {
-                                    Strecken.map((schlüssel) => (
+                                    Strecken.filter(schlüssel => streckenVisible && streckenVisible[schlüssel]).map((schlüssel) => (
                                     <th key={schlüssel} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                         <img 
                                             src={require(`./../../Components/Länderflaggen/${
@@ -140,7 +160,7 @@ const LigaSeiteKonstrukteurtabelle = () => {
                             {teamsArray.map((team, index) => (
                                 <tr key={index} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                     <td className="stickySpalte">{team.teamName}</td>
-                                    {Strecken.map((schlüssel) => (
+                                    {Strecken.filter(schlüssel => streckenVisible && streckenVisible[schlüssel]).map((schlüssel) => (
                                         <td key={schlüssel}>{teams[team.teamName][schlüssel]}</td>
                                     ))}
                                     <td>{team.gesamtWertung}</td>

@@ -4,7 +4,7 @@ import { Title, Center, Box, ScrollArea, Space } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import BootstrapTable from 'react-bootstrap/Table';
 import { db } from '../../utils/firebase';
-import { collection, onSnapshot } from 'firebase/firestore';
+import { collection, onSnapshot, doc, getDoc } from 'firebase/firestore';
 
 import Alpine from '././../../Components/Teamlogos/Alpine.png';
 import AstonMartin from '././../../Components/Teamlogos/AstonMartin.png';
@@ -23,6 +23,7 @@ const LigaSeiteFahrertabelle = () => {
     const [ligaDaten, setLigaDaten] = useState(null);
     const matches = useMediaQuery('(max-width: 768px)');
     const [fahrerListe, setFahrerListe] = useState(null);
+    const [streckenVisible, setStreckenVisible] = useState(null);
 
     useEffect(() => {
         const path = location.pathname.split("/");
@@ -68,6 +69,25 @@ const LigaSeiteFahrertabelle = () => {
                 setFahrerListe(fahrerlistenArray);
             });
         }
+    }, [ligaDaten]);
+
+    useEffect(() => {
+        const fetchStreckenDaten = async () => {
+            if (ligaDaten) { // Stellen Sie sicher, dass ligaName nicht leer oder undefined ist
+                try {
+                    const StreckenRef = doc(db, ligaDaten.ligaName, "Strecken");
+                    const StreckenDoc = await getDoc(StreckenRef);
+                    if (StreckenDoc.exists()) {
+                        setStreckenVisible(StreckenDoc.data());
+                    } else {
+                        console.log("Keine Strecken gefunden");
+                    }
+                } catch (error) {
+                    console.error("Fehler beim Abrufen der Strecken Daten:", error);
+                }
+            }
+        };
+        fetchStreckenDaten();
     }, [ligaDaten]);
 
     const Strecken = [
@@ -164,7 +184,7 @@ const LigaSeiteFahrertabelle = () => {
                                 <th className="stickySpalte">Fahrername</th>
                                 <th>Team</th>
                                     {
-                                        Strecken.map((schlüssel) => (
+                                        Strecken.filter(schlüssel => streckenVisible && streckenVisible[schlüssel]).map((schlüssel) => (
                                         <th key={schlüssel} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                             <img 
                                                 src={require(`./../../Components/Länderflaggen/${
@@ -186,8 +206,8 @@ const LigaSeiteFahrertabelle = () => {
                                 <tr key={index} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                     <td className="stickySpalte">{fahrer.fahrername}</td>
                                     <td>{renderTeamLogo(fahrer.team)}</td>
-                                    {Strecken.map((schlüssel) => (
-                                        <td key={schlüssel} style={getCellStyle(fahrer?.Wertung[schlüssel])}>{fahrer?.Wertung[schlüssel]}</td>
+                                    {Strecken.filter(schlüssel => streckenVisible && streckenVisible[schlüssel]).map((schlüssel) => (
+                                        <td key={schlüssel} style={getCellStyle(fahrer?.Wertung?.[schlüssel])}>{fahrer?.Wertung?.[schlüssel]}</td>
                                     ))}
                                     <td>{fahrer.gesamtWertung}</td>
                                 </tr>
