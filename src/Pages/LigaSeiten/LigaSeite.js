@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
-import { Title, Center } from '@mantine/core';
+import { Center } from '@mantine/core';
 import { useLocation } from 'react-router-dom';
 import { useMediaQuery } from '@mantine/hooks';
 import { doc, getDoc } from "firebase/firestore";
 import { db } from './../../utils/firebase';
 
 import { Link } from '@mantine/tiptap';
-import { EditorContent, useEditor } from '@tiptap/react';
+import { EditorContent, useEditor,  } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Highlight from '@tiptap/extension-highlight';
 import Underline from '@tiptap/extension-underline';
@@ -53,6 +53,7 @@ const LigaSeite = () => {
           Placeholder.configure({ placeholder: 'Hier kannst du die Ligastartseite anpassen.' })
         ],
         content: data.content ? data.content : '',
+        editable: false,
     });
 
     useEffect(() => {
