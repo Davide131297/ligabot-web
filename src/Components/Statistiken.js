@@ -57,27 +57,15 @@ const Statistiken = ({ ligaName, fahrerlistenObjekt, teamsArray }) => {
 
     useEffect(() => {
         if (!teamsArray) return;
-        console.log('Teams Array:', teamsArray);
         const chartData = teamsArray.map(team => {
-            // Berechnen der Summe der Integer-Werte für jedes Team, Nullen ignorieren
-            const sum = Object.values(team).reduce((acc, curr) => {
-                if (typeof curr === 'number' && curr !== 0) {
-                    return acc + curr;
-                }
-                return acc;
-            }, 0);
-
-            // Erstellen des Datenobjekts für das Chart
             return {
-                name: team.teamName, // Annahme: teamName ist der Schlüssel für den Teamnamen
-                value: sum,
+                name: team.teamName,
+                value: team.gesamtWertung,
                 color: teamColors[team.teamName] || 'gray'
             };
         });
-
-        // Aktualisieren der poleData Variable (oder State, wenn poleData ein State ist)
-        setTeamData(chartData); // Annahme: poleData ist ein State, der mit useState gesetzt wird
-    }, [teamsArray]); // Abhängigkeit von teamsArray, um Effekt bei Änderungen neu auszuführen
+        setTeamData(chartData);
+    }, [teamsArray]);
 
     return (
         <>
