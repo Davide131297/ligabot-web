@@ -164,7 +164,7 @@ const Registrierung = ({ modalOpen, setModalOpen}) => {
             ligaName: leagueName,
             key: ligaKey,
             registrierungsDatum: Timestamp.now(),
-            adminUser: displayName
+            adminUser: [displayName]
         })
         .then((docRef) => {
             console.log("Dokument erfolgreich erstellt mit ID: ", docRef.id);
