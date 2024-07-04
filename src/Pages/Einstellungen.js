@@ -2,7 +2,7 @@ import { db } from './../utils/firebase';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { collection, onSnapshot, doc, setDoc, updateDoc, getDoc, deleteField, where, getDocs, query } from 'firebase/firestore';
 import { useEffect, useState, useCallback } from 'react';
-import { Button, Table, Modal, ScrollArea, Box, Select, Divider, Loader, TextInput, Menu, ActionIcon, FileButton, Group } from '@mantine/core';
+import { Button, Table, Modal, ScrollArea, Box, Select, Divider, Loader, TextInput, Menu, ActionIcon, FileButton, Group, Space, Switch } from '@mantine/core';
 import BootstrapTable from 'react-bootstrap/Table';
 import { useDisclosure } from '@mantine/hooks';
 import { FaTrashAlt } from "react-icons/fa";
@@ -18,6 +18,7 @@ import { CgProfile } from "react-icons/cg";
 import './Einstellungen.css';
 import Statistiken from '../Components/Statistiken';
 import RichText from '../Components/RichText/Richtext';
+import { IoFilter } from "react-icons/io5";
 
 const Einstellungen = ({ ligaName, setLigaName}) => {  
 
@@ -45,6 +46,9 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
     const [ergebnisse, setErgebnis] = useState({}); // Ergebnisse für die Strecken
     const [gefahreneStrecke, setGefahreneStrecke] = useState(null); // Strecke, für die die Ergebnisse eingetragen werden
     const [file, setFile] = useState(null);
+    const [streckenVisible, setStreckenVisible] = useState(null);
+    const [tempStreckenVisible, setTempStreckenVisible] = useState({ ...streckenVisible });
+    const [streckenPopup, setStreckenPopup] = useState(false);
 
     const Strecken = [
         "Bahrain",
@@ -142,10 +146,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
     ];
 
     const allDataAvailable = useCallback(() => {
-        console.log("User: ", user)
-        console.log("Liga: ", JSON.stringify(Liga[0]));
         const pairringLiga = Liga.filter(liga => liga.adminUser.includes(user));
-        console.log("Paarung Liga: ", pairringLiga);
         if (pairringLiga.length > 0) {
             setLigaName(pairringLiga[0].ligaName);
             const pairringDiscrodServer = DiscordServer.find(server => server.ligaKey === pairringLiga[0].key);
@@ -153,6 +154,12 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
             setDaten({ pairringLiga: pairringLiga[0], pairringDiscrodServer });
         }
     }, [DiscordServer, Liga, user, setDaten]);
+
+    useEffect(() => {
+        if (streckenPopup) {
+          setTempStreckenVisible({ ...streckenVisible });
+        }
+    }, [streckenPopup, streckenVisible]);
 
     useEffect(() => {
         const user = localStorage.getItem('user');
@@ -172,10 +179,6 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
             handleLogoUpload();
         }
     }, [file]);
-
-    useEffect(() => {
-        console.log("Loading: ", isLoading);
-    }, [isLoading, reloadData]);
 
     useEffect(() => {
         const discordServerRef = collection(db, 'discordServers');
@@ -320,6 +323,25 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
             });
         }
     }, [ligaErstellt, ligaName, reloadData]);
+
+    useEffect(() => {
+        const fetchStreckenDaten = async () => {
+            if (ligaDaten && teamsArray && ligaName) { // Stellen Sie sicher, dass ligaName nicht leer oder undefined ist
+                try {
+                    const StreckenRef = doc(db, ligaName, "Strecken");
+                    const StreckenDoc = await getDoc(StreckenRef);
+                    if (StreckenDoc.exists()) {
+                        setStreckenVisible(StreckenDoc.data());
+                    } else {
+                        console.log("Keine Strecken gefunden");
+                    }
+                } catch (error) {
+                    console.error("Fehler beim Abrufen der Strecken Daten:", error);
+                }
+            }
+        };
+        fetchStreckenDaten();
+    }, [ligaDaten, teamsArray, ligaName]); // Stellen Sie sicher, dass ligaName als Abhängigkeit hinzugefügt wird
 
     async function createLigaCollection() {
         if (ligaName) {
@@ -851,6 +873,28 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
         return { backgroundColor: 'transparent' };
     }
 
+    function handleCancelUpdateStreckenVisible() {
+        setStreckenPopup(false);
+        setTempStreckenVisible({ ...streckenVisible });
+    }
+
+    async function handleUpdateStreckenVisible() {
+        const docRef = doc(db, ligaName, 'Strecken');
+        try {
+            await setDoc(docRef, tempStreckenVisible);
+            console.log("Strecken erfolgreich aktualisiert");
+            notifications.show({
+                title: 'Strecken aktualisiert',
+                message: 'Strecken wurden erfolgreich aktualisiert ✅',
+                color: 'green',
+            });
+            setStreckenPopup(false);
+            // setStreckenPopup(false);
+        } catch (error) {
+            console.error("Fehler beim Aktualisieren der Strecken: ", error);
+        }
+    }
+
     return (
         <>
             <div>
@@ -869,6 +913,9 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                             </Menu.Item>
                             <Menu.Item onClick={() => setOpenEintragen(true)}>
                                 Ergebnisse eintragen
+                            </Menu.Item>
+                            <Menu.Item onClick={() => setStreckenPopup(true)}>
+                                Strecken filtern
                             </Menu.Item>
                             <Menu.Item color="red" onClick={() => handleReset()}>
                                 Zurücksetzen
@@ -924,6 +971,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                     <>
                         <Button variant="filled" radius="xl" color="cyan" onClick={open} style={{ flex: 1 }}>Fahrer hinzufügen</Button>
                         <Button variant="filled" radius="xl" color="cyan" onClick={() => setOpenEintragen(true)} style={{ flex: 1 }}>Ergebnisse eintragen</Button>
+                        <Button variant="filled" radius="xl" color="gray" rightSection={<IoFilter size={14}/>} style={{ flex: 1 }} onClick={() => setStreckenPopup(true)}>Streckenfiltern</Button>
                         <Button variant="filled" radius="xl" color="red" onClick={() => handleReset()} style={{ flex: 1 }}>Alle Wertungen zurücksetzten</Button>
                         <Button
                             variant="filled" radius="xl" color="grape"
@@ -995,7 +1043,8 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                                             <th className="stickySpalte">Fahrername</th>
                                             <th>Team</th>
                                             {
-                                                Strecken.map((schlüssel) => (
+                                                Strecken.filter(schlüssel => streckenVisible && streckenVisible[schlüssel]).map((schlüssel) => (
+                                                    // Spaltenrendering mit gefilterten Strecken
                                                     <th key={schlüssel} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                                         <img 
                                                             src={require(`./../Components/Länderflaggen/${
@@ -1018,8 +1067,8 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                                             <tr key={index} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                                 <td className="stickySpalte">{fahrer.fahrername}</td>
                                                 <td>{fahrer.team}</td>
-                                                {Strecken.map((schlüssel) => (
-                                                    <td key={schlüssel} style={getCellStyle(fahrer?.Wertung[schlüssel])}>{fahrer?.Wertung[schlüssel]}</td>
+                                                {Strecken.filter(schlüssel => streckenVisible && streckenVisible[schlüssel]).map((schlüssel) => (
+                                                    <td key={schlüssel} style={getCellStyle(fahrer?.Wertung?.[schlüssel])}>{fahrer?.Wertung?.[schlüssel]}</td>
                                                 ))}
                                                 <td>{fahrer.gesamtWertung}</td>
                                                 <td>
@@ -1050,7 +1099,8 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                                         <tr>
                                             <th className="stickySpalte">Team</th>
                                             {
-                                                Strecken.map((schlüssel) => (
+                                                Strecken.filter(schlüssel => streckenVisible && streckenVisible[schlüssel]).map((schlüssel) => (
+                                                    // Spaltenrendering mit gefilterten Strecken
                                                     <th key={schlüssel} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                                         <img 
                                                             src={require(`./../Components/Länderflaggen/${
@@ -1072,7 +1122,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                                         {teamsArray.map((team, index) => (
                                             <tr key={index} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                                 <td className="stickySpalte">{team.teamName}</td>
-                                                {Strecken.map((schlüssel) => (
+                                                {Strecken.filter(schlüssel => streckenVisible && streckenVisible[schlüssel]).map((schlüssel) => (
                                                     <td key={schlüssel}>{teams[team.teamName][schlüssel]}</td>
                                                 ))}
                                                 <td>{team.gesamtWertung}</td>
@@ -1269,6 +1319,66 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                 size="xl"
                 >
                 <RichText ligaName={ligaName} setEditPage={setEditPage}/>
+            </Modal>
+
+            {/* Modal für das Filtern der Strecken */}
+            <Modal
+                opened={streckenPopup}
+                onClose={() => setStreckenPopup(false)}
+                title="Streckenfilter"
+                centered
+                size="md"
+            >
+                <ScrollArea h="60vh">
+                    <Box w="100%">
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            <BootstrapTable striped bordered hover className='StreckenvisibleModal'>
+                                <thead>
+                                <tr>
+                                    <th>Strecke</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {Object.entries(streckenVisible || {}).sort((a, b) => a[0].localeCompare(b[0])).map(([strecke, isVisible]) => (
+                                    <tr key={strecke}>
+                                    <td>{strecke}</td>
+                                    <td>{isVisible ? 'Sichtbar' : 'Nicht sichtbar'}</td>
+                                    <td>
+                                        <Switch
+                                            checked={tempStreckenVisible[strecke]}
+                                            onChange={() => setTempStreckenVisible(prev => ({
+                                                ...prev,
+                                                [strecke]: !prev[strecke]
+                                            }))}
+                                        />
+                                    </td>
+                                    </tr>
+                                ))}
+                                </tbody>
+                            </BootstrapTable>
+                        </div>
+                    </Box>
+                </ScrollArea>
+
+                <Space h="xl" />
+
+                <Group justify="flex-end">
+                    <Button 
+                        variant="filled" color="red" radius="xl"
+                        onClick={handleCancelUpdateStreckenVisible}
+                    >
+                        Abbrechen
+                    </Button>
+                    <Button
+                        variant="filled" color="green" radius="xl"
+                        onClick={() => handleUpdateStreckenVisible()}
+                    >
+                        Speichern
+                    </Button>
+                </Group>
+
             </Modal>
         </>
     );

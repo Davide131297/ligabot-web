@@ -187,7 +187,7 @@ const LigaSeiteFahrertabelle = () => {
                                     <td className="stickySpalte">{fahrer.fahrername}</td>
                                     <td>{renderTeamLogo(fahrer.team)}</td>
                                     {Strecken.map((schlüssel) => (
-                                        <td key={schlüssel} style={getCellStyle(fahrer?.Wertung[schlüssel])}>{fahrer.Wertung[schlüssel]}</td>
+                                        <td key={schlüssel} style={getCellStyle(fahrer?.Wertung[schlüssel])}>{fahrer?.Wertung[schlüssel]}</td>
                                     ))}
                                     <td>{fahrer.gesamtWertung}</td>
                                 </tr>
