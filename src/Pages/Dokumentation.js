@@ -31,13 +31,34 @@ export default function Dokumentation() {
             <Title order={2}>Liga Webseite</Title>
                 <Text>
                     Die Liga Webseite zeigt die Eingerichtete Liga an. Um auf die LigaSeite zu gelangen, muss die URL so ausschauen: "https://ligabot-38d61.web.app/(Liganame)".
-                    Auf der Liga Seite werden die Fahrertabelle, die Konstrukteurstabelle und die Statistiken der Liga angezeigt.
+                </Text>
+                <Text>
+                    Auf der Liga Webseite werden die Fahrertabelle, die Konstrukteurstabelle und die Statistiken der Liga angezeigt.
                 </Text>
             <Title order={2}>Einstellungsseite</Title>
                 <Text>
                     Die Einstellungsseite ermöglicht es, eine neue Liga zu erstellen oder eine bestehende Liga zu bearbeiten.
+                </Text>
+                <Text>
                     Es können der Name der Liga, das Logo der Liga und die Anzahl der Rennen pro Saison eingestellt werden, sowie deren Ergebnisse eingetragen werden.
                 </Text>
+                <Text>
+                    Die Sichtbarkeit der Länder in den Tabellen kann eingestellt werden, falls nicht alle Strecken im Rennkalender enthalten sind. Drücke dazu den Button "Streckenfiltern".
+                </Text>
+                <Text>
+                    Die Fahrerwertung und die Konstrukteurswertung können zurückgesetzt werden. Damit werden alle Punkte der Fahrer und Konstrukteure auf 0 gesetzt für eine neue Saison.
+                </Text>
+                <Text>
+                    Die Tabellen "Fahrerwertung" und "Konstrukteurswertung" können auf der Einstellungsseite über den Button "Downloads" als CSV-Datei heruntergeladen werden.
+                </Text>
+            <Title order={2}>CSV Download</Title>
+                <Text>
+                    Die Tabellen "Fahrerwertung" und "Konstrukteurswertung" können auf der Einstellungsseite über den Button "Downloads" als CSV-Datei heruntergeladen werden.
+                </Text>
+                <Text>
+                    Die CSV-Dateien können in Excel oder Google Tabellen geöffnet werden. Bei Excel muss gegebenfalls das das Komma als Trennzeichen eingestellt werden.
+                </Text>
+
         </div>
     );
 }       
