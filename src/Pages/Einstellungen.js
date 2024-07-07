@@ -924,6 +924,56 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
         }
     }
 
+    function downloadDriverStandingsCSV(ligaDaten, Strecken, streckenVisible) {
+        const BOM = "\uFEFF";
+        const spaltenÜberschriften = ["Fahrername", "Team", ...Strecken.filter(schlüssel => streckenVisible && streckenVisible[schlüssel]), "Gesamtwertung"];
+    
+        let csvString = BOM + spaltenÜberschriften.join(",") + "\n";
+    
+        ligaDaten.forEach((fahrer) => {
+            let zeile = [fahrer.fahrername, fahrer.team];
+    
+            Strecken.filter(schlüssel => streckenVisible && streckenVisible[schlüssel]).forEach((schlüssel) => {
+                zeile.push(fahrer.Wertung?.[schlüssel] || '');
+            });
+    
+            zeile.push(fahrer.gesamtWertung);
+            csvString += zeile.join(",") + "\n";
+        });
+    
+        const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'Fahrerwertung.csv');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function downloadTeamStandingCSV(teamsArray, Strecken, streckenVisible) {
+        const BOM = "\uFEFF"; // Byte Order Mark für UTF-8
+        let csvContent = "Team," + Strecken.filter(schlüssel => streckenVisible && streckenVisible[schlüssel]).map(schlüssel => schlüssel).join(",") + ",Gesamtwertung\n";
+    
+        teamsArray.forEach(team => {
+            let row = [team.teamName];
+            Strecken.filter(schlüssel => streckenVisible && streckenVisible[schlüssel]).forEach(schlüssel => {
+                row.push(team[schlüssel]);
+            });
+            row.push(team.gesamtWertung);
+            csvContent += row.join(",") + "\n";
+        });
+    
+        const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", "Konstrukteurstabelle.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
     return (
         <>
             <div>
@@ -960,6 +1010,14 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                         <Menu.Label>Discrod Bot</Menu.Label>
                             <Menu.Item onClick={() => inviteBot()}>
                                 Bot Einladen
+                            </Menu.Item>
+                        <Menu.Divider />
+                        <Menu.Label>Downloads</Menu.Label>
+                            <Menu.Item onClick={() => downloadDriverStandingsCSV(ligaDaten, Strecken, streckenVisible)}>
+                                Fahrertabelle CSV
+                            </Menu.Item>
+                            <Menu.Item onClick={() => downloadTeamStandingCSV(teamsArray, Strecken, streckenVisible)}>
+                                Konstrukteurstabelle CSV
                             </Menu.Item>
                     </Menu.Dropdown>
                 </Menu>
@@ -1027,6 +1085,23 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                         >
                             Seite Home anpassen
                         </Button>
+                        <Menu>
+                            <Menu.Target>
+                                <Button
+                                    variant="filled" radius="xl" color="gray"
+                                >
+                                    Downloads
+                                </Button>
+                            </Menu.Target>
+                            <Menu.Dropdown>
+                                <Menu.Item onClick={() => downloadDriverStandingsCSV(ligaDaten, Strecken, streckenVisible)}>
+                                    Fahrertabelle CSV
+                                </Menu.Item>
+                                <Menu.Item onClick={() => downloadTeamStandingCSV(teamsArray, Strecken, streckenVisible)}>
+                                    Konstrukteurstabelle CSV
+                                </Menu.Item>
+                            </Menu.Dropdown>
+                        </Menu>
                     </>
                 )}
                 </div>
