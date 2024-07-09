@@ -9,7 +9,7 @@ import LigaSeiteFahrertabelle from './Pages/LigaSeiten/LigaSeiteFahrertabelle';
 import LigaSeiteKonstrukteurtabelle from './Pages/LigaSeiten/LigaSeiteKonstrukteurtabelle';
 import LigaSeiteStatistiken from './Pages/LigaSeiten/LigaSeiteStatistiken';
 
-import { AppShell } from '@mantine/core';
+import { AppShell, Divider } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Navigation } from './Navigation';
 
