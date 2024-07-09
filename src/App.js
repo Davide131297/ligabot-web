@@ -8,6 +8,7 @@ import '@mantine/notifications/styles.css';
 import '@mantine/charts/styles.css';
 import '@mantine/tiptap/styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import '@mantine/carousel/styles.css';
 
 function App() {
   return (

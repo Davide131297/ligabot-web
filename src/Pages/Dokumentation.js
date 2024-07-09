@@ -1,10 +1,19 @@
-import { Center, Title, Text } from "@mantine/core";
+import { Center, Title, Text, SimpleGrid, Image, Box, Space } from "@mantine/core";
 import { useMediaQuery } from '@mantine/hooks';
+import { Carousel } from '@mantine/carousel';
+import React, { useState } from 'react';
+
+import DemoSeite from '../Components/DemoBilder/DemoStartseite.png';
+import StartseiteEditor from '../Components/DemoBilder/StartseiteEditor.png';
+import DemoFahrertabelle from '../Components/DemoBilder/Fahrertabelle.png';
+import DemoKonstrukteuretabelle from '../Components/DemoBilder/Konstrukteurstabelle.png';
+import DemoStatistiken from '../Components/DemoBilder/StatistikenGrafik.png';
 
 export default function Dokumentation() {  
     const matches = useMediaQuery('(max-width: 768px)'); 
 
     return (
+        <SimpleGrid cols={matches ? 1 : 2}>
         <div>
             <Center>
                 <Title order={1}>Dokumentation</Title>
@@ -58,7 +67,172 @@ export default function Dokumentation() {
                 <Text>
                     Die CSV-Dateien können in Excel oder Google Tabellen geöffnet werden. Bei Excel muss gegebenfalls das das Komma als Trennzeichen eingestellt werden.
                 </Text>
+        </div>
+        {!matches && (
+        <div>
+        <Carousel withIndicators height={500} slideGap="md">
+            <Carousel.Slide>
+            <Box
+                bg="#dbdbdb"
+                p="sm"
+            >
+                <Center>
+                    <Image
+                        src={DemoSeite}
+                        radius="md"
+                        h={200}
+                        w="auto"
+                        fit="contain"
+                        alt="Demo Startseite"
+                    />
+                </Center>
+            </Box>
+            </Carousel.Slide>
+            <Carousel.Slide>
+            <Box
+                bg="#dbdbdb"
+                p="sm"
+            >
+                <Center>
+                    <Image
+                        src={StartseiteEditor}
+                        radius="md"
+                        h={400}
+                        w="auto"
+                        fit="contain"
+                        alt="Demo Startseite Editor"
+                    />
+                </Center>
+            </Box>
+            </Carousel.Slide>
+            <Carousel.Slide>
+            <Box
+                bg="#dbdbdb"
+                p="sm"
+            >
+                <Center>
+                    <Image
+                        src={DemoFahrertabelle}
+                        radius="md"
+                        h={300}
+                        w="auto"
+                        fit="contain"
+                        alt="Demo Fahrertabelle"
+                    />
+                </Center>
+            </Box>
+            </Carousel.Slide>
+            <Carousel.Slide>
+            <Box
+                bg="#dbdbdb"
+                p="sm"
+            >
+                <Center>
+                    <Image
+                        src={DemoKonstrukteuretabelle}
+                        radius="md"
+                        h={230}
+                        w="auto"
+                        fit="contain"
+                        alt="Demo Konstrukteurstabelle"
+                    />
+                </Center>
+            </Box>
+            </Carousel.Slide>
+            <Carousel.Slide>
+            <Box
+                bg="#dbdbdb"
+                p="sm"
+            >
+                <Center>
+                    <Image
+                        src={DemoStatistiken}
+                        radius="md"
+                        h={250}
+                        w="auto"
+                        fit="contain"
+                        alt="Demo Statistiken"
+                    />
+                </Center>
+            </Box>
+            </Carousel.Slide>
+        </Carousel>
+        </div>
+        )}
+        {matches && (
+        <div>
+            <Center>
+            <Title order={3}>DemoStartseite</Title>
+            </Center>
+            <Center>
+                <Image
+                    src={DemoSeite}
+                    radius="md"
+                    h="14vh"
+                    w="auto"
+                    fit="contain"
+                    alt="Demo Startseite"
+                />
+            </Center>
+
+            <Center>
+            <Title order={3}>Startseite Editor</Title>
+            </Center>
+            <Center>
+                <Image
+                    src={StartseiteEditor}
+                    radius="md"
+                    h="30vh"
+                    w="auto"
+                    fit="contain"
+                    alt="Demo Startseite Editor"
+                />
+            </Center>
+
+            <Center>
+            <Title order={3}>Fahrertabelle</Title>
+            </Center>
+            <Center>
+                <Image
+                    src={DemoFahrertabelle}
+                    radius="md"
+                    h="19vh"
+                    w="auto"
+                    fit="contain"
+                    alt="Demo Fahrertabelle"
+                />
+            </Center>
+
+            <Center>
+            <Title order={3}>Konstrukteurstabelle</Title>
+            </Center>
+            <Center>
+                <Image
+                    src={DemoKonstrukteuretabelle}
+                    radius="md"
+                    h="14vh"
+                    w="auto"
+                    fit="contain"
+                    alt="Demo Konstrukteurstabelle"
+                />
+            </Center>
+
+            <Center>
+            <Title order={3}>Statistiken</Title>
+            </Center>
+            <Center>
+                <Image
+                    src={DemoStatistiken}
+                    radius="md"
+                    h="16vh"
+                    w="auto"
+                    fit="contain"
+                    alt="Demo Statistiken"
+                />
+            </Center>
 
         </div>
+        )}
+        </SimpleGrid>
     );
 }       
