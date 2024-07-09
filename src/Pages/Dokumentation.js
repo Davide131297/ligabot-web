@@ -1,4 +1,4 @@
-import { Center, Title, Text, SimpleGrid, Image, Box, Space } from "@mantine/core";
+import { Center, Title, Text, SimpleGrid, Image, Box, Space, ScrollArea } from "@mantine/core";
 import { useMediaQuery } from '@mantine/hooks';
 import { Carousel } from '@mantine/carousel';
 import React, { useState } from 'react';
@@ -8,6 +8,7 @@ import StartseiteEditor from '../Components/DemoBilder/StartseiteEditor.png';
 import DemoFahrertabelle from '../Components/DemoBilder/Fahrertabelle.png';
 import DemoKonstrukteuretabelle from '../Components/DemoBilder/Konstrukteurstabelle.png';
 import DemoStatistiken from '../Components/DemoBilder/StatistikenGrafik.png';
+import Buttons from "../Components/DemoBilder/Buttons.png";
 
 export default function Dokumentation() {  
     const matches = useMediaQuery('(max-width: 768px)'); 
@@ -229,6 +230,10 @@ export default function Dokumentation() {
                     fit="contain"
                     alt="Demo Statistiken"
                 />
+            </Center>
+
+            <Center>
+            <Title order={3}>Buttons</Title>
             </Center>
 
         </div>
