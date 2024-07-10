@@ -1061,9 +1061,9 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
     }    
 
     // Schritt 1 & 2: Extrahiere und sortiere die Strecken basierend auf dem Datum
-    const sortierteStrecken = Object.keys(streckenVisible)
+    const sortierteStrecken = streckenVisible ? Object.keys(streckenVisible)
         .filter(schlüssel => streckenVisible[schlüssel].Visible) // Nur sichtbare Strecken
-        .sort((a, b) => streckenVisible[a].datum.seconds - streckenVisible[b].datum.seconds); // Sortiere nach Datum
+        .sort((a, b) => streckenVisible[a].datum.seconds - streckenVisible[b].datum.seconds) : []; // Sortiere nach Datum
 
     return (
         <>
