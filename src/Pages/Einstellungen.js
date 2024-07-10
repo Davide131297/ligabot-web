@@ -1017,48 +1017,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
         if (!datum) return '';
         const date = new Date(datum.seconds * 1000);
         return date.toLocaleDateString('de-DE');
-    }
-
-    function handlesync() {
-        const StreckenDocRef = doc(db, ligaName, 'Strecken');
-        const strecken = {
-            AbuDhabi: { Visible: true },
-            Aserbaidschan: { Visible: true },
-            Austin: { Visible: true },
-            Australien: { Visible: true },
-            Bahrain: { Visible: true },
-            Belgien: { Visible: true },
-            Brasilien: { Visible: true },
-            China: { Visible: true },
-            Großbritannien: { Visible: true },
-            Imola: { Visible: true },
-            Japan: { Visible: true },
-            Kanada: { Visible: true },
-            Katar: { Visible: true },
-            LasVegas: { Visible: true },
-            Mexiko: { Visible: true },
-            Miami: { Visible: true },
-            Monaco: { Visible: true },
-            Monza: { Visible: true },
-            Niederlande: { Visible: true },
-            SaudiArabien: { Visible: true },
-            Singapur: { Visible: true },
-            Spanien: { Visible: true },
-            Ungarn: { Visible: true },
-            Österreich: { Visible: true }
-        };
-    
-        let baseTimestamp = Timestamp.now();
-        let counter = 0;
-        const oneDayInSeconds = 86400;
-    
-        for (const strecke in strecken) {
-            strecken[strecke].datum = new Timestamp(baseTimestamp.seconds + (counter * oneDayInSeconds), baseTimestamp.nanoseconds);
-            counter += 1;
-        }
-    
-        setDoc(StreckenDocRef, strecken);
-    }    
+    }   
 
     // Schritt 1 & 2: Extrahiere und sortiere die Strecken basierend auf dem Datum
     const sortierteStrecken = streckenVisible ? Object.keys(streckenVisible)
@@ -1067,7 +1026,6 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
 
     return (
         <>
-            <button onClick={handlesync}>Änderung</button>
             <div>
                 {window.innerWidth < 768 && (
                 <Menu shadow="md" width={200}>
