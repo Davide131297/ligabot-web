@@ -24,6 +24,7 @@ const LigaSeiteFahrertabelle = () => {
     const matches = useMediaQuery('(max-width: 768px)');
     const [fahrerListe, setFahrerListe] = useState(null);
     const [streckenVisible, setStreckenVisible] = useState(null);
+    const [sortierteStrecken, setSortierteStrecken] = useState(null);
 
     useEffect(() => {
         const path = location.pathname.split("/");
@@ -89,6 +90,14 @@ const LigaSeiteFahrertabelle = () => {
         };
         fetchStreckenDaten();
     }, [ligaDaten]);
+
+    useEffect(() => {
+        if (streckenVisible) {
+            setSortierteStrecken(Object.keys(streckenVisible)
+            .filter(schlüssel => streckenVisible[schlüssel].Visible) // Nur sichtbare Strecken
+            .sort((a, b) => streckenVisible[a].datum.seconds - streckenVisible[b].datum.seconds));
+        }
+    }, [streckenVisible]);
 
     const Strecken = [
         "Bahrain",
@@ -175,18 +184,19 @@ const LigaSeiteFahrertabelle = () => {
 
         <Space h="xl" />
 
+        {streckenVisible && sortierteStrecken && (
         <Center>
             <ScrollArea w="auto" h="auto">
                 <Box w="70%">
-                    <BootstrapTable striped bordered hover className='Eintragungübersicht'>
-                        <thead>
-                            <tr>
-                                <th className="stickySpalte">Fahrername</th>
-                                <th>Team</th>
-                                    {
-                                        Strecken.filter(schlüssel => streckenVisible && streckenVisible[schlüssel]).map((schlüssel) => (
-                                        <th key={schlüssel} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                                            <img 
+                <BootstrapTable striped bordered hover className='Eintragungübersicht'>
+                                    <thead>
+                                        <tr>
+                                        <th className="stickySpalte">Fahrername</th>
+                                        <th>Team</th>
+                                        {
+                                            sortierteStrecken.map((schlüssel) => (
+                                            <th key={schlüssel} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                                                <img 
                                                 src={require(`./../../Components/Länderflaggen/${
                                                     schlüssel.toLowerCase() === 'austin' || schlüssel.toLocaleLowerCase() === 'miami' || schlüssel.toLocaleLowerCase() === 'lasvegas' ? 'usa' : 
                                                     schlüssel.toLowerCase() === 'imola' || schlüssel.toLowerCase() === 'monza' ? 'italien' : 
@@ -194,29 +204,32 @@ const LigaSeiteFahrertabelle = () => {
                                                 }.png`)} 
                                                 alt={schlüssel} 
                                                 className='ÜbersichtFlaggen'
-                                            />
-                                        </th>
-                                        ))
-                                    }
-                                <th>Gesamtwertung</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {fahrerListe?.map((fahrer, index) => (
-                                <tr key={index} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                                    <td className="stickySpalte">{fahrer.fahrername}</td>
-                                    <td>{renderTeamLogo(fahrer.team)}</td>
-                                    {Strecken.filter(schlüssel => streckenVisible && streckenVisible[schlüssel]).map((schlüssel) => (
-                                        <td key={schlüssel} style={getCellStyle(fahrer?.Wertung?.[schlüssel])}>{fahrer?.Wertung?.[schlüssel]}</td>
-                                    ))}
-                                    <td>{fahrer.gesamtWertung}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </BootstrapTable>
+                                                />
+                                            </th>
+                                            ))
+                                        }
+                                        <th>Gesamtwertung</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {fahrerListe.map((fahrer, index) => (
+                                        <tr key={index} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                                            <td className="stickySpalte">{fahrer.fahrername}</td>
+                                            <td>{fahrer.team}</td>
+                                            {
+                                            sortierteStrecken.map((schlüssel) => (
+                                                <td key={schlüssel} style={getCellStyle(fahrer?.Wertung?.[schlüssel])}>{fahrer?.Wertung?.[schlüssel]}</td>
+                                            ))
+                                            }
+                                            <td>{fahrer.gesamtWertung}</td>
+                                        </tr>
+                                        ))}
+                                    </tbody>
+                                </BootstrapTable>
                 </Box>
             </ScrollArea>
         </Center>
+        )}
         </>
     );
 }

@@ -13,6 +13,7 @@ const LigaSeiteKonstrukteurtabelle = () => {
     const [teamsArray, setTeamsArray] = useState([]);
     const [teams, setTeams] = useState(null);
     const [streckenVisible, setStreckenVisible] = useState(null);
+    const [sortierteStrecken, setSortierteStrecken] = useState(null);
 
     useEffect(() => {
         const path = location.pathname.split("/");
@@ -96,6 +97,14 @@ const LigaSeiteKonstrukteurtabelle = () => {
         fetchStreckenDaten();
     }, [ligaDaten]);
 
+    useEffect(() => {
+        if (streckenVisible) {
+            setSortierteStrecken(Object.keys(streckenVisible)
+            .filter(schlüssel => streckenVisible[schlüssel].Visible) // Nur sichtbare Strecken
+            .sort((a, b) => streckenVisible[a].datum.seconds - streckenVisible[b].datum.seconds));
+        }
+    }, [streckenVisible]);
+
     const Strecken = [
         "Bahrain",
         "SaudiArabien",
@@ -131,46 +140,50 @@ const LigaSeiteKonstrukteurtabelle = () => {
 
         <Space h="xl" />
 
+        {streckenVisible && sortierteStrecken &&(
         <Center>
             <ScrollArea w="auto" h="auto">
                 <Box w="70%">
-                    <BootstrapTable striped bordered hover className='Eintragungübersicht'>
-                        <thead>
-                            <tr>
-                                <th className="stickySpalte">Team</th>
-                                {
-                                    Strecken.filter(schlüssel => streckenVisible && streckenVisible[schlüssel]).map((schlüssel) => (
-                                    <th key={schlüssel} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                                        <img 
-                                            src={require(`./../../Components/Länderflaggen/${
-                                                schlüssel.toLowerCase() === 'austin' || schlüssel.toLocaleLowerCase() === 'miami' || schlüssel.toLocaleLowerCase() === 'lasvegas' ? 'usa' : 
-                                                schlüssel.toLowerCase() === 'imola' || schlüssel.toLowerCase() === 'monza' ? 'italien' : 
-                                                schlüssel.toLowerCase()
-                                            }.png`)} 
-                                            alt={schlüssel} 
-                                            className='ÜbersichtFlaggen'
-                                        />
-                                    </th>
-                                    ))
-                                }
-                                <th>Gesamtwertung</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {teamsArray.map((team, index) => (
-                                <tr key={index} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                                    <td className="stickySpalte">{team.teamName}</td>
-                                    {Strecken.filter(schlüssel => streckenVisible && streckenVisible[schlüssel]).map((schlüssel) => (
-                                        <td key={schlüssel}>{teams[team.teamName][schlüssel]}</td>
-                                    ))}
-                                    <td>{team.gesamtWertung}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </BootstrapTable>
+                <BootstrapTable striped bordered hover className='Eintragungübersicht'>
+                                    <thead>
+                                        <tr>
+                                        <th className="stickySpalte">Team</th>
+                                        {
+                                            sortierteStrecken.map((schlüssel) => (
+                                            <th key={schlüssel} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                                                <img 
+                                                src={require(`./../../Components/Länderflaggen/${
+                                                    schlüssel.toLowerCase() === 'austin' || schlüssel.toLocaleLowerCase() === 'miami' || schlüssel.toLocaleLowerCase() === 'lasvegas' ? 'usa' : 
+                                                    schlüssel.toLowerCase() === 'imola' || schlüssel.toLowerCase() === 'monza' ? 'italien' : 
+                                                    schlüssel.toLowerCase()
+                                                }.png`)} 
+                                                alt={schlüssel} 
+                                                className='ÜbersichtFlaggen'
+                                                />
+                                            </th>
+                                            ))
+                                        }
+                                        <th>Gesamtwertung</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {teamsArray.map((team, index) => (
+                                        <tr key={index} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                                            <td className="stickySpalte">{team.teamName}</td>
+                                            {
+                                            sortierteStrecken.map((schlüssel) => (
+                                                <td key={schlüssel}>{teams[team.teamName][schlüssel]}</td>
+                                            ))
+                                            }
+                                            <td>{team.gesamtWertung}</td>
+                                        </tr>
+                                        ))}
+                                    </tbody>
+                                </BootstrapTable>
                 </Box>
             </ScrollArea>
         </Center>
+        )}
         </>
     );
 }

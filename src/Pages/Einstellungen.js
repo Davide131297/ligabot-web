@@ -415,32 +415,43 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
             });
 
             const StreckenDocRef = doc(db, ligaName, 'Strecken');
-            setDoc(StreckenDocRef, {
-                AbuDhabi: true,
-                Aserbaidschan: true,
-                Austin: true,
-                Australien: true,
-                Bahrain: true,
-                Belgien: true,
-                Brasilien: true,
-                China: true,
-                Großbritannien: true,
-                Imola: true,
-                Japan: true,
-                Kanada: true,
-                Katar: true,
-                LasVegas: true,
-                Mexiko: true,
-                Miami: true,
-                Monaco: true,
-                Monza: true,
-                Niederlande: true,
-                SaudiArabien: true,
-                Singapur: true,
-                Spanien: true,
-                Ungarn: true,
-                Österreich: true
-            });
+            const strecken = {
+                AbuDhabi: { Visible: true },
+                Aserbaidschan: { Visible: true },
+                Austin: { Visible: true },
+                Australien: { Visible: true },
+                Bahrain: { Visible: true },
+                Belgien: { Visible: true },
+                Brasilien: { Visible: true },
+                China: { Visible: true },
+                Großbritannien: { Visible: true },
+                Imola: { Visible: true },
+                Japan: { Visible: true },
+                Kanada: { Visible: true },
+                Katar: { Visible: true },
+                LasVegas: { Visible: true },
+                Mexiko: { Visible: true },
+                Miami: { Visible: true },
+                Monaco: { Visible: true },
+                Monza: { Visible: true },
+                Niederlande: { Visible: true },
+                SaudiArabien: { Visible: true },
+                Singapur: { Visible: true },
+                Spanien: { Visible: true },
+                Ungarn: { Visible: true },
+                Österreich: { Visible: true }
+            };
+        
+            let baseTimestamp = Timestamp.now();
+            let counter = 0;
+            const oneDayInSeconds = 86400;
+        
+            for (const strecke in strecken) {
+                strecken[strecke].datum = new Timestamp(baseTimestamp.seconds + (counter * oneDayInSeconds), baseTimestamp.nanoseconds);
+                counter += 1;
+            }
+        
+            setDoc(StreckenDocRef, strecken);
         } else {
             console.error("Fehler: Liga-Name ist leer");
         }
@@ -1008,8 +1019,55 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
         return date.toLocaleDateString('de-DE');
     }
 
+    function handlesync() {
+        const StreckenDocRef = doc(db, ligaName, 'Strecken');
+        const strecken = {
+            AbuDhabi: { Visible: true },
+            Aserbaidschan: { Visible: true },
+            Austin: { Visible: true },
+            Australien: { Visible: true },
+            Bahrain: { Visible: true },
+            Belgien: { Visible: true },
+            Brasilien: { Visible: true },
+            China: { Visible: true },
+            Großbritannien: { Visible: true },
+            Imola: { Visible: true },
+            Japan: { Visible: true },
+            Kanada: { Visible: true },
+            Katar: { Visible: true },
+            LasVegas: { Visible: true },
+            Mexiko: { Visible: true },
+            Miami: { Visible: true },
+            Monaco: { Visible: true },
+            Monza: { Visible: true },
+            Niederlande: { Visible: true },
+            SaudiArabien: { Visible: true },
+            Singapur: { Visible: true },
+            Spanien: { Visible: true },
+            Ungarn: { Visible: true },
+            Österreich: { Visible: true }
+        };
+    
+        let baseTimestamp = Timestamp.now();
+        let counter = 0;
+        const oneDayInSeconds = 86400;
+    
+        for (const strecke in strecken) {
+            strecken[strecke].datum = new Timestamp(baseTimestamp.seconds + (counter * oneDayInSeconds), baseTimestamp.nanoseconds);
+            counter += 1;
+        }
+    
+        setDoc(StreckenDocRef, strecken);
+    }    
+
+    // Schritt 1 & 2: Extrahiere und sortiere die Strecken basierend auf dem Datum
+    const sortierteStrecken = Object.keys(streckenVisible)
+        .filter(schlüssel => streckenVisible[schlüssel].Visible) // Nur sichtbare Strecken
+        .sort((a, b) => streckenVisible[a].datum.seconds - streckenVisible[b].datum.seconds); // Sortiere nach Datum
+
     return (
         <>
+            <button onClick={handlesync}>Änderung</button>
             <div>
                 {window.innerWidth < 768 && (
                 <Menu shadow="md" width={200}>
@@ -1178,48 +1236,49 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                                 <BootstrapTable striped bordered hover className='Eintragungübersicht'>
                                     <thead>
                                         <tr>
-                                            <th className="stickySpalte">Fahrername</th>
-                                            <th>Team</th>
-                                            {
-                                                Strecken.filter(schlüssel => streckenVisible && streckenVisible[schlüssel]).map((schlüssel) => (
-                                                    // Spaltenrendering mit gefilterten Strecken
-                                                    <th key={schlüssel} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                                                        <img 
-                                                            src={require(`./../Components/Länderflaggen/${
-                                                                schlüssel.toLowerCase() === 'austin' || schlüssel.toLocaleLowerCase() === 'miami' || schlüssel.toLocaleLowerCase() === 'lasvegas' ? 'usa' : 
-                                                                schlüssel.toLowerCase() === 'imola' || schlüssel.toLowerCase() === 'monza' ? 'italien' : 
-                                                                schlüssel.toLowerCase()
-                                                            }.png`)} 
-                                                            alt={schlüssel} 
-                                                            className='ÜbersichtFlaggen'
-                                                        />
-                                                    </th>
-                                                ))
-                                            }
-                                            <th>Gesamtwertung</th>
-                                            <th>{/* Buttons */}</th>
+                                        <th className="stickySpalte">Fahrername</th>
+                                        <th>Team</th>
+                                        {
+                                            sortierteStrecken.map((schlüssel) => (
+                                            <th key={schlüssel} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                                                <img 
+                                                src={require(`./../Components/Länderflaggen/${
+                                                    schlüssel.toLowerCase() === 'austin' || schlüssel.toLocaleLowerCase() === 'miami' || schlüssel.toLocaleLowerCase() === 'lasvegas' ? 'usa' : 
+                                                    schlüssel.toLowerCase() === 'imola' || schlüssel.toLowerCase() === 'monza' ? 'italien' : 
+                                                    schlüssel.toLowerCase()
+                                                }.png`)} 
+                                                alt={schlüssel} 
+                                                className='ÜbersichtFlaggen'
+                                                />
+                                            </th>
+                                            ))
+                                        }
+                                        <th>Gesamtwertung</th>
+                                        <th>{/* Buttons */}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {ligaDaten.map((fahrer, index) => (
-                                            <tr key={index} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                                                <td className="stickySpalte">{fahrer.fahrername}</td>
-                                                <td>{fahrer.team}</td>
-                                                {Strecken.filter(schlüssel => streckenVisible && streckenVisible[schlüssel]).map((schlüssel) => (
-                                                    <td key={schlüssel} style={getCellStyle(fahrer?.Wertung?.[schlüssel])}>{fahrer?.Wertung?.[schlüssel]}</td>
-                                                ))}
-                                                <td>{fahrer.gesamtWertung}</td>
-                                                <td>
-                                                    <div style={{display: 'flex', marginLeft: '5px'}}>
-                                                        <div style={{marginRight: '10px', cursor: 'pointer'}}>
-                                                            <FaUserEdit color='black' size={20} onClick={() => handleDriverEdit(fahrer)}/>
-                                                        </div>
-                                                        <div style={{ cursor: 'pointer'}}>
-                                                            <FaTrashAlt color='red' size={20} onClick={() => handleDriverDelete(fahrer)}/>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
+                                        <tr key={index} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                                            <td className="stickySpalte">{fahrer.fahrername}</td>
+                                            <td>{fahrer.team}</td>
+                                            {
+                                            sortierteStrecken.map((schlüssel) => (
+                                                <td key={schlüssel} style={getCellStyle(fahrer?.Wertung?.[schlüssel])}>{fahrer?.Wertung?.[schlüssel]}</td>
+                                            ))
+                                            }
+                                            <td>{fahrer.gesamtWertung}</td>
+                                            <td>
+                                            <div style={{display: 'flex', marginLeft: '5px'}}>
+                                                <div style={{marginRight: '10px', cursor: 'pointer'}}>
+                                                <FaUserEdit color='black' size={20} onClick={() => handleDriverEdit(fahrer)}/>
+                                                </div>
+                                                <div style={{ cursor: 'pointer'}}>
+                                                <FaTrashAlt color='red' size={20} onClick={() => handleDriverDelete(fahrer)}/>
+                                                </div>
+                                            </div>
+                                            </td>
+                                        </tr>
                                         ))}
                                     </tbody>
                                 </BootstrapTable>
@@ -1235,43 +1294,44 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                                 <BootstrapTable striped bordered hover className='Eintragungübersicht'>
                                     <thead>
                                         <tr>
-                                            <th className="stickySpalte">Team</th>
-                                            {
-                                                Strecken.filter(schlüssel => streckenVisible && streckenVisible[schlüssel]).map((schlüssel) => (
-                                                    // Spaltenrendering mit gefilterten Strecken
-                                                    <th key={schlüssel} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                                                        <img 
-                                                            src={require(`./../Components/Länderflaggen/${
-                                                                schlüssel.toLowerCase() === 'austin' || schlüssel.toLocaleLowerCase() === 'miami' || schlüssel.toLocaleLowerCase() === 'lasvegas' ? 'usa' : 
-                                                                schlüssel.toLowerCase() === 'imola' || schlüssel.toLowerCase() === 'monza' ? 'italien' : 
-                                                                schlüssel.toLowerCase()
-                                                            }.png`)} 
-                                                            alt={schlüssel} 
-                                                            className='ÜbersichtFlaggen'
-                                                        />
-                                                    </th>
-                                                ))
-                                            }
-                                            <th>Gesamtwertung</th>
-                                            <th>{/* Buttons */}</th>
+                                        <th className="stickySpalte">Team</th>
+                                        {
+                                            sortierteStrecken.map((schlüssel) => (
+                                            <th key={schlüssel} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                                                <img 
+                                                src={require(`./../Components/Länderflaggen/${
+                                                    schlüssel.toLowerCase() === 'austin' || schlüssel.toLocaleLowerCase() === 'miami' || schlüssel.toLocaleLowerCase() === 'lasvegas' ? 'usa' : 
+                                                    schlüssel.toLowerCase() === 'imola' || schlüssel.toLowerCase() === 'monza' ? 'italien' : 
+                                                    schlüssel.toLowerCase()
+                                                }.png`)} 
+                                                alt={schlüssel} 
+                                                className='ÜbersichtFlaggen'
+                                                />
+                                            </th>
+                                            ))
+                                        }
+                                        <th>Gesamtwertung</th>
+                                        <th>{/* Buttons */}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {teamsArray.map((team, index) => (
-                                            <tr key={index} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                                                <td className="stickySpalte">{team.teamName}</td>
-                                                {Strecken.filter(schlüssel => streckenVisible && streckenVisible[schlüssel]).map((schlüssel) => (
-                                                    <td key={schlüssel}>{teams[team.teamName][schlüssel]}</td>
-                                                ))}
-                                                <td>{team.gesamtWertung}</td>
-                                                <td>
-                                                    <div style={{display: 'flex', marginLeft: '5px'}}>
-                                                        <div style={{ cursor: 'pointer'}}>
-                                                            <FaTrashAlt color='red' size={20} onClick={() => handleTeamDelete(team)}/>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
+                                        <tr key={index} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                                            <td className="stickySpalte">{team.teamName}</td>
+                                            {
+                                            sortierteStrecken.map((schlüssel) => (
+                                                <td key={schlüssel}>{teams[team.teamName][schlüssel]}</td>
+                                            ))
+                                            }
+                                            <td>{team.gesamtWertung}</td>
+                                            <td>
+                                            <div style={{display: 'flex', marginLeft: '5px'}}>
+                                                <div style={{ cursor: 'pointer'}}>
+                                                <FaTrashAlt color='red' size={20} onClick={() => handleTeamDelete(team)}/>
+                                                </div>
+                                            </div>
+                                            </td>
+                                        </tr>
                                         ))}
                                     </tbody>
                                 </BootstrapTable>
@@ -1544,7 +1604,13 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                 </Center>
 
                 <Group justify="flex-end">
-                    <Button onClick={updateDate} style={{ marginTop: '1rem' }}>Datum aktualisieren</Button>
+                    <Button 
+                        variant="filled" color="green" radius="xl"
+                        onClick={updateDate} 
+                        style={{ marginTop: '1rem' }}
+                    >
+                        Datum aktualisieren
+                    </Button>
                 </Group>
             </Modal>
         </>
