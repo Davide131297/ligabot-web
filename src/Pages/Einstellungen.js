@@ -1,8 +1,8 @@
 import { db } from './../utils/firebase';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { collection, onSnapshot, doc, setDoc, updateDoc, getDoc, deleteField, where, getDocs, query } from 'firebase/firestore';
+import { collection, onSnapshot, doc, setDoc, updateDoc, getDoc, deleteField, where, getDocs, query, Timestamp } from 'firebase/firestore';
 import { useEffect, useState, useCallback } from 'react';
-import { Button, Table, Modal, ScrollArea, Box, Select, Divider, Loader, TextInput, Menu, ActionIcon, FileButton, Group, Space, Switch } from '@mantine/core';
+import { Button, Table, Modal, ScrollArea, Box, Select, Divider, Loader, TextInput, Menu, ActionIcon, FileButton, Group, Space, Switch, Center } from '@mantine/core';
 import BootstrapTable from 'react-bootstrap/Table';
 import { useDisclosure } from '@mantine/hooks';
 import { FaTrashAlt } from "react-icons/fa";
@@ -19,6 +19,7 @@ import './Einstellungen.css';
 import Statistiken from '../Components/Statistiken';
 import RichText from '../Components/RichText/Richtext';
 import { IoFilter } from "react-icons/io5";
+import { DatePicker } from '@mantine/dates';
 
 const Einstellungen = ({ ligaName, setLigaName}) => {  
 
@@ -49,6 +50,33 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
     const [streckenVisible, setStreckenVisible] = useState(null);
     const [tempStreckenVisible, setTempStreckenVisible] = useState({ ...streckenVisible });
     const [streckenPopup, setStreckenPopup] = useState(false);
+
+    const [dateModal, setDateModal] = useState(false);
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [editingStrecke, setEditingStrecke] = useState('');
+
+    const openModal = (strecke, datum) => {
+        setEditingStrecke(strecke);
+        setSelectedDate(datum ? new Date(datum.seconds * 1000) : new Date());
+        setDateModal(true);
+    };
+      
+    // Funktion zum Aktualisieren des Datums
+    const updateDate = () => {
+        const newTimestamp = Timestamp.fromDate(selectedDate);
+        setTempStreckenVisible(prev => ({
+          ...prev,
+          [editingStrecke]: {
+            ...prev[editingStrecke],
+            datum: newTimestamp,
+          },
+        }));
+        setDateModal(false);
+    };
+
+    useEffect(() => {
+        console.log("tempStreckenVisible: ", tempStreckenVisible);
+    }, [tempStreckenVisible]);
 
     const Strecken = [
         "Bahrain",
@@ -974,6 +1002,12 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
         document.body.removeChild(link);
     }
 
+    function formatDate(datum) {
+        if (!datum) return '';
+        const date = new Date(datum.seconds * 1000);
+        return date.toLocaleDateString('de-DE');
+    }
+
     return (
         <>
             <div>
@@ -1440,32 +1474,39 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                 <ScrollArea h="60vh">
                     <Box w="100%">
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <BootstrapTable striped bordered hover className='StreckenvisibleModal'>
-                                <thead>
+                        <BootstrapTable striped bordered hover className='StreckenvisibleModal'>
+                            <thead>
                                 <tr>
                                     <th>Strecke</th>
                                     <th>Status</th>
+                                    <th>Datum</th> {/* Neue Spalte für das Datum */}
                                     <th></th>
                                 </tr>
-                                </thead>
-                                <tbody>
-                                {Object.entries(streckenVisible || {}).sort((a, b) => a[0].localeCompare(b[0])).map(([strecke, isVisible]) => (
+                            </thead>
+                            <tbody>
+                                {Object.entries(tempStreckenVisible || {}).sort((a, b) => a[0].localeCompare(b[0])).map(([strecke, { Visible, datum }]) => (
                                     <tr key={strecke}>
                                     <td>{strecke}</td>
-                                    <td>{isVisible ? 'Sichtbar' : 'Nicht sichtbar'}</td>
+                                    <td>{Visible ? 'Sichtbar' : 'Nicht sichtbar'}</td>
+                                    <td onClick={() => Visible && openModal(strecke, datum)} style={{cursor: Visible ? 'pointer' : 'default'}}>
+                                        {Visible ? formatDate(datum) : "Kein Rennen"}
+                                    </td>
                                     <td>
                                         <Switch
-                                            checked={tempStreckenVisible[strecke]}
-                                            onChange={() => setTempStreckenVisible(prev => ({
-                                                ...prev,
-                                                [strecke]: !prev[strecke]
-                                            }))}
+                                        checked={tempStreckenVisible[strecke]?.Visible}
+                                        onChange={() => setTempStreckenVisible(prev => ({
+                                            ...prev,
+                                            [strecke]: {
+                                            ...prev[strecke],
+                                            Visible: !prev[strecke]?.Visible
+                                            }
+                                        }))}
                                         />
                                     </td>
                                     </tr>
                                 ))}
-                                </tbody>
-                            </BootstrapTable>
+                            </tbody>
+                        </BootstrapTable>
                         </div>
                     </Box>
                 </ScrollArea>
@@ -1487,6 +1528,24 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                     </Button>
                 </Group>
 
+            </Modal>
+
+            <Modal
+                opened={dateModal}
+                onClose={() => setDateModal(false)}
+                title="Datum auswählen"
+                >
+                <Center>
+                <DatePicker
+                locale='de'
+                    value={selectedDate}
+                    onChange={setSelectedDate}
+                />
+                </Center>
+
+                <Group justify="flex-end">
+                    <Button onClick={updateDate} style={{ marginTop: '1rem' }}>Datum aktualisieren</Button>
+                </Group>
             </Modal>
         </>
     );
