@@ -43,7 +43,7 @@ export default function Dokumentation() {
             <Space h="lg" />
             <Title order={2}>Liga Webseite</Title>
                 <Text>
-                    Die Liga Webseite zeigt die Eingerichtete Liga an. Um auf die LigaSeite zu gelangen, muss die URL so ausschauen: "https://ligabot-38d61.web.app/(Liganame)".
+                    Die Liga Webseite zeigt die Eingerichtete Liga an. Um auf die LigaSeite zu gelangen, muss die URL so ausschauen: "https://rlgbot.de/(Liganame)".
                 </Text>
                 <Text>
                     Auf der Liga Webseite werden die Fahrertabelle, die Konstrukteurstabelle und die Statistiken der Liga angezeigt.
