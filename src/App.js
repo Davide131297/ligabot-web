@@ -4,6 +4,7 @@ import { Divider, MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { Modal } from '@mantine/core';
 import Datenschutz from './Pages/Datenschutz';
+import Impressum from './Pages/Impressum';
 
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
@@ -57,7 +58,7 @@ function App() {
         title="Impressum"
         size="lg"
       >
-        <p>Test</p>
+        <Impressum />
       </Modal>
 
     </MantineProvider>

@@ -775,7 +775,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
     }
 
     async function handleTeamDelete(team) {
-        const bestaetigung = window.confirm(`Möchten Sie den Fahrer ${team.teamName} wirklich löschen?`);
+        const bestaetigung = window.confirm(`Möchtest du das Team ${team.teamName} wirklich löschen?`);
         if (!bestaetigung) {
             console.log("Löschen abgebrochen");
         } else {
@@ -867,7 +867,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
 
         if (!gesuchterFahrer) {
         } else {
-            const neuerName = window.prompt("Bitte geben Sie den neuen Fahrernamen ein:", gesuchterFahrerSchlüssel);
+            const neuerName = window.prompt("Bitte gebe den neuen Fahrernamen ein:", gesuchterFahrerSchlüssel);
             if (neuerName && !fahrerlistenObjekt[neuerName]) {
                 fahrerlistenObjekt[neuerName] = gesuchterFahrer;
                 delete fahrerlistenObjekt[gesuchterFahrerSchlüssel];
