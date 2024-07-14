@@ -1,8 +1,8 @@
 import { db } from './../utils/firebase';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { collection, onSnapshot, doc, setDoc, updateDoc, getDoc, deleteField, where, getDocs, query, Timestamp } from 'firebase/firestore';
-import { useEffect, useState, useCallback } from 'react';
-import { Button, Table, Modal, ScrollArea, Box, Select, Divider, Loader, TextInput, Menu, ActionIcon, FileButton, Group, Space, Switch, Center } from '@mantine/core';
+import { useEffect, useState, useCallback, useRef } from 'react';
+import { Button, Table, Modal, ScrollArea, Box, Select, Divider, Loader, TextInput, Menu, ActionIcon, FileButton, Group, Space, Switch, Center, Tooltip } from '@mantine/core';
 import BootstrapTable from 'react-bootstrap/Table';
 import { useDisclosure } from '@mantine/hooks';
 import { FaTrashAlt } from "react-icons/fa";
@@ -20,6 +20,8 @@ import Statistiken from '../Components/Statistiken';
 import RichText from '../Components/RichText/Richtext';
 import { IoFilter } from "react-icons/io5";
 import { DatePicker } from '@mantine/dates';
+import html2canvas from 'html2canvas';
+import { IoCamera } from "react-icons/io5";
 
 const Einstellungen = ({ ligaName, setLigaName}) => {  
 
@@ -54,6 +56,9 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
     const [dateModal, setDateModal] = useState(false);
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [editingStrecke, setEditingStrecke] = useState('');
+
+    const driverRef = useRef();
+    const teamRef = useRef();
 
     const openModal = (strecke, datum) => {
         setEditingStrecke(strecke);
@@ -1019,6 +1024,96 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
         return date.toLocaleDateString('de-DE');
     }   
 
+    const downloadDriverTableAsImage = () => {
+        const table = driverRef.current;
+        const lastColumns = table.querySelectorAll('tr > :last-child');
+
+        // Temporarily hide the last column
+        lastColumns.forEach(cell => {
+            cell.style.display = 'none';
+        });
+
+        // Change background, text color, and border styles
+        table.style.backgroundColor = 'black';
+        table.style.color = 'white';
+        const cells = table.querySelectorAll('td, th');
+        cells.forEach(cell => {
+            cell.style.backgroundColor = 'black';
+            cell.style.color = 'white';
+            cell.style.borderColor = 'white'; // Set border color to white
+            cell.style.borderWidth = '1px'; // Set border width to 2px
+            cell.style.borderStyle = 'solid'; // Ensure border style is solid
+        });
+
+        html2canvas(table).then((canvas) => {
+            const link = document.createElement('a');
+            link.download = 'Fahrerwertung.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            
+            // Restore the last column
+            lastColumns.forEach(cell => {
+                cell.style.display = '';
+            });
+
+            // Revert background, text color, and border styles
+            table.style.backgroundColor = '';
+            table.style.color = '';
+            cells.forEach(cell => {
+                cell.style.backgroundColor = '';
+                cell.style.color = '';
+                cell.style.borderColor = ''; // Revert border color
+                cell.style.borderWidth = ''; // Revert border width
+                cell.style.borderStyle = ''; // Revert border style
+            });
+        });
+    };
+
+    const downloadTeamTableAsImage = () => {
+        const table = teamRef.current;
+        const lastColumns = table.querySelectorAll('tr > :last-child');
+
+        // Temporarily hide the last column
+        lastColumns.forEach(cell => {
+            cell.style.display = 'none';
+        });
+
+        // Change background, text color, and border styles
+        table.style.backgroundColor = 'black';
+        table.style.color = 'white';
+        const cells = table.querySelectorAll('td, th');
+        cells.forEach(cell => {
+            cell.style.backgroundColor = 'black';
+            cell.style.color = 'white';
+            cell.style.borderColor = 'white'; // Set border color to white
+            cell.style.borderWidth = '1px'; // Set border width to 2px
+            cell.style.borderStyle = 'solid'; // Ensure border style is solid
+        });
+
+        html2canvas(table).then((canvas) => {
+            const link = document.createElement('a');
+            link.download = 'Fahrerwertung.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            
+            // Restore the last column
+            lastColumns.forEach(cell => {
+                cell.style.display = '';
+            });
+
+            // Revert background, text color, and border styles
+            table.style.backgroundColor = '';
+            table.style.color = '';
+            cells.forEach(cell => {
+                cell.style.backgroundColor = '';
+                cell.style.color = '';
+                cell.style.borderColor = ''; // Revert border color
+                cell.style.borderWidth = ''; // Revert border width
+                cell.style.borderStyle = ''; // Revert border style
+            });
+        });
+    };
+
     // Schritt 1 & 2: Extrahiere und sortiere die Strecken basierend auf dem Datum
     const sortierteStrecken = streckenVisible ? Object.keys(streckenVisible)
         .filter(schlüssel => streckenVisible[schlüssel].Visible) // Nur sichtbare Strecken
@@ -1191,9 +1286,14 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                     <div className='tabellenPosition'>
                         <ScrollArea w="auto" h="auto">
                             <Box w="70%">
-                                <BootstrapTable striped bordered hover className='Eintragungübersicht'>
+                                <Tooltip label="Fahrertabelle als Bild speichern">
+                                <ActionIcon variant="filled" color="rgba(0, 0, 0, 1)" aria-label="Settings" onClick={downloadDriverTableAsImage}>
+                                    <IoCamera size={20}/>
+                                </ActionIcon>
+                                </Tooltip>
+                                <BootstrapTable striped bordered hover className='Eintragungübersicht' ref={driverRef}>
                                     <thead>
-                                        <tr>
+                                        <tr style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                         <th className="stickySpalte">Fahrername</th>
                                         <th>Team</th>
                                         {
@@ -1249,9 +1349,14 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                     <div className='tabellenPosition'>
                         <ScrollArea w="auto" h="auto">
                             <Box w="70%">
-                                <BootstrapTable striped bordered hover className='Eintragungübersicht'>
+                                <Tooltip label="Teamtabelle als Bild speichern">
+                                <ActionIcon variant="filled" color="rgba(0, 0, 0, 1)" aria-label="Settings" onClick={downloadTeamTableAsImage}>
+                                    <IoCamera size={20}/>
+                                </ActionIcon>
+                                </Tooltip>
+                                <BootstrapTable striped bordered hover className='Eintragungübersicht' ref={teamRef}>
                                     <thead>
-                                        <tr>
+                                        <tr style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                                         <th className="stickySpalte">Team</th>
                                         {
                                             sortierteStrecken.map((schlüssel) => (
