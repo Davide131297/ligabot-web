@@ -56,9 +56,15 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
     const [dateModal, setDateModal] = useState(false);
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [editingStrecke, setEditingStrecke] = useState('');
+    const [calendarData, setCalendarData] = useState([]);
 
     const driverRef = useRef();
     const teamRef = useRef();
+
+    // Schritt 1 & 2: Extrahiere und sortiere die Strecken basierend auf dem Datum
+    const sortierteStrecken = streckenVisible ? Object.keys(streckenVisible)
+        .filter(schlüssel => streckenVisible[schlüssel].Visible) // Nur sichtbare Strecken
+        .sort((a, b) => streckenVisible[a].datum.seconds - streckenVisible[b].datum.seconds) : []; // Sortiere nach Datum
 
     const openModal = (strecke, datum) => {
         setEditingStrecke(strecke);
@@ -80,8 +86,19 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
     };
 
     useEffect(() => {
-        console.log("tempStreckenVisible: ", tempStreckenVisible);
-    }, [tempStreckenVisible]);
+        if (typeof streckenVisible === 'object' && streckenVisible !== null) {
+            const arrayData = Object.keys(streckenVisible).map(key => {
+                const obj = streckenVisible[key];
+                const formattedDate = obj.datum.toDate().toLocaleDateString('de-DE', {
+                    day: '2-digit',
+                    month: '2-digit'
+                }).replace(/\./g, '.').slice(0, -1);
+                return { ...obj, datum: formattedDate, name: key };
+            });
+            setCalendarData(arrayData);
+        }
+    }, [streckenVisible]);
+
 
     const Strecken = [
         "Bahrain",
@@ -192,7 +209,6 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
         if (streckenPopup) {
           setTempStreckenVisible({ ...streckenVisible });
         }
-        console.log("StreckenVisible: ", streckenVisible);
     }, [streckenPopup, streckenVisible]);
 
     useEffect(() => {
@@ -1114,10 +1130,9 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
         });
     };
 
-    // Schritt 1 & 2: Extrahiere und sortiere die Strecken basierend auf dem Datum
-    const sortierteStrecken = streckenVisible ? Object.keys(streckenVisible)
-        .filter(schlüssel => streckenVisible[schlüssel].Visible) // Nur sichtbare Strecken
-        .sort((a, b) => streckenVisible[a].datum.seconds - streckenVisible[b].datum.seconds) : []; // Sortiere nach Datum
+    const downloadCalendarAsImage = () => {
+        console.log("Download Kalender als Bild", calendarData);
+    };
 
     return (
         <>
@@ -1244,6 +1259,9 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                                 </Menu.Item>
                                 <Menu.Item onClick={() => downloadTeamStandingCSV(teamsArray, Strecken, streckenVisible)}>
                                     Konstrukteurstabelle CSV
+                                </Menu.Item>
+                                <Menu.Item onClick={() => downloadCalendarAsImage()}>
+                                    🗓️ Kalender Download
                                 </Menu.Item>
                             </Menu.Dropdown>
                         </Menu>
