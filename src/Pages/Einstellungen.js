@@ -22,6 +22,7 @@ import { IoFilter } from "react-icons/io5";
 import { DatePicker } from '@mantine/dates';
 import html2canvas from 'html2canvas';
 import { IoCamera } from "react-icons/io5";
+import RenderCalendar from '../Components/DownloadPictureDocs/RenderCalendar';
 
 const Einstellungen = ({ ligaName, setLigaName}) => {  
 
@@ -56,10 +57,14 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
     const [dateModal, setDateModal] = useState(false);
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [editingStrecke, setEditingStrecke] = useState('');
+
     const [calendarData, setCalendarData] = useState([]);
+    const [openCalendar, setOpenCalendar] = useState(false);
 
     const driverRef = useRef();
     const teamRef = useRef();
+
+
 
     // Schritt 1 & 2: Extrahiere und sortiere die Strecken basierend auf dem Datum
     const sortierteStrecken = streckenVisible ? Object.keys(streckenVisible)
@@ -94,11 +99,21 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                     month: '2-digit'
                 }).replace(/\./g, '.').slice(0, -1);
                 return { ...obj, datum: formattedDate, name: key };
+            }).sort((a, b) => {
+                const [dayA, monthA] = a.datum.split('.');
+                const [dayB, monthB] = b.datum.split('.');
+                const dateA = new Date(2023, monthA - 1, dayA); // Jahr 2023 als Platzhalter
+                const dateB = new Date(2023, monthB - 1, dayB); // Jahr 2023 als Platzhalter
+                return dateA - dateB;
             });
             setCalendarData(arrayData);
         }
     }, [streckenVisible]);
 
+    useEffect(() => {
+        console.log("Calendar Data: ", calendarData);
+        console.log("Open Calendar: ", openCalendar);
+    }, [calendarData, openCalendar]);
 
     const Strecken = [
         "Bahrain",
@@ -1132,6 +1147,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
 
     const downloadCalendarAsImage = () => {
         console.log("Download Kalender als Bild", calendarData);
+        setOpenCalendar(true);
     };
 
     return (
@@ -1693,6 +1709,16 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                         Datum aktualisieren
                     </Button>
                 </Group>
+            </Modal>
+
+            <Modal
+                opened={openCalendar}
+                onClose={() => setOpenCalendar(false)}
+                title="Kalender Download"
+                centered
+                size="xl"
+            >
+                <RenderCalendar />
             </Modal>
         </>
     );
