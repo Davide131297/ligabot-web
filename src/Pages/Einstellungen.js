@@ -1718,7 +1718,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                 centered
                 size="xl"
             >
-                <RenderCalendar />
+                <RenderCalendar calendarData={calendarData}/>
             </Modal>
         </>
     );

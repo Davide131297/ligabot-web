@@ -1,19 +1,90 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import F1Logo from './F1Logo.png';
 import BackgroundBlack from './BackgroundBlack.png';
 
-const RenderCalendar = () => {
+import AbuDhabi from '../Länderflaggen/abudhabi.png';
+import Aserbaidschan from '../Länderflaggen/aserbaidschan.png';
+import Australien from '../Länderflaggen/australien.png';
+import Bahrain from '../Länderflaggen/bahrain.png';
+import Belgien from '../Länderflaggen/belgien.png';
+import Brasilien from '../Länderflaggen/brasilien.png';
+import China from '../Länderflaggen/china.png';
+import Großbritannien from '../Länderflaggen/großbritannien.png';
+import Italien from '../Länderflaggen/italien.png';
+import Japan from '../Länderflaggen/japan.png';
+import Kanada from '../Länderflaggen/kanada.png';
+import Katar from '../Länderflaggen/katar.png';
+import Mexiko from '../Länderflaggen/mexiko.png';
+import Monaco from '../Länderflaggen/monaco.png';
+import Niederlande from '../Länderflaggen/niederlande.png';
+import Österreich from '../Länderflaggen/österreich.png';
+import SaudiArabien from '../Länderflaggen/saudiarabien.png';
+import Singapur from '../Länderflaggen/singapur.png';
+import Spanien from '../Länderflaggen/spanien.png';
+import Ungarn from '../Länderflaggen/ungarn.png';
+import USA from '../Länderflaggen/usa.png';
+
+const RenderCalendar = ({calendarData}) => {
+
+    const [f1Calendar, setF1Calendar] = useState([]);
+
+    useEffect(() => {
+        if (calendarData) {
+            const f1Calendar = calendarData.filter((item) => item.Visible === true);
+            console.log("F1 Calendar: ", f1Calendar);
+            setF1Calendar(f1Calendar);
+        }
+    }, [calendarData]);
+
+    const flaggen = {   
+        AbuDhabi,
+        Aserbaidschan,
+        Australien,
+        Bahrain,
+        Belgien,
+        Brasilien,
+        China,
+        Großbritannien,
+        Italien,
+        Japan,
+        Kanada,
+        Katar,
+        Mexiko,
+        Monaco,
+        Niederlande,
+        Österreich,
+        SaudiArabien,
+        Singapur,
+        Spanien,
+        Ungarn,
+        USA
+    };
+
+    function getFlagByCountryName(countryName) {
+        if (countryName === "Imola" || countryName === "Monza") {
+            countryName = "Italien";
+        }
+        if (countryName === "Miami" || countryName === "LasVegas" || countryName === "Austin") {
+            countryName = "USA";
+        }
+        return flaggen[countryName] || null;
+    }
+    
     return (
-        <svg width="100%" height="100%" viewBox="0 0 33334 18750" version="1.1"
-            xmlns="http://www.w3.org/2000/svg"
-            style={{
-                fillRule: 'evenodd',
-                clipRule: 'evenodd',
-                strokeLinejoin: 'round',
-                strokeMiterlimit: 2
-            }}
-        >
-            <rect id="Hintergrund" x="0" y="0" width="33333.3" height="18750"/>
+        <div>
+            {f1Calendar && f1Calendar.length > 0 ? (
+                <svg width="100%" height="100%" viewBox="0 0 33334 18750" version="1.1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    style={{
+                        fillRule: 'evenodd',
+                        clipRule: 'evenodd',
+                        strokeLinejoin: 'round',
+                        strokeMiterlimit: 2
+                    }}
+                >
+                <rect id="Hintergrund" x="0" y="0" width="33333.3" height="18750"/>
+
+                {f1Calendar.length > 24 && (
                 <g id="Feld24">
                     <path 
                         id="StreckeHintergrund24" d="M26178.9,16571c31.692,-1.375 63.383,-3.958 95.075,-3.963c2116.75,-0.191 4233.5,-0.179 6350.25,-0.179l102.779,0c0,175.038 0.004,341.854 0,508.671c-0.004,150.321 -0.637,300.646 0.108,450.963c1.305,263.029 -134.366,400.879 -399.57,400.912c-2119.65,0.275 -4239.29,0.033 -6365.54,-6.367c56.646,-56.279 134.45,-86.241 174.783,-167.012c21.296,-42.65 69.888,-71.675 106.154,-106.85c5.98,4.842 11.959,9.683 17.934,14.525c-26.284,-4.271 -52.571,-8.542 -78.209,-12.704c-2.754,-13.45 -5.929,-21.742 -5.937,-30.038c-0.221,-245.037 -2.271,-490.121 2.804,-735.058c0.592,-28.65 40.779,-56.479 53.067,-72.358c-47.071,9.462 -62.467,-30.238 -56.659,-93.805c4.438,-48.595 2.205,-97.8 2.938,-146.737m6495.21,282.446c1.175,-1.046 2.35,-2.092 0,-0m-37.233,-43.396c-1.383,2.05 -2.767,4.1 -4.154,6.15c2.479,-0.817 4.966,-1.633 4.154,-6.15m36.958,-37.263c1.692,-2.004 3.388,-4.008 5.079,-6.012c-1.72,0.408 -3.441,0.817 -5.079,6.012Z" 
@@ -37,7 +108,7 @@ const RenderCalendar = () => {
                     </g>
                     <use 
                         id="FlaggePlaceholder24" 
-                        href="#_Image1" 
+                        href="#_Flag24" 
                         x="0" 
                         y="0" 
                         width="275px" 
@@ -87,6 +158,9 @@ const RenderCalendar = () => {
                         </text>
                     </g>
                 </g>
+                )}
+
+                {f1Calendar.length > 23 && (
                 <g id="Feld23">
                     <path 
                         id="StreckeHintergrund23" 
@@ -114,7 +188,7 @@ const RenderCalendar = () => {
                     </g>
                     <use 
                         id="FlaggePlaceholder23" 
-                        href="#_Image1" 
+                        href="#_Flagg23" 
                         x="0" 
                         y="0" 
                         width="275px" 
@@ -159,6 +233,9 @@ const RenderCalendar = () => {
                         </text>
                     </g>
                 </g>
+                )}
+
+                {f1Calendar.length > 22 && (
                 <g id="Feld22">
                 <path 
                     id="StreckeHintergrund22" 
@@ -181,7 +258,7 @@ const RenderCalendar = () => {
                         03.09
                     </text>
                 </g>
-                <use id="FlaggePlaceholder22" href="#_Image1" x="0" y="0" width="275px" height="183px" 
+                <use id="FlaggePlaceholder22" href="#_Flag22" x="0" y="0" width="275px" height="183px" 
                     transform="matrix(5.68182,0,0,5.12295,26389.2,13913.4)"
                 />
                 <g id="Track22" transform="matrix(600,0,0,600,31855.4,14843.6)"></g>
@@ -221,6 +298,9 @@ const RenderCalendar = () => {
                     </text>
                 </g>
                 </g>  
+                )}
+
+                {f1Calendar.length > 21 && (
                 <g id="Feld21">
                 <path 
                     id="StreckeHintergrund21" 
@@ -245,7 +325,7 @@ const RenderCalendar = () => {
                 </g>
                 <use 
                     id="FlaggePlaceholder21" 
-                    href="#_Image1" 
+                    href="#_Flag21" 
                     x="0" 
                     y="0" 
                     width="275px" 
@@ -289,6 +369,9 @@ const RenderCalendar = () => {
                     </text>
                 </g>
                 </g>
+                )}
+
+                {f1Calendar.length > 20 && (
                 <g id="Feld20">
                     <path 
                         id="StreckeHintergrund20" 
@@ -309,7 +392,7 @@ const RenderCalendar = () => {
                     </g>
                     <use 
                         id="FlaggePlaceholder20" 
-                        href="#_Image1" 
+                        href="#_Flag20" 
                         x="0" 
                         y="0" 
                         width="275px" 
@@ -353,6 +436,9 @@ const RenderCalendar = () => {
                         </text>
                     </g>
                 </g>
+                )}
+
+                {f1Calendar.length > 19 && (
                 <g id="Feld19">
                     <path 
                         id="StreckeHintergrund19" 
@@ -373,7 +459,7 @@ const RenderCalendar = () => {
                     </g>
                     <use 
                         id="FlaggePlaceholder19" 
-                        href="#_Image1" 
+                        href="#_Flag19" 
                         x="0" 
                         y="0" 
                         width="275px" 
@@ -417,6 +503,9 @@ const RenderCalendar = () => {
                         </text>
                     </g>
                 </g>
+                )}
+
+                {f1Calendar.length > 18 && (
                 <g id="Feld18">
                     <path 
                         id="StreckeHintergrund191" 
@@ -437,7 +526,7 @@ const RenderCalendar = () => {
                     </g>
                     <use 
                         id="FlaggePlaceholder18" 
-                        href="#_Image1" 
+                        href="#_Flag18" 
                         x="0" 
                         y="0" 
                         width="275px" 
@@ -481,6 +570,9 @@ const RenderCalendar = () => {
                         </text>
                     </g>
                 </g>
+                )}
+
+                {f1Calendar.length > 17 && (
                 <g id="Feld17">
                     <path 
                         id="StreckeHintergrund17" 
@@ -501,7 +593,7 @@ const RenderCalendar = () => {
                     </g>
                     <use 
                         id="FlaggePlaceholder17" 
-                        href="#_Image1" 
+                        href="#_Flag17" 
                         x="0" 
                         y="0" 
                         width="275px" 
@@ -545,6 +637,9 @@ const RenderCalendar = () => {
                         </text>
                     </g>
                 </g>
+                )}
+
+                {f1Calendar.length > 16 && (
                 <g id="Feld16">
                     <path 
                         id="StreckeHintergrund16" 
@@ -565,7 +660,7 @@ const RenderCalendar = () => {
                     </g>
                     <use 
                         id="FlaggePlaceholder16" 
-                        href="#_Image1" 
+                        href="#_Flag16" 
                         x="0" 
                         y="0" 
                         width="275px" 
@@ -609,6 +704,9 @@ const RenderCalendar = () => {
                         </text>
                     </g>
                 </g>
+                )}
+
+                {f1Calendar.length > 15 && (
                 <g id="Feld15">
                     <path 
                         id="StreckeHintergrund15" 
@@ -629,7 +727,7 @@ const RenderCalendar = () => {
                     </g>
                     <use 
                         id="FlaggePlaceholder15" 
-                        href="#_Image1" 
+                        href="#_Flag15" 
                         x="0" 
                         y="0" 
                         width="275px" 
@@ -673,6 +771,9 @@ const RenderCalendar = () => {
                         </text>
                     </g>
                 </g>
+                )}
+
+                {f1Calendar.length > 14 && (
                 <g id="Feld14">
                     <path 
                         id="StreckeHintergrund14" 
@@ -693,7 +794,7 @@ const RenderCalendar = () => {
                     </g>
                     <use 
                         id="FlaggePlaceholder14" 
-                        href="#_Image1" 
+                        href="#_Flag14" 
                         x="0" 
                         y="0" 
                         width="275px" 
@@ -737,6 +838,9 @@ const RenderCalendar = () => {
                         </text>
                     </g>
                 </g>
+                )}
+
+                {f1Calendar.length > 13 && (
                 <g id="Feld13">
                     <path 
                         id="StreckeHintergrund13" 
@@ -757,7 +861,7 @@ const RenderCalendar = () => {
                     </g>
                     <use 
                         id="FlaggePlaceholder13" 
-                        href="#_Image1" 
+                        href="#_Flag13" 
                         x="0" 
                         y="0" 
                         width="275px" 
@@ -796,6 +900,9 @@ const RenderCalendar = () => {
                         </g>
                     </g>
                 </g>
+                )}
+
+                {f1Calendar.length > 12 && (
                 <g id="Feld12">
                     <path 
                         id="StreckeHintergrund12" 
@@ -816,7 +923,7 @@ const RenderCalendar = () => {
                     </g>
                     <use 
                         id="FlaggePlaceholder12" 
-                        href="#_Image1" 
+                        href="#_Flag12" 
                         x="0" 
                         y="0" 
                         width="275px" 
@@ -860,6 +967,9 @@ const RenderCalendar = () => {
                         </text>
                     </g>
                 </g>
+                )}
+
+                {f1Calendar.length > 11 && (
                 <g id="Feld11">
                     <path
                         id="StreckeHintergrund11"
@@ -887,7 +997,7 @@ const RenderCalendar = () => {
                     </g>
                     <use
                         id="FlaggePlaceholder11"
-                        href="#_Image1"
+                        href="#_Flag11"
                         x="0"
                         y="0"
                         width="275px"
@@ -939,6 +1049,9 @@ const RenderCalendar = () => {
                         </text>
                     </g>
                 </g>
+                )}
+
+                {f1Calendar.length > 10 && (
                 <g id="Feld10">
                     <path
                         id="StreckeHintergrund10"
@@ -966,7 +1079,7 @@ const RenderCalendar = () => {
                     </g>
                     <use
                         id="FlaggePlaceholder10"
-                        href="#_Image1"
+                        href="#_Flag10"
                         x="0"
                         y="0"
                         width="275px"
@@ -1018,6 +1131,9 @@ const RenderCalendar = () => {
                         </text>
                     </g>
                 </g>
+                )}
+
+                {f1Calendar.length > 9 && (
                 <g id="Feld9">
                     <path 
                         id="StreckeHintergrund9" 
@@ -1038,7 +1154,7 @@ const RenderCalendar = () => {
                     </g>
                     <use 
                         id="FlaggePlaceholder9" 
-                        href="#_Image1" 
+                        href="#_Flag9" 
                         x="0" 
                         y="0" 
                         width="275px" 
@@ -1082,6 +1198,9 @@ const RenderCalendar = () => {
                         </text>
                     </g>
                 </g>
+                )}
+
+                {f1Calendar.length > 8 && (
                 <g id="Feld8">
                     <path 
                         id="StreckeHintergrund8" 
@@ -1097,12 +1216,12 @@ const RenderCalendar = () => {
                             y="11359.1px" 
                             style={{ fontFamily: "'Avenir-BlackOblique', 'Avenir', sans-serif", fontWeight: 800, fontStyle: "italic", fontSize: "605.696px", fill: "#818181", fillOpacity: 0.55 }}
                         >
-                            03.09
+                            {f1Calendar[7].date}
                         </text>
                     </g>
                     <use 
                         id="FlaggePlaceholder8" 
-                        href="#_Image1" 
+                        href="#_Flag8" 
                         x="0" 
                         y="0" 
                         width="275px" 
@@ -1117,9 +1236,9 @@ const RenderCalendar = () => {
                     <text 
                         x="19429.6px" 
                         y="12002px" 
-                        style={{ fontFamily: "'Arial-Black', 'Arial Black', sans-serif", fontWeight: 900, fontSize: "600px", fill: "#ff0100" }}
+                        style={{ fontFamily: "'Arial-Black', 'Arial Black', sans-serif", fontWeight: 900, fontSize: f1Calendar[7].name.length > 10 ? '550px' : '600px', fill: "#ff0100" }}
                     >
-                        Australien
+                        {f1Calendar[7].name}
                     </text>
                     <path 
                         d="M16723.6,12240.5c204.571,-60.55 294.029,-173.342 295.404,-394.071c1.984,-317.6 0.046,-635.225 -1.175,-960.621c32.546,-7.883 66.05,-7.983 107.3,-5.4c7.009,51.617 9.246,100.825 4.809,149.421c-5.813,63.567 9.583,103.267 56.654,93.804c-12.288,15.875 -52.475,43.708 -53.067,72.358c-5.071,244.934 -3.025,490.021 -2.804,735.059c0.008,8.291 3.183,16.583 5.937,30.037c25.638,4.163 51.925,8.434 78.209,12.7c-5.975,-4.841 -11.954,-9.683 -17.934,-14.525c-36.266,35.179 -84.858,64.2 -106.154,106.854c-40.333,80.771 -118.137,110.734 -182.704,166.138c-59.75,6.492 -118.179,7.537 -184.475,8.246Z" 
@@ -1142,10 +1261,13 @@ const RenderCalendar = () => {
                             y="11865.4px" 
                             style={{ fontFamily: "'Arial-Black', 'Arial Black', sans-serif", fontWeight: 900, fontSize: "833.333px", fill: "#fff" }}
                         >
-                            R3
+                            R8
                         </text>
                     </g>
                 </g>
+                )}
+
+                {f1Calendar.length > 7 && (
                 <g id="Feld7">
                     <path 
                         id="StreckeHintergrund7" 
@@ -1161,12 +1283,12 @@ const RenderCalendar = () => {
                             y="9924.55px" 
                             style={{ fontFamily: "'Avenir-BlackOblique', 'Avenir', sans-serif", fontWeight: 800, fontStyle: "italic", fontSize: "605.696px", fill: "#818181", fillOpacity: 0.55 }}
                         >
-                            03.09
+                            {f1Calendar[6].datum}
                         </text>
                     </g>
                     <use 
                         id="FlaggePlaceholder7" 
-                        href="#_Image1" 
+                        href="#_Flag7" 
                         x="0" 
                         y="0" 
                         width="275px" 
@@ -1181,9 +1303,9 @@ const RenderCalendar = () => {
                     <text 
                         x="19429.6px" 
                         y="10567.5px" 
-                        style={{ fontFamily: "'Arial-Black', 'Arial Black', sans-serif", fontWeight: 900, fontSize: "600px", fill: "#ff0100" }}
+                        style={{ fontFamily: "'Arial-Black', 'Arial Black', sans-serif", fontWeight: 900, fontSize: f1Calendar[6].name.length > 10 ? '550px' : '600px', fill: "#ff0100" }}
                     >
-                        Australien
+                        {f1Calendar[6].name}
                     </text>
                     <path 
                         d="M16723.6,10806c204.571,-60.55 294.029,-173.342 295.404,-394.071c1.984,-317.6 0.046,-635.225 -1.175,-960.621c32.546,-7.883 66.05,-7.983 107.3,-5.4c7.009,51.617 9.246,100.825 4.809,149.421c-5.813,63.566 9.583,103.266 56.654,93.804c-12.288,15.875 -52.475,43.708 -53.067,72.358c-5.071,244.934 -3.025,490.021 -2.804,735.059c0.008,8.291 3.183,16.583 5.937,30.037c25.638,4.163 51.925,8.433 78.209,12.7c-5.975,-4.842 -11.954,-9.683 -17.934,-14.525c-36.266,35.179 -84.858,64.2 -106.154,106.854c-40.333,80.771 -118.137,110.734 -182.704,166.138c-59.75,6.491 -118.179,7.537 -184.475,8.246Z" 
@@ -1206,10 +1328,13 @@ const RenderCalendar = () => {
                             y="10430.9px" 
                             style={{ fontFamily: "'Arial-Black', 'Arial Black', sans-serif", fontWeight: 900, fontSize: "833.333px", fill: "#fff" }}
                         >
-                            R3
+                            R7
                         </text>
                     </g>
                 </g>
+                )}
+
+                {f1Calendar.length > 6 && (
                 <g id="Feld6">
                     <path 
                         id="StreckeHintergrund6" 
@@ -1225,12 +1350,12 @@ const RenderCalendar = () => {
                             y="8487.07px" 
                             style={{ fontFamily: "'Avenir-BlackOblique', 'Avenir', sans-serif", fontWeight: 800, fontStyle: "italic", fontSize: "605.696px", fill: "#818181", fillOpacity: 0.55 }}
                         >
-                            03.09
+                            {f1Calendar[5].datum}
                         </text>
                     </g>
                     <use 
                         id="FlaggePlaceholder6" 
-                        href="#_Image1" 
+                        href="#_Flag6" 
                         x="0" 
                         y="0" 
                         width="275px" 
@@ -1245,9 +1370,9 @@ const RenderCalendar = () => {
                     <text 
                         x="19429.6px" 
                         y="9129.99px" 
-                        style={{ fontFamily: "'Arial-Black', 'Arial Black', sans-serif", fontWeight: 900, fontSize: "600px", fill: "#ff0100" }}
+                        style={{ fontFamily: "'Arial-Black', 'Arial Black', sans-serif", fontWeight: 900, fontSize: f1Calendar[5].name.length > 10 ? '550px' : '600px', fill: "#ff0100" }}
                     >
-                        Australien
+                        {f1Calendar[5].name}
                     </text>
                     <path 
                         d="M16723.6,9368.53c204.571,-60.55 294.029,-173.342 295.404,-394.071c1.984,-317.6 0.046,-635.225 -1.175,-960.621c32.546,-7.883 66.05,-7.983 107.3,-5.4c7.009,51.617 9.246,100.825 4.809,149.421c-5.813,63.567 9.583,103.267 56.654,93.804c-12.288,15.875 -52.475,43.709 -53.067,72.359c-5.071,244.933 -3.025,490.021 -2.804,735.058c0.008,8.292 3.183,16.583 5.937,30.038c25.638,4.162 51.925,8.433 78.209,12.7c-5.975,-4.842 -11.954,-9.684 -17.934,-14.525c-36.266,35.179 -84.858,64.2 -106.154,106.854c-40.333,80.771 -118.137,110.733 -182.704,166.137c-59.75,6.492 -118.179,7.538 -184.475,8.246Z" 
@@ -1270,10 +1395,13 @@ const RenderCalendar = () => {
                             y="8993.43px" 
                             style={{ fontFamily: "'Arial-Black', 'Arial Black', sans-serif", fontWeight: 900, fontSize: "833.333px", fill: "#fff" }}
                         >
-                            R3
+                            R6
                         </text>
                     </g>
                 </g>
+                )}
+
+                {f1Calendar.length > 5 && (
                 <g id="Feld5">
                     <path 
                         id="StreckeHintergrund5" 
@@ -1289,12 +1417,12 @@ const RenderCalendar = () => {
                             y="7049.07px" 
                             style={{ fontFamily: "'Avenir-BlackOblique', 'Avenir', sans-serif", fontWeight: 800, fontStyle: "italic", fontSize: "605.696px", fill: "#818181", fillOpacity: 0.55 }}
                         >
-                            03.09
+                            {f1Calendar[4].datum}
                         </text>
                     </g>
                     <use 
                         id="FlaggePlaceholder5" 
-                        href="#_Image1" 
+                        href="#_Flag5" 
                         x="0" 
                         y="0" 
                         width="275px" 
@@ -1309,9 +1437,9 @@ const RenderCalendar = () => {
                     <text 
                         x="19429.6px" 
                         y="7691.98px" 
-                        style={{ fontFamily: "'Arial-Black', 'Arial Black', sans-serif", fontWeight: 900, fontSize: "600px", fill: "#ff0100" }}
+                        style={{ fontFamily: "'Arial-Black', 'Arial Black', sans-serif", fontWeight: 900, fontSize: f1Calendar[4].name.length > 10 ? '550px' : '600px', fill: "#ff0100" }}
                     >
-                        Australien
+                        {f1Calendar[4].name}
                     </text>
                     <path 
                         d="M16723.6,7930.52c204.571,-60.55 294.029,-173.342 295.404,-394.071c1.984,-317.6 0.046,-635.225 -1.175,-960.621c32.546,-7.883 66.05,-7.983 107.3,-5.4c7.009,51.617 9.246,100.825 4.809,149.421c-5.813,63.567 9.583,103.267 56.654,93.804c-12.288,15.875 -52.475,43.709 -53.067,72.359c-5.071,244.933 -3.025,490.021 -2.804,735.058c0.008,8.292 3.183,16.583 5.937,30.038c25.638,4.162 51.925,8.433 78.209,12.7c-5.975,-4.842 -11.954,-9.684 -17.934,-14.525c-36.266,35.179 -84.858,64.2 -106.154,106.854c-40.333,80.771 -118.137,110.733 -182.704,166.137c-59.75,6.492 -118.179,7.538 -184.475,8.246Z" 
@@ -1334,10 +1462,13 @@ const RenderCalendar = () => {
                             y="7555.42px" 
                             style={{ fontFamily: "'Arial-Black', 'Arial Black', sans-serif", fontWeight: 900, fontSize: "833.333px", fill: "#fff" }}
                         >
-                            R3
+                            R5
                         </text>
                     </g>
                 </g>
+                )}
+
+                {f1Calendar.length > 4 && (
                 <g id="Feld4">
                     <path 
                         id="StreckeHintergrund4" 
@@ -1353,12 +1484,12 @@ const RenderCalendar = () => {
                             y="5609.63px" 
                             style={{ fontFamily: "'Avenir-BlackOblique', 'Avenir', sans-serif", fontWeight: 800, fontStyle: "italic", fontSize: "605.696px", fill: "#818181", fillOpacity: 0.55 }}
                         >
-                            03.09
+                            {f1Calendar[3].datum}
                         </text>
                     </g>
                     <use 
                         id="FlaggePlaceholder4" 
-                        href="#_Image1" 
+                        href="#_Flag4" 
                         x="0" 
                         y="0" 
                         width="275px" 
@@ -1373,9 +1504,9 @@ const RenderCalendar = () => {
                     <text 
                         x="19429.6px" 
                         y="6252.55px" 
-                        style={{ fontFamily: "'Arial-Black', 'Arial Black', sans-serif", fontWeight: 900, fontSize: "600px", fill: "#ff0100" }}
+                        style={{ fontFamily: "'Arial-Black', 'Arial Black', sans-serif", fontWeight: 900, fontSize: f1Calendar[3].name.length > 10 ? '550px' : '600px', fill: "#ff0100" }}
                     >
-                        Australien
+                        {f1Calendar[3].name}
                     </text>
                     <path 
                         d="M16723.6,6491.09c204.571,-60.55 294.029,-173.341 295.404,-394.07c1.984,-317.6 0.046,-635.225 -1.175,-960.621c32.546,-7.884 66.05,-7.984 107.3,-5.4c7.009,51.616 9.246,100.825 4.809,149.421c-5.813,63.566 9.583,103.266 56.654,93.804c-12.288,15.875 -52.475,43.708 -53.067,72.358c-5.071,244.933 -3.025,490.021 -2.804,735.058c0.008,8.292 3.183,16.584 5.937,30.038c25.638,4.162 51.925,8.433 78.209,12.7c-5.975,-4.842 -11.954,-9.683 -17.934,-14.525c-36.266,35.179 -84.858,64.2 -106.154,106.854c-40.333,80.771 -118.137,110.733 -182.704,166.138c-59.75,6.491 -118.179,7.537 -184.475,8.245Z" 
@@ -1402,6 +1533,9 @@ const RenderCalendar = () => {
                         </text>
                     </g>
                 </g>
+                )}
+
+                {f1Calendar.length > 3 && (
                 <g id="Feld3">
                     <path 
                         id="StreckeHintergrund3" 
@@ -1417,12 +1551,12 @@ const RenderCalendar = () => {
                             y="4168.91px" 
                             style={{ fontFamily: "'Avenir-BlackOblique', 'Avenir', sans-serif", fontWeight: 800, fontStyle: 'italic', fontSize: '605.696px', fill: '#818181', fillOpacity: 0.55 }}
                         >
-                            03.09
+                            {f1Calendar[2].datum}
                         </text>
                     </g>
                     <use 
                         id="FlaggePlaceholder3" 
-                        xlinkHref="#_Image1" 
+                        href="#_Flag3" 
                         x="0" 
                         y="0" 
                         width="275px" 
@@ -1437,9 +1571,9 @@ const RenderCalendar = () => {
                     <text 
                         x="19429.6px" 
                         y="4811.83px" 
-                        style={{ fontFamily: "'Arial-Black', 'Arial Black', sans-serif", fontWeight: 900, fontSize: '600px', fill: '#ff0100' }}
+                        style={{ fontFamily: "'Arial-Black', 'Arial Black', sans-serif", fontWeight: 900, fontSize: f1Calendar[2].name.length > 10 ? '550px' : '600px', fill: '#ff0100' }}
                     >
-                        Australien
+                        {f1Calendar[2].name}
                     </text>
                     <path 
                         d="M16723.6,5050.37c204.571,-60.55 294.029,-173.342 295.404,-394.071c1.984,-317.6 0.046,-635.225 -1.175,-960.621c32.546,-7.883 66.05,-7.983 107.3,-5.4c7.009,51.617 9.246,100.825 4.809,149.421c-5.813,63.566 9.583,103.266 56.654,93.804c-12.288,15.875 -52.475,43.708 -53.067,72.358c-5.071,244.934 -3.025,490.021 -2.804,735.059c0.008,8.291 3.183,16.583 5.937,30.037c25.638,4.163 51.925,8.433 78.209,12.7c-5.975,-4.842 -11.954,-9.683 -17.934,-14.525c-36.266,35.179 -84.858,64.2 -106.154,106.854c-40.333,80.771 -118.137,110.734 -182.704,166.138c-59.75,6.491 -118.179,7.537 -184.475,8.246Z" 
@@ -1466,6 +1600,9 @@ const RenderCalendar = () => {
                         </text>
                     </g>
                 </g>
+                )}
+
+                {f1Calendar.length > 2 && (
                 <g id="Feld2">
                     <path 
                         id="StreckeHintergrund2" 
@@ -1481,12 +1618,12 @@ const RenderCalendar = () => {
                             y="2731.41px" 
                             style={{ fontFamily: "'Avenir-BlackOblique', 'Avenir', sans-serif", fontWeight: 800, fontStyle: 'italic', fontSize: '605.696px', fill: '#818181', fillOpacity: 0.55 }}
                         >
-                            03.09
+                            {f1Calendar[1].datum}
                         </text>
                     </g>
                     <use 
                         id="FlaggePlaceholder2" 
-                        href="#_Image1" 
+                        href="#_Flag2"  
                         x="0" 
                         y="0" 
                         width="275px" 
@@ -1501,9 +1638,9 @@ const RenderCalendar = () => {
                     <text 
                         x="19450px" 
                         y="3374.32px" 
-                        style={{ fontFamily: "'Arial-Black', 'Arial Black', sans-serif", fontWeight: 900, fontSize: '600px', fill: '#ff0100' }}
+                        style={{ fontFamily: "'Arial-Black', 'Arial Black', sans-serif", fontWeight: 900, fontSize: f1Calendar[1].name.length > 10 ? '550px' : '600px', fill: '#ff0100' }}
                     >
-                        Australien
+                        {f1Calendar[1].name}
                     </text>
                     <path 
                         d="M16723.6,3612.86c204.571,-60.55 294.029,-173.342 295.404,-394.071c1.984,-317.6 0.046,-635.225 -1.175,-960.621c32.546,-7.883 66.05,-7.983 107.3,-5.4c7.009,51.617 9.246,100.825 4.809,149.421c-5.813,63.567 9.583,103.267 56.654,93.804c-12.288,15.875 -52.475,43.709 -53.067,72.359c-5.071,244.933 -3.025,490.021 -2.804,735.058c0.008,8.292 3.183,16.583 5.937,30.038c25.638,4.162 51.925,8.433 78.209,12.7c-5.975,-4.842 -11.954,-9.684 -17.934,-14.525c-36.266,35.179 -84.858,64.2 -106.154,106.854c-40.333,80.771 -118.137,110.733 -182.704,166.137c-59.75,6.492 -118.179,7.538 -184.475,8.246Z" 
@@ -1529,6 +1666,9 @@ const RenderCalendar = () => {
                         </text>
                     </g>
                 </g>
+                )}
+
+                {f1Calendar.length > 1 && (
                 <g id="Feld1">
                     <path 
                         id="StreckeHintergrund1" 
@@ -1544,12 +1684,12 @@ const RenderCalendar = () => {
                             y="1295.21px" 
                             style={{ fontFamily: "'Avenir-BlackOblique', 'Avenir', sans-serif", fontWeight: 800, fontStyle: 'italic', fontSize: '605.696px', fill: '#818181', fillOpacity: 0.55 }}
                         >
-                            03.09
+                            {f1Calendar[0].datum}
                         </text>
                     </g>
                     <use 
                         id="FlaggePlaceholder1" 
-                        href="#_Image1" 
+                        href="#_Flag1" 
                         x="0" 
                         y="0" 
                         width="275px" 
@@ -1562,7 +1702,7 @@ const RenderCalendar = () => {
                         y="1943.74px" 
                         style={{ fontFamily: "'Arial-Black', 'Arial Black', sans-serif", fontWeight: 900, fontSize: '625px', fill: '#ff0100' }}
                     >
-                        Australien
+                        {f1Calendar[0].name}
                     </text>
                     <path 
                         d="M16723.6,2176.66c204.571,-60.55 294.029,-173.342 295.404,-394.071c1.984,-317.6 0.046,-635.225 -1.175,-960.621c32.546,-7.883 66.05,-7.983 107.3,-5.4c7.009,51.617 9.246,100.825 4.809,149.421c-5.813,63.566 9.583,103.266 56.654,93.804c-12.288,15.875 -52.475,43.708 -53.067,72.358c-5.071,244.934 -3.025,490.021 -2.804,735.059c0.008,8.291 3.183,16.583 5.937,30.037c25.638,4.163 51.925,8.433 78.209,12.7c-5.975,-4.842 -11.954,-9.683 -17.934,-14.525c-36.266,35.179 -84.858,64.2 -106.154,106.854c-40.333,80.771 -118.137,110.734 -182.704,166.138c-59.75,6.491 -118.179,7.537 -184.475,8.246Z" 
@@ -1589,6 +1729,8 @@ const RenderCalendar = () => {
                         </text>
                     </g>
                 </g>
+                )}
+
                 <text 
                     x="656.458px" 
                     y="14046.3px" 
@@ -1596,6 +1738,7 @@ const RenderCalendar = () => {
                 >
                     Kalender
                 </text>
+
                 <g id="Jahr">
                     <g transform="matrix(1,0,0,0.952306,1.13687e-13,564.048)">
                         <text 
@@ -1607,14 +1750,18 @@ const RenderCalendar = () => {
                         </text>
                     </g>
                 </g>
+
                 <use id="F1Logo" href="#_Image2" x="0" y="0" width="1024px" height="256px" transform="matrix(12.1799,0,0,12.0917,845.488,5121.54)"/>
             <defs>
-                <image 
-                    id="_Image1" 
-                    width="275px" 
-                    height="183px" 
-                    href={BackgroundBlack}
-                />
+                {f1Calendar.map((item, index) => (
+                    <image 
+                        key={index}
+                        id={`_Flag${index + 1}`} 
+                        width="275px" 
+                        height="183px" 
+                        href={getFlagByCountryName(item.name)}
+                    />
+                ))}
                 <image 
                     id="_Image2" 
                     width="1024px" 
@@ -1622,7 +1769,9 @@ const RenderCalendar = () => {
                     href={F1Logo}
                 />
             </defs>
-        </svg>
+                </svg>
+            ) : null}
+        </div>
     )
 }
 export default RenderCalendar;
