@@ -33,7 +33,6 @@ const RenderCalendar = ({calendarData}) => {
     useEffect(() => {
         if (calendarData) {
             const f1Calendar = calendarData.filter((item) => item.Visible === true);
-            console.log("F1 Calendar: ", f1Calendar);
             setF1Calendar(f1Calendar);
         }
     }, [calendarData]);
@@ -83,7 +82,6 @@ const RenderCalendar = ({calendarData}) => {
     }
 
     function roundNumberFontSize(roundNumber) {
-        console.log("Round Number: ", roundNumber);
         const length = roundNumber.toString().length;
         if (length === 1) {
             return '833.333px';

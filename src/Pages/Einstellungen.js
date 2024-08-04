@@ -110,11 +110,6 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
         }
     }, [streckenVisible]);
 
-    useEffect(() => {
-        console.log("Calendar Data: ", calendarData);
-        console.log("Open Calendar: ", openCalendar);
-    }, [calendarData, openCalendar]);
-
     const Strecken = [
         "Bahrain",
         "SaudiArabien",
@@ -1142,7 +1137,6 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
     };
 
     const downloadCalendarAsImage = () => {
-        console.log("Download Kalender als Bild", calendarData);
         setOpenCalendar(true);
     };
 
