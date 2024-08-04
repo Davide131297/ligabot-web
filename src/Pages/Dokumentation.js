@@ -73,7 +73,7 @@ export default function Dokumentation() {
                     </Text>
                     <Space h="sm" />
                     <Text>
-                        Um die zu fahrenden Strecken auszuwählen und diese zu sortieren kannst du den Button "Streckenfiltern" drücken. Dort kannst du die Strecken auswählen, die in der Tabelle angezeigt werden sollen, und wann sie gefahren werden sollen. So wird die Tabelle automatisch sortiert.
+                        Um die zu fahrenden Strecken auszuwählen und diese zu sortieren kannst du den Button "Kalender" drücken. Dort kannst du die Strecken auswählen, die in der Tabelle angezeigt werden sollen, und wann sie gefahren werden sollen. So wird die Tabelle automatisch sortiert.
                     </Text>
                 <Space h="lg" />
                 <Title order={2}>CSV Download</Title>
