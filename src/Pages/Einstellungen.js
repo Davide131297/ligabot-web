@@ -153,8 +153,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
         { value: 'Monaco', label: 'Monaco' },
         { value: 'Kanada', label: 'Kanada' },
         { value: 'Spanien', label: 'Spanien' },
-        { value: 'Österreich_Sprint', label: 'Österreich Sprint' },
-        { value: 'Österreich_Rennen', label: 'Österreich Rennen' },
+        { value: 'Österreich', label: 'Österreich' },
         { value: 'Großbritannien', label: 'Großbritannien' },
         { value: 'Ungarn', label: 'Ungarn' },
         { value: 'Belgien', label: 'Belgien' },
@@ -162,14 +161,11 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
         { value: 'Monza', label: 'Monza' },
         { value: 'Aserbaidschan', label: 'Aserbaidschan' },
         { value: 'Singapur', label: 'Singapur' },
-        { value: 'Austin_Sprint', label: 'Austin Sprint' },
-        { value: 'Austin_Rennen', label: 'Austin Rennen' },
+        { value: 'Austin', label: 'Austin' },
         { value: 'Mexiko', label: 'Mexiko' },
-        { value: 'Brasilien_Sprint', label: 'Brasilien Sprint' },
-        { value: 'Brasilien_Rennen', label: 'Brasilien Rennen' },
+        { value: 'Brasilien', label: 'Brasilien' },
         { value: 'LasVegas', label: 'Las Vegas' },
-        { value: 'Katar_Sprint', label: 'Katar Sprint' },
-        { value: 'Katar_Rennen', label: 'Katar Rennen' },
+        { value: 'Katar', label: 'Katar' },
         { value: 'AbuDhabi', label: 'Abu Dhabi' },
     ];
 
@@ -1170,7 +1166,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                                 Ergebnisse eintragen
                             </Menu.Item>
                             <Menu.Item onClick={() => setStreckenPopup(true)}>
-                                Strecken filtern
+                                Kalender
                             </Menu.Item>
                             <Menu.Item color="red" onClick={() => handleReset()}>
                                 Zurücksetzen
@@ -1234,7 +1230,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                     <>
                         <Button variant="filled" radius="xl" color="cyan" onClick={open} style={{ flex: 1 }}>Fahrer hinzufügen</Button>
                         <Button variant="filled" radius="xl" color="cyan" onClick={() => setOpenEintragen(true)} style={{ flex: 1 }}>Ergebnisse eintragen</Button>
-                        <Button variant="filled" radius="xl" color="gray" rightSection={<IoFilter size={14}/>} style={{ flex: 1 }} onClick={() => setStreckenPopup(true)}>Streckenfiltern</Button>
+                        <Button variant="filled" radius="xl" color="gray" rightSection={<IoFilter size={14}/>} style={{ flex: 1 }} onClick={() => setStreckenPopup(true)}>Kalender</Button>
                         <Button variant="filled" radius="xl" color="red" onClick={() => handleReset()} style={{ flex: 1 }}>Alle Wertungen zurücksetzten</Button>
                         <Button
                             variant="filled" radius="xl" color="grape"
