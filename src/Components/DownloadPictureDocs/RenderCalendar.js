@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import F1Logo from './F1Logo.png';
 import BackgroundBlack from './BackgroundBlack.png';
+import { IoMdDownload } from "react-icons/io";
+import { Button, Space, Group } from '@mantine/core';
 
 import AbuDhabi from '../Länderflaggen/abudhabi.png';
 import Aserbaidschan from '../Länderflaggen/aserbaidschan.png';
@@ -99,10 +101,48 @@ const RenderCalendar = ({calendarData}) => {
         }
     }
 
+    const handleDownload = () => {
+        const svgElement = document.querySelector('#calendar-svg'); // Verwenden Sie eine eindeutige ID
+        if (svgElement) {
+            const svgData = new XMLSerializer().serializeToString(svgElement);
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(svgBlob);
+    
+            // Setzen Sie die Breite und Höhe des Canvas auf die des SVG-Elements
+            const svgWidth = svgElement.getBoundingClientRect().width;
+            const svgHeight = svgElement.getBoundingClientRect().height;
+            canvas.width = svgWidth;
+            canvas.height = svgHeight;
+    
+            img.onload = () => {
+                ctx.drawImage(img, 0, 0, svgWidth, svgHeight);
+                URL.revokeObjectURL(url);
+    
+                canvas.toBlob((blob) => {
+                    const pngUrl = URL.createObjectURL(blob);
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = pngUrl;
+                    downloadLink.download = 'calendar.png';
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
+                }, 'image/png');
+            };
+    
+            img.src = url;
+        } else {
+            console.error('SVG element not found');
+        }
+    };
+
     return (
         <div>
             {f1Calendar && f1Calendar.length > 0 ? (
                 <svg 
+                    id='calendar-svg'
                     width="100%" 
                     height="100%" 
                     viewBox="0 0 33668 18750" // Erhöht, um Platz für beide Reihen zu schaffen
@@ -381,6 +421,16 @@ const RenderCalendar = ({calendarData}) => {
             ) : (
                 <p>Keine Daten vorhanden</p>
             )}
+
+            <Space h="md" />
+            <Group justify="flex-end">
+                <Button
+                    onClick={handleDownload}
+                    rightSection={<IoMdDownload size={14} />}
+                >
+                    Download
+                </Button>
+            </Group>
         </div>
     );    
 }
