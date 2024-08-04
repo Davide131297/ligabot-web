@@ -1046,6 +1046,20 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
         return date.toLocaleDateString('de-DE');
     }   
 
+    function returnFontColorForDriverTableImage(value) { // Funktion die die Schriftfarbe pro Zelle für die Fahrertabelle bestimmt
+        if (value === "DNF") {
+            return 'red';
+        } else if (value === "25" || value === "26") {
+            return 'gold';
+        } else if (value === "18" || value === "19") {
+            return 'silver';
+        } else if (value === "15" || value === "16") {
+            return 'peru';
+        } else {
+            return 'white';
+        }
+    }
+
     const downloadDriverTableAsImage = () => {
         const table = driverRef.current;
         const lastColumns = table.querySelectorAll('tr > :last-child');
@@ -1061,10 +1075,10 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
         const cells = table.querySelectorAll('td, th');
         cells.forEach(cell => {
             cell.style.backgroundColor = 'black';
-            cell.style.color = 'white';
             cell.style.borderColor = 'white'; // Set border color to white
             cell.style.borderWidth = '1px'; // Set border width to 2px
             cell.style.borderStyle = 'solid'; // Ensure border style is solid
+            cell.style.color = returnFontColorForDriverTableImage(cell.innerText); // Pass cell text to function
         });
 
         html2canvas(table).then((canvas) => {
