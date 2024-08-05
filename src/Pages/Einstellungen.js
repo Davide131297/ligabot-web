@@ -24,6 +24,17 @@ import html2canvas from 'html2canvas';
 import { IoCamera } from "react-icons/io5";
 import RenderCalendar from '../Components/DownloadPictureDocs/RenderCalendar';
 
+import Alpine from './../Components/Teamlogos/AlpineBlue.png';
+import AstonMartin from './../Components/Teamlogos/AstonMartinGreen.jpg';
+import Ferrari from './../Components/Teamlogos/Ferrari.png';
+import Haas from './../Components/Teamlogos/Logo_Haas_F1.png';
+import McLaren from './../Components/Teamlogos/MclarenIcon.png';
+import Mercedes from './../Components/Teamlogos/MercedesIcon.png';
+import RedBull from './../Components/Teamlogos/RedBullIcon.png';
+import VisaRB from './../Components/Teamlogos/VisaRB.jpg';
+import Williams from './../Components/Teamlogos/Williams.png';
+import KickSauber from './../Components/Teamlogos/StakeSauber.png';
+
 const Einstellungen = ({ ligaName, setLigaName}) => {  
 
     const [DiscordServer, setDiscordServer] = useState([]);
@@ -1079,6 +1090,41 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
             cell.style.borderWidth = '1px'; // Set border width to 2px
             cell.style.borderStyle = 'solid'; // Ensure border style is solid
             cell.style.color = returnFontColorForDriverTableImage(cell.innerText); // Pass cell text to function
+            switch (cell.innerText) {
+                case "Mercedes":
+                    cell.innerHTML = `<img src="${Mercedes}" height="25" width="25"/>`;
+                    break;
+                case "Alpine":
+                    cell.innerHTML = `<img src="${Alpine}" height="30" width="40"/>`;
+                    break;
+                case "AstonMartin":
+                    cell.innerHTML = `<img src="${AstonMartin}" height="25" width="30"/>`;
+                    break;
+                case "Ferrari":
+                    cell.innerHTML = `<img src="${Ferrari}" height="25" width="20"/>`;
+                    break;
+                case "Haas":
+                    cell.innerHTML = `<img src="${Haas}" height="25" width="25"/>`;
+                    break;
+                case "McLaren":
+                    cell.innerHTML = `<img src="${McLaren}" height="25" width="25"/>`;
+                    break;
+                case "RedBull":
+                    cell.innerHTML = `<img src="${RedBull}" height="25" width="35"/>`;
+                    break;
+                case "VisaRB":
+                    cell.innerHTML = `<img src="${VisaRB}" height="25" width="35"/>`;
+                    break;
+                case "Williams":
+                    cell.innerHTML = `<img src="${Williams}" height="25" width="25"/>`;
+                    break;
+                case "KickSauber":
+                    cell.innerHTML = `<img src="${KickSauber}" height="30" width="30"/>`;
+                    break;
+                default:
+                    // Optional: handle cases where no match is found
+                    break;
+            }
         });
 
         html2canvas(table).then((canvas) => {
@@ -1124,6 +1170,41 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
             cell.style.borderColor = 'white'; // Set border color to white
             cell.style.borderWidth = '1px'; // Set border width to 2px
             cell.style.borderStyle = 'solid'; // Ensure border style is solid
+            switch (cell.innerText) {
+                case "Mercedes":
+                    cell.innerHTML = `<img src="${Mercedes}" height="25" width="25"/>`;
+                    break;
+                case "Alpine":
+                    cell.innerHTML = `<img src="${Alpine}" height="30" width="40"/>`;
+                    break;
+                case "AstonMartin":
+                    cell.innerHTML = `<img src="${AstonMartin}" height="25" width="30"/>`;
+                    break;
+                case "Ferrari":
+                    cell.innerHTML = `<img src="${Ferrari}" height="25" width="20"/>`;
+                    break;
+                case "Haas":
+                    cell.innerHTML = `<img src="${Haas}" height="25" width="25"/>`;
+                    break;
+                case "McLaren":
+                    cell.innerHTML = `<img src="${McLaren}" height="25" width="25"/>`;
+                    break;
+                case "RedBull":
+                    cell.innerHTML = `<img src="${RedBull}" height="25" width="35"/>`;
+                    break;
+                case "VisaRB":
+                    cell.innerHTML = `<img src="${VisaRB}" height="25" width="35"/>`;
+                    break;
+                case "Williams":
+                    cell.innerHTML = `<img src="${Williams}" height="25" width="25"/>`;
+                    break;
+                case "KickSauber":
+                    cell.innerHTML = `<img src="${KickSauber}" height="30" width="30"/>`;
+                    break;
+                default:
+                    // Optional: handle cases where no match is found
+                    break;
+            }
         });
 
         html2canvas(table).then((canvas) => {
