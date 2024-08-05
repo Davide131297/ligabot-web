@@ -1280,6 +1280,9 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                             <Menu.Item onClick={() => downloadTeamStandingCSV(teamsArray, Strecken, streckenVisible)}>
                                 Konstrukteurstabelle CSV
                             </Menu.Item>
+                            <Menu.Item onClick={() => downloadCalendarAsImage()}>
+                                🗓️ Kalender Download PNG
+                            </Menu.Item>
                     </Menu.Dropdown>
                 </Menu>
                 )}
