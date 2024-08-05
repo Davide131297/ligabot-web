@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaHome } from "react-icons/fa";
 import { IoMdSettings } from "react-icons/io";
-import { AppShell, Group, Burger, Button, Text, Avatar, Loader } from '@mantine/core';
+import { AppShell, Group, Burger, Button, Text, Avatar, Loader, SegmentedControl } from '@mantine/core';
 import { db } from './utils/firebase';
 import Login from './Components/login';
 import Registrierung from './Components/Registrierung';
@@ -21,6 +21,14 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
     const [logo, setLogo] = useState(null); //Logo speicherung
     const location = useLocation();
     const [newLocation, setNewLocation] = useState(null);
+    const [language, setLanguage] = useState(null);
+
+    useEffect(() => {
+        const savedLanguage = localStorage.getItem("Language");
+        if (savedLanguage) {
+            setLanguage(savedLanguage);
+        }
+    }, []);
 
     useEffect(() => {
         if (location.pathname !== "/" && location.pathname !== "/Einstellungen") {
@@ -78,6 +86,25 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
         });
     }
 
+    const data = [
+        {
+            label: <img 
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Flag_of_Germany.svg/1920px-Flag_of_Germany.svg.png" 
+                alt="Germany" 
+                width="20" 
+                height="15" />,
+            value: 'Germany'
+        },
+        {   
+            label: <img
+                src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Flag_of_the_United_Kingdom_%281-2%29.svg/1920px-Flag_of_the_United_Kingdom_%281-2%29.svg.png'
+                alt='United Kingdom'
+                width='20'
+                height='15' />,
+            value: 'United Kingdom'
+        },
+    ];
+
     return (
         <>
         <AppShell.Header>
@@ -113,6 +140,16 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
                 ) : (
                     <Text size="md"> {newLocation} </Text>
                 )}
+                <Group justify="flex-end">
+                    <SegmentedControl
+                        value={language}
+                        onChange={(value) => {
+                            setLanguage(value);
+                            localStorage.setItem("Language", value);
+                        }}
+                        data={data} 
+                    />
+                </Group>
             </Group>
         </AppShell.Header>
         {location.pathname === "/" || location.pathname === "/Einstellungen" || location.pathname === "/Dokumentation" ? (
