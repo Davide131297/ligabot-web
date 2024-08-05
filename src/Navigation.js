@@ -11,6 +11,8 @@ import { doc, getDoc } from 'firebase/firestore';
 import { useLocation } from 'react-router-dom';
 import SeitenNavbar from './Components/SeitenNavbar';
 import { FaBook } from "react-icons/fa";
+import { useTranslation } from 'react-i18next';
+import '../src/utils/i18n'; // i18n-Konfiguration importieren
 
 export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOpened, ligaName}) {
     const navigate = useNavigate();
@@ -23,8 +25,10 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
     const [newLocation, setNewLocation] = useState(null);
     const [language, setLanguage] = useState(null);
 
+    const { t, i18n } = useTranslation();
+
     useEffect(() => {
-        const savedLanguage = localStorage.getItem("Language");
+        const savedLanguage = localStorage.getItem("i18nextLng");
         if (savedLanguage) {
             setLanguage(savedLanguage);
         }
@@ -93,7 +97,7 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
                 alt="Germany" 
                 width="20" 
                 height="15" />,
-            value: 'Germany'
+            value: 'de'
         },
         {   
             label: <img
@@ -101,7 +105,7 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
                 alt='United Kingdom'
                 width='20'
                 height='15' />,
-            value: 'United Kingdom'
+            value: 'en'
         },
     ];
 
@@ -145,7 +149,7 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
                         value={language}
                         onChange={(value) => {
                             setLanguage(value);
-                            localStorage.setItem("Language", value);
+                            localStorage.setItem("i18nextLng", value);
                         }}
                         data={data} 
                     />
@@ -158,7 +162,7 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
                 <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px', cursor: 'pointer' }} onClick={() => handleNavigation("/")}> {/* Flex Container */}
                     <FaHome size={26} />
                     <Text size="xl" weight={700} ml="sm">
-                        Startseite
+                        {t('home')}
                     </Text>
                 </div>
             </AppShell.Section>
