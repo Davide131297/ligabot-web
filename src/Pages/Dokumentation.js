@@ -1,6 +1,8 @@
-import { Center, Title, Text, SimpleGrid, Image, Box, Space, ScrollArea } from "@mantine/core";
+import { Center, Title, Text, SimpleGrid, Image, Space } from "@mantine/core";
 import { useMediaQuery } from '@mantine/hooks';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+import '../utils/i18n';
 
 import DemoSeite from '../Components/DemoBilder/DemoStartseite.png';
 import StartseiteEditor from '../Components/DemoBilder/StartseiteEditor.png';
@@ -11,77 +13,75 @@ import StreckenFilter from '../Components/DemoBilder/Streckenfilter.png';
 
 export default function Dokumentation() {  
     const matches = useMediaQuery('(max-width: 768px)'); 
+    const {t} = useTranslation();
 
     return (
         <>
         <Center>
-            <Title order={1}>Dokumentation</Title>
+            <Title order={1}>{t('documentation')}</Title>
         </Center>
         <Space h="lg" />
         <SimpleGrid cols={matches ? 1 : 2}>
             <div>
-                <Title order={2}>Einleitung</Title>
+                <Title order={2}>{t('introduction')}</Title>
                     <Text>
-                        Der "F1-LigaBot" ist eine Anwendung, die es ermöglicht, eine eigene Formel 1 Liga zu erstellen, verwalten, und die Ergebnisse der Rennen zu speichern.
-                        Es wird jeder Liga eine eigene Webseite erstellt in der die Tabellen & Statistiken der Liga angezeigt werden.
-                        Außerdem wird ein Discord Bot bereitgestellt, der die Ergebnisse der Rennen in einem Discord Server postet.
+                        {t('introductionText')}
                     </Text>
                 <Space h="lg" />
-                <Title order={2}>Registrierung</Title>
+                <Title order={2}>{t('register')}</Title>
                     <Text>
-                        Um die Anwendung zu nutzen, musst du deine Liga registrieren. Dazu musst du dich einmal registrieren. Bei der Registrierung musst du die ServerID 
-                        deines Discord Servers angeben, damit der Bot weiß, welcher Server zu welcher Liga gehört.
+                        {t('registrationText')}
                     </Text>
                 <Space h="lg" />
                 <Title order={2}>Discord Bot</Title>
                     <Text>
-                        Der Discord Bot ist ein Bot, der in einem Discord Server hinzugefügt werden kann.
+                        {t('discordBot')}
                     </Text>
                     <Space h="sm" />
                     <Text>
-                        Der Bot kann die Fahrertabelle und die Konstrukteurstabelle der Liga in einem Discord Server posten.
+                        {t('botPost')}
                     </Text>
                 <Space h="lg" />
-                <Title order={2}>Liga Webseite</Title>
+                <Title order={2}>{t('leagueWebsiteTitle')}</Title>
                     <Text>
-                        Die Liga Webseite zeigt die Eingerichtete Liga an. Um auf die LigaSeite zu gelangen, muss die URL so ausschauen: "https://rlgbot.de/(Liganame)".
+                        {t('leagueWebsite')}
                     </Text>
                     <Space h="sm" />
                     <Text>
-                        Auf der Liga Webseite werden die Fahrertabelle, die Konstrukteurstabelle und die Statistiken der Liga angezeigt.
+                        {t('leagueWebsiteContent')}
                     </Text>
                 <Space h="lg" />
-                <Title order={2}>Einstellungsseite</Title>
+                <Title order={2}>{t('settingsPage')}</Title>
                     <Text>
-                        Die Einstellungsseite ermöglicht es, eine neue Liga zu erstellen oder eine bestehende Liga zu bearbeiten.
+                        {t('settingsPageContent')}
                     </Text>
                     <Space h="sm" />
                     <Text>
-                        Es können der Name der Liga, das Logo der Liga und die Anzahl der Rennen pro Saison eingestellt werden, sowie deren Ergebnisse eingetragen werden.
+                        {t('settingsPageContent2')}
                     </Text>
                     <Space h="sm" />
                     <Text>
-                        Die Sichtbarkeit der Länder in den Tabellen kann eingestellt werden, falls nicht alle Strecken im Rennkalender enthalten sind. Drücke dazu den Button "Streckenfiltern".
+                        {t('settingsPageContent3')}
                     </Text>
                     <Space h="sm" />
                     <Text>
-                        Die Fahrerwertung und die Konstrukteurswertung können zurückgesetzt werden. Damit werden alle Punkte der Fahrer und Konstrukteure auf 0 gesetzt für eine neue Saison.
+                        {t('settingPageContent4')}
                     </Text>
                     <Space h="sm" />
                     <Text>
-                        Die Tabellen "Fahrerwertung" und "Konstrukteurswertung" können auf der Einstellungsseite über den Button "Downloads" als CSV-Datei heruntergeladen werden.
+                        {t('settingPageContent5')}
                     </Text>
                     <Space h="sm" />
                     <Text>
-                        Um die zu fahrenden Strecken auszuwählen und diese zu sortieren kannst du den Button "Kalender" drücken. Dort kannst du die Strecken auswählen, die in der Tabelle angezeigt werden sollen, und wann sie gefahren werden sollen. So wird die Tabelle automatisch sortiert.
+                        {t('settingPageContent6')}
                     </Text>
                 <Space h="lg" />
                 <Title order={2}>CSV Download</Title>
                     <Text>
-                        Die Tabellen "Fahrerwertung" und "Konstrukteurswertung" können auf der Einstellungsseite über den Button "Downloads" als CSV-Datei heruntergeladen werden.
+                        {t('settingPageContent5')}
                     </Text>
                     <Text>
-                        Die CSV-Dateien können in Excel oder Google Tabellen geöffnet werden. Bei Excel muss gegebenfalls das das Komma als Trennzeichen eingestellt werden.
+                        {t('settingPageContent7')}
                     </Text>
                 <Space h="lg" />
             </div>

@@ -1,37 +1,39 @@
 import { Stepper, Text, Image, Title, SimpleGrid, Center, Space } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
+import { useTranslation } from 'react-i18next';
+import '../utils/i18n';
 
 import BefehlAntworten from '../Components/HomeBilder/BefehlAntworten.png';
 import BotBefehle from '../Components/HomeBilder/BotBefehle.png';
 
 const Home = () => {
-
+    const {t} = useTranslation();
     const isMobile = useMediaQuery('(max-width: 768px)');
 
     return (
         <>
             <Center>
-                <Title order={isMobile ? 2 : 1}>Willkommen beim F1 Ligabot</Title>
+                <Title order={isMobile ? 2 : 1}>{t('welcome')}</Title>
             </Center>
 
             <Space h="xl" />
 
             <SimpleGrid cols={isMobile ? 1 : 3}>
                 <div>
-                    <Title order={2}>Das sind die Schritte zum F1 Ligabot</Title>
+                    <Title order={2}>{t('stepsToF1Ligabot')}</Title>
                     <Space h="sm" />
                     <Stepper orientation="vertical">
-                        <Stepper.Step label="Step 1" description="Registrieren" />
-                        <Stepper.Step label="Step 2" description="Anmelden" />
-                        <Stepper.Step label="Step 3" description="Liga erstellen Button drücken" />
-                        <Stepper.Step label="Step 4" description="Bot in deinen Discord Server einladen" />
-                        <Stepper.Step label="Step 4" description="Fahrer hinzufügen" />
-                        <Stepper.Step label="Step 5" description="Ergebnisse Eintragen" />
+                        <Stepper.Step label="Step 1" description={t('register')} />
+                        <Stepper.Step label="Step 2" description={t('login')} />
+                        <Stepper.Step label="Step 3" description={t('createLeague')} />
+                        <Stepper.Step label="Step 4" description={t('inviteBot')} />
+                        <Stepper.Step label="Step 4" description={t('driverAdd')} />
+                        <Stepper.Step label="Step 5" description={t('resultsEnter')} />
                     </Stepper>
                 </div>
 
                 <div> {/* Container für den ersten Titel und Bild */}
-                    <Title order={2}>Beispielantworten</Title>
+                    <Title order={2}>{t('exampleAnswers')}</Title>
                     <Space h="sm" />
                     <Image
                         radius="md"
@@ -40,7 +42,7 @@ const Home = () => {
                 </div>
 
                 <div>
-                    <Title order={2}>Verfügbare Slash Befehle</Title>
+                    <Title order={2}>{t('availableSlashCommands')}</Title>
                     <Space h="sm" />
                     <Image
                         radius="md"

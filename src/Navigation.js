@@ -24,15 +24,15 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
     const location = useLocation();
     const [newLocation, setNewLocation] = useState(null);
     const [language, setLanguage] = useState(null);
-
-    const { t, i18n } = useTranslation();
+    const {t, i18n} = useTranslation();
 
     useEffect(() => {
         const savedLanguage = localStorage.getItem("i18nextLng");
         if (savedLanguage) {
             setLanguage(savedLanguage);
+            i18n.changeLanguage(savedLanguage);
         }
-    }, []);
+    }, [i18n]);
 
     useEffect(() => {
         if (location.pathname !== "/" && location.pathname !== "/Einstellungen") {
@@ -109,6 +109,12 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
         },
     ];
 
+    function handleLanguageChange(value) {
+        setLanguage(value);
+        localStorage.setItem("i18nextLng", value);
+        i18n.changeLanguage(value); //Sprache ändern
+    };
+
     return (
         <>
         <AppShell.Header>
@@ -126,19 +132,19 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
                     !angemeldet ? (
                         <>
                             <Button variant="white" color="rgba(0, 0, 0, 1)" onClick={() => setModalOpen(true)}>
-                                Registrieren
+                                {t('register')}
                             </Button>
                             <Button variant='white' color='rgba(0, 0, 0, 1)' onClick={() => setGeöffnet(true)}>
-                                Anmelden
+                                {t('login')}
                             </Button>
                         </>
                     ) : (
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                             <Button variant='white' color='rgba(0, 0, 0, 1)' onClick={() => handleLogout()}>
-                                Logout
+                                {t('logout')}
                             </Button>
                             <Avatar alt="it's me" src={logo} />
-                            <Text size="xs">Angemeldet als {nutzername}</Text>
+                            <Text size="xs">{nutzername}</Text>
                         </div>
                     )
                 ) : (
@@ -147,10 +153,7 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
                 <Group justify="flex-end">
                     <SegmentedControl
                         value={language}
-                        onChange={(value) => {
-                            setLanguage(value);
-                            localStorage.setItem("i18nextLng", value);
-                        }}
+                        onChange={handleLanguageChange}
                         data={data} 
                     />
                 </Group>
@@ -170,7 +173,7 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
                 <div style={{ display: 'flex', alignItems: 'center', marginTop: '20px', cursor: 'pointer' }} onClick={() => handleNavigation("/Dokumentation")}> {/* Flex Container */}
                     <FaBook size={22} />
                     <Text size="xl" weight={700} ml="sm">
-                        Dokumentation
+                        {t('documentation')}
                     </Text>
                 </div>
             </AppShell.Section>
@@ -179,7 +182,7 @@ export function Navigation({toggleMobile, toggleDesktop, mobileOpened, desktopOp
                     <div style={{ display: 'flex', alignItems: 'center', marginTop: '20px', cursor: 'pointer'}} onClick={() => handleNavigation("/Einstellungen")}> {/* Flex Container */}
                         <IoMdSettings size={26} />
                         <Text size="xl" weight={700} ml="sm">
-                            Einstellungen
+                            {t('settings')}
                         </Text>
                     </div>
                 </AppShell.Section>

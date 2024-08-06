@@ -1,10 +1,12 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { Router } from './Router';
 import { Divider, MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { Modal } from '@mantine/core';
 import Datenschutz from './Pages/Datenschutz';
 import Impressum from './Pages/Impressum';
+import { useTranslation } from 'react-i18next';
+import '../src/utils/i18n';
 
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
@@ -15,8 +17,17 @@ import '@mantine/carousel/styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
-  const [opened, setOpened] = React.useState(false);
-  const [impressumOpened, setImpressumOpened] = React.useState(false);
+  const [opened, setOpened] = useState(false);
+  const [impressumOpened, setImpressumOpened] = useState(false);
+  const {t, i18n} = useTranslation();
+
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("i18nextLng");
+    if (savedLanguage) {
+        i18n.changeLanguage(savedLanguage);
+    }
+  }, [i18n]);
+
 
   const handleDatenschutzClick = () => {
     setOpened(true);
@@ -39,14 +50,14 @@ function App() {
         paddingTop: '10px',
         borderTop: '2px solid #dcdcdc'
       }}>
-        <p style={{cursor: 'pointer'}} onClick={handleDatenschutzClick}>Datenschutz</p>
-        <p style={{cursor: 'pointer'}} onClick={handleImpressumClick}>Impressum</p>
+        <p style={{cursor: 'pointer'}} onClick={handleDatenschutzClick}>{t('PrivacyPolicy')}</p>
+        <p style={{cursor: 'pointer'}} onClick={handleImpressumClick}>{t('Imprint')}</p>
       </div>
 
       <Modal
         opened={opened}
         onClose={() => setOpened(false)}
-        title="Datenschutzerklärung"
+        title={t('PrivacyPolicy')}
         size="100vh"
       >
         <Datenschutz />
@@ -55,7 +66,7 @@ function App() {
       <Modal
         opened={impressumOpened}
         onClose={() => setImpressumOpened(false)}
-        title="Impressum"
+        title={t('Imprint')}
         size="lg"
       >
         <Impressum />
