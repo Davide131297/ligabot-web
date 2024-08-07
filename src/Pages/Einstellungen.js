@@ -1376,11 +1376,11 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
             <div>
                 {!ligaErstellt && isLoading === "2" &&(
                     <div style={{marginTop: '20px'}}>
-                        Die Liga wurde noch nicht erstellt!
+                        {t('leagueIsNotCreated')}
                         <Button variant="filled" color="rgba(0, 0, 0, 1)" onClick={createLigaCollection}
                         style={{marginLeft: '10px'}}
                         >
-                            Liga erstellen
+                            {t('createLeague')}
                         </Button>
                     </div>
                 )}
@@ -1394,7 +1394,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                 {ligaErstellt && isLoading === "3" && ligaDaten.length === 0 &&(
                     <div style={{ display: 'flex', justifyContent: 'center'}}>
                         <Box bg="transparent" my="xl" style={{ width: '40vh', height: '40vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                            Keine Daten vorhanden...
+                            {t('noData')}...
                         </Box>
                     </div>
                 )}
@@ -1402,7 +1402,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                 {ligaErstellt && ligaDaten.length > 0 && isLoading === "3" &&(
                     <>
                     <div className='divider'>
-                    <Divider orientation="horizontal" margins="md" label="Fahrerübersicht" />
+                    <Divider orientation="horizontal" margins="md" label={t('driveroverview')} />
                     </div>
 
                     <div className='tabellenPosition'>
@@ -1416,7 +1416,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                                 <BootstrapTable striped bordered hover className='Eintragungübersicht' ref={driverRef}>
                                     <thead>
                                         <tr style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                                        <th className="stickySpalte">Fahrername</th>
+                                        <th className="stickySpalte">{t('driverName')}</th>
                                         <th>Team</th>
                                         {
                                             sortierteStrecken.map((schlüssel) => (
@@ -1433,7 +1433,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                                             </th>
                                             ))
                                         }
-                                        <th>Gesamtwertung</th>
+                                        <th>{t('totalPoints')}</th>
                                         <th>{/* Buttons */}</th>
                                         </tr>
                                     </thead>
@@ -1466,7 +1466,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                         </ScrollArea>
                     </div>
                     <div className='divider'>
-                        <Divider orientation="horizontal" margins="md" label="Teamübersicht" />
+                        <Divider orientation="horizontal" margins="md" label={t('teamOverview')} />
                     </div>
                     <div className='tabellenPosition'>
                         <ScrollArea w="auto" h="auto">
@@ -1495,7 +1495,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                                             </th>
                                             ))
                                         }
-                                        <th>Gesamtwertung</th>
+                                        <th>{t('totalPoints')}</th>
                                         <th>{/* Buttons */}</th>
                                         </tr>
                                     </thead>
@@ -1529,7 +1529,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
             {ligaErstellt && isLoading === "3" && ligaDaten.length > 0 && (
                 <>
                     <div className='divider'>
-                        <Divider orientation="horizontal" margins="md" label="Statistiken" />
+                        <Divider orientation="horizontal" margins="md" label={t('statistics')} />
                     </div>
                     <div className="Statisiken">
                         <Statistiken ligaName={ligaName} fahrerlistenObjekt={fahrerlistenObjekt} teamsArray={teamsArray}/>
@@ -1545,16 +1545,16 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                     setFahrername("");
                     setTeamname("");
                 }}
-                title="Fahrer hinzufügen"
+                title={t('addDriver')}
                 centered
                 size="md"
             >
                 <form onSubmit={handleCreateDriver} style={{ display: 'flex', flexDirection: 'column', maxWidth: '300px', margin: '0 auto' }}>
                     <TextInput
-                        label="Fahrername"
+                        label={t('driverName')}
                         withAsterisk
-                        description="Gib den Namen des Fahrers ein"
-                        placeholder="Fahrername"
+                        description={t('enterDriverName')}
+                        placeholder={t('driverName')}
                         value={fahrername}
                         onChange={(event) => setFahrername(event.currentTarget.value)}
                         required
@@ -1562,14 +1562,14 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                     />
                     <Select
                         label="Team:"
-                        placeholder="--Bitte wähle ein Team--"
+                        placeholder={t('selectTeam')}
                         onChange={(value) => setTeamname(value)}
                         data={f1Teams.map(team => ({ value: team.value, label: team.label }))}
                         searchable
                         required
                         style={{ width: '100%', padding: '10px', fontSize: '16px' }}
                     />
-                    <Button type="submit" style={{ marginTop: '10px' }}>Fahrer hinzufügen</Button>
+                    <Button type="submit" style={{ marginTop: '10px' }}>{t('addDriver')}</Button>
                 </form>
             </Modal>
 
@@ -1580,13 +1580,13 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                     setOpenEintragen(false); // Schließt den Dialog oder das Pop-up
                     setErgebnis({}); // Setzt den Zustand `ergebnis` zurück
                 }}
-                title="Ergebnisse eintragen"
+                title={t('addResults')}
                 centered
                 size="md"
             >
                 <Select
-                    label="Streckenauswahl"
-                    placeholder="Wähle hier die Strecke"
+                    label={t('selectTrack')}
+                    placeholder={t('selectTrackInfo')}
                     data={StreckenSelect.map(strecke => ({ value: strecke.value, label: strecke.label }))}
                     searchable
                     onChange={(value) => setGefahreneStrecke(value)}
@@ -1599,8 +1599,8 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                         <BootstrapTable striped bordered hover className='Eintragungübersicht'>
                             <thead>
                                 <tr style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                                    <th>Fahrername</th>
-                                    <th>Punkte</th>
+                                    <th>{t('driverName')}</th>
+                                    <th>{t('points')}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1609,7 +1609,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                                         <td>{fahrer}</td>
                                         <td>
                                             <Select
-                                                placeholder="Punkte auswahl"
+                                                placeholder={t('selectPoints')}
                                                 data={punkte.map(punkt => ({value: punkt, label: punkt}))}
                                                 onChange={(value) => setErgebnis(prevErgebnis => ({
                                                     ...prevErgebnis,
@@ -1627,7 +1627,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
 
                 <div>
                     <Select
-                        placeholder='Wer hat die Pole Position?'
+                        placeholder={t('whoHasThePole')}
                         data={fahrerliste.map(fahrer => ({ value: fahrer, label: fahrer }))}
                         onChange={(value) => setErgebnis(prevErgebnis => ({
                             ...prevErgebnis,
@@ -1640,7 +1640,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                     />
 
                     <Select
-                        placeholder='Wer hat die schnellste Runde?'
+                        placeholder={t('whoHasTheFastestLap')}
                         data={fahrerliste.map(fahrer => ({ value: fahrer, label: fahrer }))}
                         onChange={(value) => setErgebnis(prevErgebnis => ({
                             ...prevErgebnis,
@@ -1653,7 +1653,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                     />
 
                     <Select
-                        placeholder='Wer ist der Fahrer des Tages?'
+                        placeholder={t('whoIsTheDriverOfTheDay')}
                         data={fahrerliste.map(fahrer => ({ value: fahrer, label: fahrer }))}
                         onChange={(value) => setErgebnis(prevErgebnis => ({
                             ...prevErgebnis,
@@ -1671,7 +1671,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                         variant="filled" color="green" radius="xl"
                         onClick={() => {handleErgenisseEintragen()}}
                     >
-                        Ergebnisse eintragen
+                        {t('resultsEnter')}
                     </Button>
                 </div>
 
@@ -1684,14 +1684,14 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                     setNewLogo(false);
                     setFile(null);
                 }}
-                title="Liga Logo ändern"
+                title={t('changeLeagueLogo')}
                 centered
                 size="md"
             >
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <Group justify="center">
                         <FileButton onChange={setFile} accept="image/png,image/jpeg">
-                        {(props) => <Button {...props}>Upload image</Button>}
+                        {(props) => <Button {...props}>{t('logoUpload')}</Button>}
                         </FileButton>
                     </Group>
                 </div>
@@ -1701,7 +1701,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
             <Modal
                 opened={editPage}
                 onClose={() => setEditPage(false)}
-                title="Startseite bearbeiten"
+                title={t('changeHomeSite')}
                 centered
                 size="xl"
                 >
@@ -1712,7 +1712,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
             <Modal
                 opened={streckenPopup}
                 onClose={() => setStreckenPopup(false)}
-                title="Streckenfilter"
+                title={t('trackFilter')}
                 centered
                 size="md"
             >
@@ -1722,9 +1722,9 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                         <BootstrapTable striped bordered hover className='StreckenvisibleModal'>
                             <thead>
                                 <tr>
-                                    <th>Strecke</th>
+                                    <th>{t('track')}</th>
                                     <th>Status</th>
-                                    <th>Datum</th> {/* Neue Spalte für das Datum */}
+                                    <th>{t('date')}</th> {/* Neue Spalte für das Datum */}
                                     <th></th>
                                 </tr>
                             </thead>
@@ -1732,9 +1732,9 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                                 {Object.entries(tempStreckenVisible || {}).sort((a, b) => a[0].localeCompare(b[0])).map(([strecke, { Visible, datum }]) => (
                                     <tr key={strecke}>
                                     <td>{strecke}</td>
-                                    <td>{Visible ? 'Sichtbar' : 'Nicht sichtbar'}</td>
+                                    <td>{Visible ? t('visible') : t('notVisible')}</td>
                                     <td onClick={() => Visible && openModal(strecke, datum)} style={{cursor: Visible ? 'pointer' : 'default'}}>
-                                        {Visible ? formatDate(datum) : "Kein Rennen"}
+                                        {Visible ? formatDate(datum) : t('noRace')}
                                     </td>
                                     <td>
                                         <Switch
@@ -1763,13 +1763,13 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                         variant="filled" color="red" radius="xl"
                         onClick={handleCancelUpdateStreckenVisible}
                     >
-                        Abbrechen
+                        {t('cancel')}
                     </Button>
                     <Button
                         variant="filled" color="green" radius="xl"
                         onClick={() => handleUpdateStreckenVisible()}
                     >
-                        Speichern
+                        {t('save')}
                     </Button>
                 </Group>
 
@@ -1778,7 +1778,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
             <Modal
                 opened={dateModal}
                 onClose={() => setDateModal(false)}
-                title="Datum auswählen"
+                title={t('selectDate')}
                 >
                 <Center>
                 <DatePicker
@@ -1794,7 +1794,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                         onClick={updateDate} 
                         style={{ marginTop: '1rem' }}
                     >
-                        Datum aktualisieren
+                        {t('updateDate')}
                     </Button>
                 </Group>
             </Modal>
@@ -1802,7 +1802,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
             <Modal
                 opened={openCalendar}
                 onClose={() => setOpenCalendar(false)}
-                title="Kalender Download"
+                title={t('calendarDownload')}
                 centered
                 size="xl"
             >
