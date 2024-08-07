@@ -4,11 +4,14 @@ import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/aut
 import { auth } from './../utils/firebase';
 import { notifications } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import '../utils/i18n';
 
 function Login({geöffnet, setGeöffnet, setAngemeldet, setNutzername}) {
   const [email, setEmail] = useState('');
   const [passwort, setPasswort] = useState('');
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
     const handleLogin = async () => {
         try {
@@ -17,8 +20,8 @@ function Login({geöffnet, setGeöffnet, setAngemeldet, setNutzername}) {
         // Speichern Sie die Anmeldedaten im LocalStorage
         localStorage.setItem('user', JSON.stringify(userCredential.user));
         notifications.show({
-            title: 'Login erfolgreich! 🎉',
-            message: 'Du hast dich erfolgreich angemeldet!',
+            title: t('loginSuccess'),
+            message: t('loginSuccessMessage'),
             color: 'green',
             autoClose: 2000,
         });
@@ -29,8 +32,8 @@ function Login({geöffnet, setGeöffnet, setAngemeldet, setNutzername}) {
         } catch (error) {
             console.error(error);
             notifications.show({
-                title: 'Fehler beim Anmelden! 😞',
-                message: 'Fehler beim Anmelden: ',
+                title: t('loginError'),
+                message: t('loginErrorMessage') + error.message,
                 color: 'red',
                 autoClose: 2000,
             });
@@ -41,15 +44,15 @@ function Login({geöffnet, setGeöffnet, setAngemeldet, setNutzername}) {
         try {
             await sendPasswordResetEmail(auth, email);
             notifications.show({
-                title: 'Passwort-Reset-Email gesendet! 📧',
-                message: 'Überprüfe deine E-Mail, um Ihr Passwort zurückzusetzen.',
+                title: t('passwordResetEmailSent'),
+                message: t('passwordResetEmailSentMessage'),
                 color: 'green',
                 autoClose: 2000,
             });
         } catch (error) {
             notifications.show({
-                title: 'Fehler beim Senden der Passwort-Reset-Email! 😞',
-                message: 'Fehler beim Senden der Passwort-Reset-Email: ' + error.message,
+                title: t('passwordResetEmailError'),
+                message: t('passwordResetEmailSentMessage') + error.message,
                 color: 'red',
                 autoClose: 2000,
             });
@@ -61,7 +64,7 @@ function Login({geöffnet, setGeöffnet, setAngemeldet, setNutzername}) {
         <Modal
             opened={geöffnet}
             onClose={() => setGeöffnet(false)}
-            title="Anmelden"
+            title={t('login')}
             size="md"
             closeOnClickOutside={false}
             centered
@@ -69,20 +72,20 @@ function Login({geöffnet, setGeöffnet, setAngemeldet, setNutzername}) {
         >
             <TextInput
                 label="E-Mail"
-                placeholder="Ihre E-Mail"
+                placeholder={t('yourEmail')}
                 value={email}
                 onChange={(event) => setEmail(event.currentTarget.value)}
             />
             <TextInput
-                label="Passwort"
-                placeholder="Ihr Passwort"
+                label={t('password')}
+                placeholder={t('yourPassword')}
                 type="password"
                 value={passwort}
                 onChange={(event) => setPasswort(event.currentTarget.value)}
             />
             <div style={{ marginTop: '20px', textAlign: 'right' }}>
-                <Button onClick={handlePasswordReset} variant="filled" color="gray">Passwort zurücksetzen</Button>
-                <Button onClick={handleLogin} variant="filled" color="rgba(0, 0, 0, 1)" style={{marginLeft: '5px'}}>Anmelden</Button>
+                <Button onClick={handlePasswordReset} variant="filled" color="gray">{t('passwordReset')}</Button>
+                <Button onClick={handleLogin} variant="filled" color="rgba(0, 0, 0, 1)" style={{marginLeft: '5px'}}>{t('login')}</Button>
             </div>
         </Modal>
         </>

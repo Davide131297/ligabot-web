@@ -10,6 +10,8 @@ import { LoadingOverlay, Box, ActionIcon, Popover, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { AiOutlineQuestionCircle } from "react-icons/ai";
 import ServerIDPhoto from './ServerID.png';
+import { useTranslation } from 'react-i18next';
+import '../utils/i18n';
 
 const Registrierung = ({ modalOpen, setModalOpen}) => {
     const [email, setEmail] = useState("");
@@ -19,6 +21,7 @@ const Registrierung = ({ modalOpen, setModalOpen}) => {
     const [serverId, setServerID] = useState("");
     const [visible, { toggle }] = useDisclosure(false);
     const [showHowToModal, setShowHowToModal] = useState(false);
+    const { t } = useTranslation();
 
     const handleSubmit = async (event) => {
         event.preventDefault(); // Verhindert das automatische Neuladen der Seite
@@ -53,8 +56,8 @@ const Registrierung = ({ modalOpen, setModalOpen}) => {
                                 console.log("AdminUser hinzugefügt.");
                                 createOnlyUser();
                                 notifications.show({
-                                    title: 'Registrierung läuft!',
-                                    message: 'Bitte warte einen Moment, du wirst einer bestehenden Liga hinzugefügt.',
+                                    title: t('registerInProcess'),
+                                    message: t('registerInProcessMessage'),
                                     color: 'yellow',
                                     autoClose: 2000,
                                 });
@@ -88,8 +91,8 @@ const Registrierung = ({ modalOpen, setModalOpen}) => {
                             .then(() => {
                                 console.log("Authentifizierungs-E-Mail gesendet an:", email);
                                 notifications.show({
-                                    title: 'Registrierung erfolgreich! 🎉',
-                                    message: 'Du hast dich erfolgreich registriert!',
+                                    title: t('registerSuccess'),
+                                    message: t('registerSuccessMessage'),
                                     color: 'green',
                                     autoClose: 2000,
                                 });
@@ -102,8 +105,8 @@ const Registrierung = ({ modalOpen, setModalOpen}) => {
                     .catch((error) => {
                         console.error("Fehler bei der Registrierung:", error.message);
                         notifications.show({
-                            title: 'Registrierung fehlgeschlagen! 😞',
-                            message: 'Fehler bei der Registrierung: ' + error.message,
+                            title: t('registerError'),
+                            message: t('registerErrorMessage') + error.message,
                             color: 'red',
                             autoClose: 4000,
                         });
@@ -133,8 +136,8 @@ const Registrierung = ({ modalOpen, setModalOpen}) => {
                     .then(() => {
                         console.log("Authentifizierungs-E-Mail gesendet an:", email);
                         notifications.show({
-                            title: 'Registrierung erfolgreich! 🎉',
-                            message: 'Du hast dich erfolgreich registriert!',
+                            title: t('registerSuccess'),
+                            message: t('registerSuccessMessage'),
                             color: 'green',
                             autoClose: 2000,
                         });
@@ -147,8 +150,8 @@ const Registrierung = ({ modalOpen, setModalOpen}) => {
         .catch((error) => {
             console.error("Fehler bei der Registrierung:", error.message);
             notifications.show({
-                title: 'Registrierung fehlgeschlagen! 😞',
-                message: 'Fehler bei der Registrierung: ' + error.message,
+                title: t('registerError'),
+                message: t('registerErrorMessage') + error.message,
                 color: 'red',
                 autoClose: 4000,
             });
@@ -213,7 +216,7 @@ const Registrierung = ({ modalOpen, setModalOpen}) => {
                                 />
                             </label>
                             <label style={{ marginBottom: '10px' }}>
-                                Nutzername:
+                                {t('userName')}:
                                 <input
                                     type="text"
                                     value={displayName}
@@ -223,7 +226,7 @@ const Registrierung = ({ modalOpen, setModalOpen}) => {
                                 />
                             </label>
                             <label style={{ marginBottom: '10px' }}>
-                                Passwort:
+                                {t('password')}:
                                 <input
                                 type="password"
                                 value={password}
@@ -235,7 +238,7 @@ const Registrierung = ({ modalOpen, setModalOpen}) => {
 
                             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
                                 <label style={{ marginBottom: '10px' }}>
-                                    Liganame:
+                                    {t('leagueName')}:
                                     <input
                                         type="text"
                                         value={leagueName}
@@ -251,7 +254,7 @@ const Registrierung = ({ modalOpen, setModalOpen}) => {
                                         </ActionIcon>
                                     </Popover.Target>
                                     <Popover.Dropdown>
-                                        <Text size="xs">Liganamen werden ohne Leerzeichen angegeben</Text>
+                                        <Text size="xs">{t('leagueNameInfo')}</Text>
                                     </Popover.Dropdown>
                                 </Popover>
                             </div>
@@ -274,7 +277,7 @@ const Registrierung = ({ modalOpen, setModalOpen}) => {
                             </div>
 
                             <button type="submit" style={{ padding: '10px', fontSize: '16px', cursor: 'pointer' }}>
-                                Registrieren
+                                {t('register')}
                             </button>
                         </form>
                     </div>
@@ -284,13 +287,13 @@ const Registrierung = ({ modalOpen, setModalOpen}) => {
         <Modal
             opened={showHowToModal}
             onClose={() => setShowHowToModal(false)}
-            title="ServerID finden"
+            title={t('findingServerId')}
             size="md"
             closeOnClickOutside={false}
             centered
         >
-            <p>So findest du die Server-ID um deine Ligadaten mit dem Bot zu koppeln.</p>
-            <p>Gehe in deinem Discord-Server und klicke auf den Namen mit einem Rechtsklick.</p>
+            <p>{t('findDiscordId')}</p>
+            <p>{t('findDiscordIdInfo')}</p>
             <img src={ServerIDPhoto} alt="ServerID" style={{ width: '100%', height: 'auto' }} />
 
         </Modal>

@@ -23,6 +23,8 @@ import { DatePicker } from '@mantine/dates';
 import html2canvas from 'html2canvas';
 import { IoCamera } from "react-icons/io5";
 import RenderCalendar from '../Components/DownloadPictureDocs/RenderCalendar';
+import { useTranslation } from 'react-i18next';
+import './../utils/i18n';
 
 import Alpine from './../Components/Teamlogos/AlpineBlue.png';
 import AstonMartin from './../Components/Teamlogos/AstonMartinGreen.jpg';
@@ -55,6 +57,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
     const [newLogo, setNewLogo] = useState(false); // Neues Logo hochladen mobiles Modal
     const [editPage, setEditPage] = useState(false); // Modal für das Bearbeiten der Ligaseite
     const navigate = useNavigate();
+    const {t} = useTranslation();
 
     const [opened, { open, close }] = useDisclosure(false); // Modal Hinzufügen neuer Fahrer
     const [openEintragen, setOpenEintragen] = useState(false); // Modal Eintragen der Ergebnisse
@@ -233,8 +236,8 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
         if (!user) {
             navigate('/');
             notifications.show({
-                title: 'Fehler',
-                message: 'Du bist nicht angemeldet, bitte melde dich an',
+                title: t('error'),
+                message: t('notLoggedInErrorMesssage'),
                 color: 'red',
             });
         }
@@ -499,8 +502,8 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
         if (!fahrername && !teamname) {
             console.error("Fahrername und Teamname sind leer");
             notifications.show({
-                title: 'Fehler',
-                message: 'Bitte fülle alle Felder aus',
+                title: t('error'),
+                message: t('emptyFieldErrorMessage'),
                 color: 'red',
             });
             return;
@@ -577,8 +580,8 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                 setTeamname(null);
                 setReloadData(!reloadData);
                 notifications.show({
-                    title: 'Fahrer hinzugefügt',
-                    message: 'Fahrer wurde erfolgreich hinzugefügt ✅',
+                    title: t('driverInserted'),
+                    message: t('driverInsertedMessage'),
                     color: 'green',
                 });
             })
@@ -594,8 +597,8 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
 
         if (!gefahreneStrecke) {
             notifications.show({
-                title: 'Fehler',
-                message: 'Bitte wähle eine Strecke aus',
+                title: t('error'),
+                message: t('selectTrack'),
                 color: 'red',
             });
             return;
@@ -603,8 +606,8 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
 
         if (!ergebnisse.Pole || !ergebnisse.SchnellsteRunde || !ergebnisse.FahrerDesTages) {
             notifications.show({
-                title: 'Warnung',
-                message: 'Du hast nicht alle Felder ausgefüllt, die Ergebnisse werden trotzdem eingetragen',
+                title: t('warning'),
+                message: t('notAllFieldsFilled'),
                 color: 'yellow',
             });
         }
@@ -702,8 +705,8 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
             setReloadData(!reloadData);
             console.log("Teams erfolgreich aktualisiert");
             notifications.show({
-                title: 'Ergebnisse eingetragen',
-                message: 'Ergebnisse wurden erfolgreich eingetragen ✅',
+                title: t('resultsInserted'),
+                message: t('resultsInsertedMessage'),
                 color: 'green',
             })
 
@@ -714,7 +717,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
 
     async function handleReset() {
         // Bestätigungsdialog anzeigen
-        const bestaetigung = window.confirm("Es werden alle Wertungen gelöscht und auf null gesetzt. Dieser Vorgang kann nicht rückgängig gemacht werden. Bist du sicher, dass du fortfahren möchten?");
+        const bestaetigung = window.confirm(t('confirmReset'));
         if (!bestaetigung) {
             console.log("Zurücksetzen abgebrochen.");
             return; // Frühe Rückkehr, wenn der Benutzer abbricht
@@ -758,8 +761,8 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
             await updateDoc(docRef, resetObjektFahrer);
             console.log("Fahrer erfolgreich zurückgesetzt");
             notifications.show({
-                title: 'Fahrer zurückgesetzt',
-                message: 'Fahrer Wertungen wurden erfolrgreich zurückgesetzt ✅',
+                title: t('driverReset'),
+                message: t('driverResetMessage'),
                 color: 'green',
             })
         } catch (error) {
@@ -779,8 +782,8 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
             await updateDoc(teamsDocRef, resetObjektTeams);
             console.log("Teams erfolgreich zurückgesetzt");
             notifications.show({
-                title: 'Teams zurückgesetzt',
-                message: 'Team Wertungen wurden erfolrgreich zurückgesetzt ✅',
+                title: t('teamReset'),
+                message: t('teamResetMessage'),
                 color: 'green',
             })
             setReloadData(!reloadData);
@@ -790,7 +793,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
     }
 
     async function handleDriverDelete(fahrer) {
-        const bestaetigung = window.confirm(`Möchtest du den Fahrer ${fahrer.fahrername} wirklich löschen?`);
+        const bestaetigung = window.confirm(t('confirmDriverDelete'), {fahrername: fahrer.fahrername});
         if (!bestaetigung) {
             console.log("Löschen abgebrochen");
         } else {
@@ -802,8 +805,8 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                 await updateDoc(docRef, update);
                 console.log("Fahrer erfolgreich gelöscht");
                 notifications.show({
-                    title: 'Fahrer gelöscht',
-                    message: `Fahrer ${fahrer.fahrername} wurde erfolgreich gelöscht ✅`,
+                    title: t('driverDeleted'),
+                    message: `${t('driver')} ${fahrer.fahrername} ${t('deletedMessage')}`,
                     color: 'green',
                 });
             } catch (error) {
@@ -813,7 +816,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
     }
 
     async function handleTeamDelete(team) {
-        const bestaetigung = window.confirm(`Möchtest du das Team ${team.teamName} wirklich löschen?`);
+        const bestaetigung = window.confirm(t('confirmTeamDelete'), {teamname: team.teamName});
         if (!bestaetigung) {
             console.log("Löschen abgebrochen");
         } else {
@@ -825,8 +828,8 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                 await updateDoc(docRef, update);
                 console.log("Team erfolgreich gelöscht");
                 notifications.show({
-                    title: 'Team gelöscht',
-                    message: `Team ${team.teamName} wurde erfolgreich gelöscht ✅`,
+                    title: t('teamDeleted'),
+                    message: `Team ${team.teamName} ${t('deletedMessage')}`,
                     color: 'green',
                 });
                 setReloadData(!reloadData);
@@ -852,7 +855,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
             if (data) {
                 console.log("Daten gefunden:", data);
                 console.log("Dokument ID:", documentID);
-                const neuerServerID = prompt("Bitte geben Sie die neue Server ID ein", data.serverId);
+                const neuerServerID = prompt(t('insertNewServerID'), data.serverId);
 
                 // Überprüfen, ob neuerServerID nicht null ist
                 if (neuerServerID !== null && neuerServerID.trim() !== "") {
@@ -866,8 +869,8 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                     await updateDoc(docRef, updateData);
                     console.log("Daten erfolgreich aktualisiert");
                     notifications.show({
-                        title: 'Server ID aktualisiert',
-                        message: 'Server ID wurden erfolgreich aktualisiert ✅',
+                        title: t('serverIDsuccess'),
+                        message: t('serverIDsuccessMessage'),
                         color: 'green',
                     });
                     setIsLoading("3");
@@ -905,7 +908,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
 
         if (!gesuchterFahrer) {
         } else {
-            const neuerName = window.prompt("Bitte gebe den neuen Fahrernamen ein:", gesuchterFahrerSchlüssel);
+            const neuerName = window.prompt(t('insertNewDriverName'), gesuchterFahrerSchlüssel);
             if (neuerName && !fahrerlistenObjekt[neuerName]) {
                 fahrerlistenObjekt[neuerName] = gesuchterFahrer;
                 delete fahrerlistenObjekt[gesuchterFahrerSchlüssel];
@@ -915,8 +918,8 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                 try {
                     await setDoc(fahrerDocRef, fahrerlistenObjekt);
                     notifications.show({
-                        title: 'Fahrer aktualisiert',
-                        message: `Fahrer ${gesuchterFahrerSchlüssel} wurde erfolgreich in ${neuerName} umbenannt ✅`,
+                        title: t('driverUpDateSuccess'),
+                        message: `${t('driver')} ${gesuchterFahrerSchlüssel} ${t('changedto')} ${neuerName} ✅`,
                         color: 'green',
                     });
                     console.log("Speichern erfolgreich");
@@ -951,8 +954,8 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
             
             console.log('Bild erfolgreich hochgeladen und URL in Firestore gespeichert.');
             notifications.show({
-                title: 'Logo hochgeladen',
-                message: 'Bild wurde erfolgreich hochgeladen ✅. Sobald du die Seite neu lädst, wird das neue Logo angezeigt.',
+                title: t('logoUpload'),
+                message: t('logoUploadMessage'),
                 color: 'green',
             });
             if (window.innerWidth < 768) {
@@ -990,8 +993,8 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
             await setDoc(docRef, tempStreckenVisible);
             console.log("Strecken erfolgreich aktualisiert");
             notifications.show({
-                title: 'Strecken aktualisiert',
-                message: 'Strecken wurden erfolgreich aktualisiert ✅',
+                title: t('tracksUpdated'),
+                message: t('tracksUpdatedMessage'),
                 color: 'green',
             });
             setStreckenPopup(false);
@@ -1003,7 +1006,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
 
     function downloadDriverStandingsCSV(ligaDaten, Strecken, streckenVisible) {
         const BOM = "\uFEFF";
-        const spaltenÜberschriften = ["Fahrername", "Team", ...Strecken.filter(schlüssel => streckenVisible && streckenVisible[schlüssel]), "Gesamtwertung"];
+        const spaltenÜberschriften = [t('driverName'), "Team", ...Strecken.filter(schlüssel => streckenVisible && streckenVisible[schlüssel]), t('totalPoints')];
     
         let csvString = BOM + spaltenÜberschriften.join(",") + "\n";
     
@@ -1022,7 +1025,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.setAttribute('href', url);
-        link.setAttribute('download', 'Fahrerwertung.csv');
+        link.setAttribute('download', t('driverStandings'));
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -1045,7 +1048,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.setAttribute("href", url);
-        link.setAttribute("download", "Konstrukteurstabelle.csv");
+        link.setAttribute("download", t('teamStandings'));
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -1129,7 +1132,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
 
         html2canvas(table).then((canvas) => {
             const link = document.createElement('a');
-            link.download = 'Fahrerwertung.png';
+            link.download = t('driverStandings') + '.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
             
@@ -1209,7 +1212,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
 
         html2canvas(table).then((canvas) => {
             const link = document.createElement('a');
-            link.download = 'Fahrerwertung.png';
+            link.download = t('teamStandings') + '.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
             
@@ -1247,38 +1250,38 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                     </Menu.Target>
 
                     <Menu.Dropdown>
-                        <Menu.Label>Liga Management</Menu.Label>
+                        <Menu.Label>{t('leagueManagement')}</Menu.Label>
                             <Menu.Item onClick={open}>
-                                Fahrer Hinzufügen
+                                {t('addDriver')}
                             </Menu.Item>
                             <Menu.Item onClick={() => setOpenEintragen(true)}>
-                                Ergebnisse eintragen
+                                {t('addResults')}
                             </Menu.Item>
                             <Menu.Item onClick={() => setStreckenPopup(true)}>
-                                Kalender
+                                {t('calendar')}
                             </Menu.Item>
                             <Menu.Item color="red" onClick={() => handleReset()}>
-                                Zurücksetzen
+                                {t('reset')}
                             </Menu.Item>
                             <Menu.Item onClick={() => setNewLogo(true)}>
-                                Liga Logo ändern
+                                {t('changeLeagueLogo')}
                             </Menu.Item>
                         <Menu.Divider />
-                        <Menu.Label>Ligaseite Design</Menu.Label>
+                        <Menu.Label>{t('leagueWebsiteDesign')}</Menu.Label>
                             <Menu.Item onClick={() => setEditPage(true)}>
-                                Seite Home anpassen
+                                {t('changeHomePage')}
                             </Menu.Item>
                         <Menu.Label>Discrod Bot</Menu.Label>
                             <Menu.Item onClick={() => inviteBot()}>
-                                Bot Einladen
+                                {t('inviteBot')}
                             </Menu.Item>
                         <Menu.Divider />
                         <Menu.Label>Downloads</Menu.Label>
                             <Menu.Item onClick={() => downloadDriverStandingsCSV(ligaDaten, Strecken, streckenVisible)}>
-                                Fahrertabelle CSV
+                                {t('driverTableCSV')}
                             </Menu.Item>
                             <Menu.Item onClick={() => downloadTeamStandingCSV(teamsArray, Strecken, streckenVisible)}>
-                                Konstrukteurstabelle CSV
+                                {t('teamTableCSV')}
                             </Menu.Item>
                     </Menu.Dropdown>
                 </Menu>
@@ -1289,7 +1292,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                         <Table.Thead>
                             <Table.Tr>
                                 <Table.Th>Admin(s)</Table.Th>
-                                <Table.Th>Liga</Table.Th>
+                                <Table.Th>{t('leagueName')}</Table.Th>
                                 <Table.Th>Discord Server ID</Table.Th>
                                 <Table.Th>{/* Buttons */}</Table.Th>
                             </Table.Tr>
@@ -1313,20 +1316,20 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                     rightSection={<FaArrowUpRightFromSquare size={14} />}
                     onClick={() => handleLigaPageClick()}
                 >
-                    Zur Liga-Seite
+                    {t('goToLeaguePage')}
                 </Button>
                 {window.innerWidth >= 768 && (
                     <>
-                        <Button variant="filled" radius="xl" color="cyan" onClick={open} style={{ flex: 1 }}>Fahrer hinzufügen</Button>
-                        <Button variant="filled" radius="xl" color="cyan" onClick={() => setOpenEintragen(true)} style={{ flex: 1 }}>Ergebnisse eintragen</Button>
-                        <Button variant="filled" radius="xl" color="gray" rightSection={<IoFilter size={14}/>} style={{ flex: 1 }} onClick={() => setStreckenPopup(true)}>Kalender</Button>
-                        <Button variant="filled" radius="xl" color="red" onClick={() => handleReset()} style={{ flex: 1 }}>Alle Wertungen zurücksetzten</Button>
+                        <Button variant="filled" radius="xl" color="cyan" onClick={open} style={{ flex: 1 }}>{t('addDriver')}</Button>
+                        <Button variant="filled" radius="xl" color="cyan" onClick={() => setOpenEintragen(true)} style={{ flex: 1 }}>{t('addResults')}</Button>
+                        <Button variant="filled" radius="xl" color="gray" rightSection={<IoFilter size={14}/>} style={{ flex: 1 }} onClick={() => setStreckenPopup(true)}>{t('calendar')}</Button>
+                        <Button variant="filled" radius="xl" color="red" onClick={() => handleReset()} style={{ flex: 1 }}>{t('reset')}</Button>
                         <Button
                             variant="filled" radius="xl" color="grape"
                             rightSection={<FaArrowUpRightFromSquare size={14} />}
                             onClick={() => inviteBot()}
                         >
-                            Bot einladen
+                            {t('inviteBot')}
                         </Button>
                         <FileButton onChange={setFile} accept="image/png,image/jpeg">
                         {(props) => 
@@ -1335,7 +1338,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                                 variant="filled" radius="xl" color="lime"
                                 rightSection={<CgProfile size={14} />}
                             >
-                                Liga Logo ändern
+                                {t('changeLeagueLogo')}
                             </Button>
                         }
                         </FileButton>
@@ -1344,7 +1347,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                             rightSection={<MdWebAsset size={14} />}
                             onClick={() => setEditPage(true)}
                         >
-                            Seite Home anpassen
+                            {t('changeHomeSite')}
                         </Button>
                         <Menu>
                             <Menu.Target>
@@ -1356,13 +1359,13 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                             </Menu.Target>
                             <Menu.Dropdown>
                                 <Menu.Item onClick={() => downloadDriverStandingsCSV(ligaDaten, Strecken, streckenVisible)}>
-                                    Fahrertabelle CSV
+                                    {t('driverTableCSV')}
                                 </Menu.Item>
                                 <Menu.Item onClick={() => downloadTeamStandingCSV(teamsArray, Strecken, streckenVisible)}>
-                                    Konstrukteurstabelle CSV
+                                    {t('teamTableCSV')}
                                 </Menu.Item>
                                 <Menu.Item onClick={() => downloadCalendarAsImage()}>
-                                    🗓️ Kalender Download
+                                    🗓️ {t('calendar')} Download
                                 </Menu.Item>
                             </Menu.Dropdown>
                         </Menu>
