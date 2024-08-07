@@ -134,6 +134,14 @@ const resources = {
       "selectDate": "Select Date",
       "updateDate": "Update Date",
       "calendarDownload": "Calendar Download",
+      "richTextPlaceholder": "Here you can customize the league homepage.",
+      "HomepageUpdated": "Homepage updated",
+      "HomepageUpdatedMessage": "The homepage was successfully updated ✅",
+      "color": "Color",
+      "teamPoints": "Team Points",
+      "driverOfTheDay": "Driver of the Day",
+      "fastestLap": "Fastest Lap",
+      "number": "Number",
     },
   },
   de: {
@@ -266,6 +274,14 @@ const resources = {
       "selectDate": "Datum auswählen",
       "updateDate": "Datum aktualisieren",
       "calendarDownload": "Kalender Download",
+      "richTextPlaceholder": "Hier kannst du die Ligastartseite anpassen.",
+      "HomepageUpdated": "Startseite aktualisiert",
+      "HomepageUpdatedMessage": "Die Startseite wurde erfolgreich aktualisiert ✅",
+      "color": "Farbe",
+      "teamPoints": "Team Punkte",
+      "driverOfTheDay": "Fahrer des Tages",
+      "fastestLap": "Schnellste Runde",
+      "number": "Anzahl",
     }
   }
 };

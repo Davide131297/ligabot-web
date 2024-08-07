@@ -19,11 +19,14 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import { notifications } from '@mantine/notifications';
 import { Button, Space, Group } from '@mantine/core';
 import { RiUploadLine } from "react-icons/ri";
+import { useTranslation } from 'react-i18next';
+import '../../utils/i18n';
 
 export default function RichText({ligaName, setEditPage}) {
 
     const [height, setHeight] = React.useState(480)
     const [width, setWidth] = React.useState(640)
+    const { t } = useTranslation();
 
     const editor = useEditor({
         extensions: [
@@ -49,7 +52,7 @@ export default function RichText({ligaName, setEditPage}) {
             interfaceLanguage: 'de',
           }),
           TextAlign.configure({ types: ['heading', 'paragraph'] }),
-          Placeholder.configure({ placeholder: 'Hier kannst du die Ligastartseite anpassen.' })
+          Placeholder.configure({ placeholder: t('richTextPlaceholder') })
         ],
     });
 
@@ -116,8 +119,8 @@ export default function RichText({ligaName, setEditPage}) {
         }
         setEditPage(false);
         notifications.show({
-            title: 'Startseite aktualisiert',
-            message: 'Startseite wurde erfolgreich aktualisiert. ✅',
+            title: t('HomepageUpdated'),
+            message: t('HomepageUpdatedMessage'),
             color: 'green',
         })
     }
@@ -220,7 +223,7 @@ export default function RichText({ligaName, setEditPage}) {
 
             <Space h="md" />
             <Group justify="flex-end">
-                <Button onClick={() => showEditor()} rightSection={<RiUploadLine size={14} />}>Speichern</Button>
+                <Button onClick={() => showEditor()} rightSection={<RiUploadLine size={14} />}>{t('save')}</Button>
             </Group>
         </>
     );

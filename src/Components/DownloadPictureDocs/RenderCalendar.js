@@ -3,6 +3,8 @@ import F1Logo from './F1Logo.png';
 import BackgroundBlack from './BackgroundBlack.png';
 import { IoMdDownload } from "react-icons/io";
 import { Button, Space, Group } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
+import '../../utils/i18n';
 
 import AbuDhabi from '../Länderflaggen/abudhabi.png';
 import Aserbaidschan from '../Länderflaggen/aserbaidschan.png';
@@ -29,6 +31,7 @@ import USA from '../Länderflaggen/usa.png';
 const RenderCalendar = ({calendarData}) => {
 
     const [f1Calendar, setF1Calendar] = useState([]);
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (calendarData) {
@@ -373,7 +376,7 @@ const RenderCalendar = ({calendarData}) => {
                         y="14046.3px" 
                         style={{ fontFamily: "'Arial-Black', 'Arial Black', sans-serif", fontWeight: 900, fontSize: '2546.93px', fill: '#fff' }}
                     >
-                        Kalender
+                        {t('calendar')}
                     </text>
     
                     <g id="Jahr">
@@ -417,7 +420,7 @@ const RenderCalendar = ({calendarData}) => {
                     </defs>
                 </svg>
             ) : (
-                <p>Keine Daten vorhanden</p>
+                <p>{t('noData')}</p>
             )}
 
             <Space h="md" />
@@ -426,7 +429,7 @@ const RenderCalendar = ({calendarData}) => {
                     onClick={handleDownload}
                     rightSection={<IoMdDownload size={14} />}
                 >
-                    Download
+                    {t('calendarDownload')}
                 </Button>
             </Group>
         </div>

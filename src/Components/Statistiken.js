@@ -4,6 +4,8 @@ import { Table } from 'react-bootstrap';
 import { SimpleGrid, Center } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import './Statistiken.css';
+import { useTranslation } from 'react-i18next';
+import '../utils/i18n';
 
 const Statistiken = ({ ligaName, fahrerlistenObjekt, teamsArray }) => {
     const [poleData, setPoleData] = useState([]);
@@ -23,6 +25,7 @@ const Statistiken = ({ ligaName, fahrerlistenObjekt, teamsArray }) => {
         'Williams': '#049cdc'
     };
     const matches = useMediaQuery('(max-width: 768px)');
+    const { t } = useTranslation();
 
 
     useEffect(() => {
@@ -83,9 +86,9 @@ const Statistiken = ({ ligaName, fahrerlistenObjekt, teamsArray }) => {
                         <Table striped bordered hover size="sm" className='StatisticTable'>
                             <thead>
                                 <tr>
-                                    <th>Fahrer</th>
-                                    <th>Pole</th>
-                                    <th>Farbe</th>
+                                    <th>{t('driver')}</th>
+                                    <th>{t('number')}</th>
+                                    <th>{t('color')}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -106,7 +109,7 @@ const Statistiken = ({ ligaName, fahrerlistenObjekt, teamsArray }) => {
                     <DonutChart
                         withLabelsLine
                         withLabels
-                        chartLabel="Fastest Lap"
+                        chartLabel={t('fastestLap')}
                         data={fastestLapData}
                         strokeWidth={2}
                         size={matches ? 130 : 150} thickness={matches ? 12: 15}
@@ -114,9 +117,9 @@ const Statistiken = ({ ligaName, fahrerlistenObjekt, teamsArray }) => {
                     <Table striped bordered hover size="sm" className='StatisticTable'>
                         <thead>
                             <tr>
-                                <th>Fahrer</th>
-                                <th>Pole</th>
-                                <th>Farbe</th>
+                                <th>{t('driver')}</th>
+                                <th>{t('number')}</th>
+                                <th>{t('color')}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -136,7 +139,7 @@ const Statistiken = ({ ligaName, fahrerlistenObjekt, teamsArray }) => {
                     <DonutChart
                         withLabelsLine
                         withLabels
-                        chartLabel="Fahrer des Tages"
+                        chartLabel={t('driverOfTheDay')}
                         data={driverOfTheDayData}
                         strokeWidth={2}
                         size={matches ? 130 : 150} thickness={matches ? 12: 15}
@@ -144,9 +147,9 @@ const Statistiken = ({ ligaName, fahrerlistenObjekt, teamsArray }) => {
                     <Table striped bordered hover size="sm" className='StatisticTable'>
                         <thead>
                             <tr>
-                                <th>Fahrer</th>
-                                <th>Pole</th>
-                                <th>Farbe</th>
+                                <th>{t('driver')}</th>
+                                <th>{t('number')}</th>
+                                <th>{t('color')}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -167,16 +170,16 @@ const Statistiken = ({ ligaName, fahrerlistenObjekt, teamsArray }) => {
                         withLabelsLine
                         withLabels
                         data={teamData}
-                        chartLabel="Team Punkte"
+                        chartLabel={t('teamPoints')}
                         strokeWidth={2}
                         size={matches ? 130 : 150} thickness={matches ? 12: 15}
                     />
                     <Table striped bordered hover size="sm" className='StatisticTable'>
                         <thead>
                             <tr>
-                                <th>Fahrer</th>
-                                <th>Punkte</th>
-                                <th>Farbe</th>
+                                <th>{t('driver')}</th>
+                                <th>{t('points')}</th>
+                                <th>{t('color')}</th>
                             </tr>
                         </thead>
                         <tbody>
