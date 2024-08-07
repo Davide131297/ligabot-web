@@ -142,6 +142,8 @@ const resources = {
       "driverOfTheDay": "Driver of the Day",
       "fastestLap": "Fastest Lap",
       "number": "Number",
+      "saveDriverTableAsImg": "Save Driver Table as Image",
+      "saveTeamTableAsImg": "Save Team Table as Image",
     },
   },
   de: {
@@ -282,6 +284,8 @@ const resources = {
       "driverOfTheDay": "Fahrer des Tages",
       "fastestLap": "Schnellste Runde",
       "number": "Anzahl",
+      "saveDriverTableAsImg": "Fahrertabelle als Bild speichern",
+      "saveTeamTableAsImg": "Teamtabelle als Bild speichern",
     }
   }
 };

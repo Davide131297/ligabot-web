@@ -1408,7 +1408,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                     <div className='tabellenPosition'>
                         <ScrollArea w="auto" h="auto">
                             <Box w="70%">
-                                <Tooltip label="Fahrertabelle als Bild speichern">
+                                <Tooltip label={t('saveDriverTableAsImg')}>
                                 <ActionIcon variant="filled" color="rgba(0, 0, 0, 1)" aria-label="Settings" onClick={downloadDriverTableAsImage}>
                                     <IoCamera size={20}/>
                                 </ActionIcon>
@@ -1471,7 +1471,7 @@ const Einstellungen = ({ ligaName, setLigaName}) => {
                     <div className='tabellenPosition'>
                         <ScrollArea w="auto" h="auto">
                             <Box w="70%">
-                                <Tooltip label="Teamtabelle als Bild speichern">
+                                <Tooltip label={t('saveTeamTableAsImg')}>
                                 <ActionIcon variant="filled" color="rgba(0, 0, 0, 1)" aria-label="Settings" onClick={downloadTeamTableAsImage}>
                                     <IoCamera size={20}/>
                                 </ActionIcon>
