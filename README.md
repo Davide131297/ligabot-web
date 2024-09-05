@@ -2,7 +2,7 @@
 
 Dieses Projekt wurde mit React entwickelt.
 
-Hier geht es zum Projekt [F1 Liga Bot]([https://ligabot-38d61.web.app](https://davide131297.github.io/ligabot-web/))
+Hier geht es zum Projekt [F1 Liga Bot](https://davide131297.github.io/ligabot-web/)
 
 ## Webseite Testen
 
