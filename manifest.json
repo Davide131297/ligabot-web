@@ -1,0 +1,25 @@
+{
+  "short_name": "F1 Liga Bot",
+  "name": "F1 Liga Bot",
+  "icons": [
+    {
+      "src": "race-car-modified.png",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "race-car-modified.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "race-car-modified.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}

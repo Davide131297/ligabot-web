@@ -1,0 +1,35 @@
+{
+  "files": {
+    "main.css": "/ligabot-web/static/css/main.cafb7833.css",
+    "main.js": "/ligabot-web/static/js/main.c835c801.js",
+    "static/js/453.b88b25c6.chunk.js": "/ligabot-web/static/js/453.b88b25c6.chunk.js",
+    "static/media/Fahrertabelle.png": "/ligabot-web/static/media/Fahrertabelle.23f49ae42634521881fe.png",
+    "static/media/MercedesIcon.png": "/ligabot-web/static/media/MercedesIcon.a64647a94ea571bce85c.png",
+    "static/media/StatistikenGrafik.png": "/ligabot-web/static/media/StatistikenGrafik.1193ce2a677147b280fb.png",
+    "static/media/RedBullIcon.png": "/ligabot-web/static/media/RedBullIcon.495ef5326f9612a27095.png",
+    "static/media/DemoStartseite.png": "/ligabot-web/static/media/DemoStartseite.96e811292cf030159902.png",
+    "static/media/Konstrukteurstabelle.png": "/ligabot-web/static/media/Konstrukteurstabelle.bfb2b77811f74fbd95c2.png",
+    "static/media/ServerID.png": "/ligabot-web/static/media/ServerID.7e9354087fe1a048fdfa.png",
+    "static/media/StartseiteEditor.png": "/ligabot-web/static/media/StartseiteEditor.e700fe69b628078f5bea.png",
+    "static/media/StakeSauber.png": "/ligabot-web/static/media/StakeSauber.376d6dc5f6865580a11c.png",
+    "static/media/BefehlAntworten.png": "/ligabot-web/static/media/BefehlAntworten.f7d846bf86833cd26556.png",
+    "static/media/Streckenfilter.png": "/ligabot-web/static/media/Streckenfilter.3081a19eff7878d75a99.png",
+    "static/media/BotBefehle.png": "/ligabot-web/static/media/BotBefehle.d5ce20f4c657f86f2b42.png",
+    "static/media/AstonMartin.png": "/ligabot-web/static/media/AstonMartin.03aa4998ed8b40b30460.png",
+    "static/media/AstonMartinGreen.jpg": "/ligabot-web/static/media/AstonMartinGreen.f822fb6aa69c3de96c18.jpg",
+    "static/media/Williams.png": "/ligabot-web/static/media/Williams.da49b673e735d418bc85.png",
+    "static/media/Ferrari.png": "/ligabot-web/static/media/Ferrari.65121f50bb94454dafbd.png",
+    "static/media/Logo_Haas_F1.png": "/ligabot-web/static/media/Logo_Haas_F1.dc712e6ff4685d4401b8.png",
+    "static/media/VisaRB.jpg": "/ligabot-web/static/media/VisaRB.c623eadd1a51ef612fa4.jpg",
+    "static/media/Alpine.png": "/ligabot-web/static/media/Alpine.8f9d89dccf3c302e4023.png",
+    "static/media/AlpineBlue.png": "/ligabot-web/static/media/AlpineBlue.dd2d7cb8c63d258cf96d.png",
+    "index.html": "/ligabot-web/index.html",
+    "main.cafb7833.css.map": "/ligabot-web/static/css/main.cafb7833.css.map",
+    "main.c835c801.js.map": "/ligabot-web/static/js/main.c835c801.js.map",
+    "453.b88b25c6.chunk.js.map": "/ligabot-web/static/js/453.b88b25c6.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.cafb7833.css",
+    "static/js/main.c835c801.js"
+  ]
+}
