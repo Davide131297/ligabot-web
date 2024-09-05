@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/ligabot-web/static/css/main.cafb7833.css",
-    "main.js": "/ligabot-web/static/js/main.c835c801.js",
+    "main.js": "/ligabot-web/static/js/main.7338bb52.js",
     "static/js/453.b88b25c6.chunk.js": "/ligabot-web/static/js/453.b88b25c6.chunk.js",
     "static/media/Fahrertabelle.png": "/ligabot-web/static/media/Fahrertabelle.23f49ae42634521881fe.png",
     "static/media/MercedesIcon.png": "/ligabot-web/static/media/MercedesIcon.a64647a94ea571bce85c.png",
@@ -25,11 +25,11 @@
     "static/media/AlpineBlue.png": "/ligabot-web/static/media/AlpineBlue.dd2d7cb8c63d258cf96d.png",
     "index.html": "/ligabot-web/index.html",
     "main.cafb7833.css.map": "/ligabot-web/static/css/main.cafb7833.css.map",
-    "main.c835c801.js.map": "/ligabot-web/static/js/main.c835c801.js.map",
+    "main.7338bb52.js.map": "/ligabot-web/static/js/main.7338bb52.js.map",
     "453.b88b25c6.chunk.js.map": "/ligabot-web/static/js/453.b88b25c6.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.cafb7833.css",
-    "static/js/main.c835c801.js"
+    "static/js/main.7338bb52.js"
   ]
 }
