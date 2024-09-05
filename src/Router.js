@@ -20,7 +20,7 @@ export function Router() {
     const [ligaName, setLigaName] = useState(null);
 
     return (
-        <BrowserRouter>
+        <BrowserRouter basename='/ligabot-web'>
             <AppShell
                 header={{ height: 60 }}
                 navbar={{
