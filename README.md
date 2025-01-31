@@ -38,3 +38,6 @@ In diesem Projekt wurden folgende Bibliotheken/Frameworks genutzt:
 ## Geplante Änderungen
 
 Derzeit keine Änderungen geplant
+
+## Discord Bot Repo
+[Zur Github Seite hier klicken](https://github.com/Davide131297/DiscordBot)
